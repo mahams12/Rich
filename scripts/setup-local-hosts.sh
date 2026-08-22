@@ -12,6 +12,9 @@ fi
 cat >> /etc/hosts <<'EOF'
 
 # NovexaHub local testing
+127.0.0.1 novexahub.live
+127.0.0.1 www.novexahub.live
+127.0.0.1 admin.novexahub.live
 127.0.0.1 novexahub.net
 127.0.0.1 www.novexahub.net
 127.0.0.1 admin.novexahub.net

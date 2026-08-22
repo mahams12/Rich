@@ -28,6 +28,6 @@ export const site = {
     "branding and product design",
     "final year project",
     "NovexaHub",
-    "novexahub.net",
+    "novexahub.live",
   ],
 };

@@ -6,7 +6,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useApp } from "@/components/providers/AppProvider";
 import { Badge, Button, Field, Section, inputClass } from "@/components/ui/Button";
 import { isAdminEmail } from "@/lib/firebase/config";
-import { isGoogleRedirectPending } from "@/lib/firebase/auth";
+
+function isGoogleRedirectPending() {
+  if (typeof window === "undefined") return false;
+  return sessionStorage.getItem("novexah-google-redirect") === "1";
+}
 
 function destination(email: string, next: string) {
   if (isAdminEmail(email)) return "/admin";

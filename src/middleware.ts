@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { adminHosts, domains, primaryHosts } from "@/data/domains";
 
-export function proxy(request: NextRequest) {
+/** Edge middleware so OpenNext/Cloudflare can host-route admin.novexahub.live. */
+export function middleware(request: NextRequest) {
   const host = (request.headers.get("host") || "").split(":")[0];
   const { pathname, search } = request.nextUrl;
 

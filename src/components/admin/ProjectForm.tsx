@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import { AdminGate, AdminNav } from "@/app/admin/AdminBits";
 import { useApp } from "@/components/providers/AppProvider";
 import { Button, Field, Section, inputClass } from "@/components/ui/Button";
-import { firebaseErrorMessage } from "@/lib/firebase/errors";
-import { uploadProjectCover } from "@/lib/firebase/storage";
 import { uid } from "@/lib/format";
 import type { CategoryId, Project } from "@/types";
 
@@ -22,10 +20,15 @@ export function ProjectForm({ existing }: { existing?: Project }) {
     if (!file) return;
     setUploading(true);
     try {
+      const [{ uploadProjectCover }, { firebaseErrorMessage }] = await Promise.all([
+        import("@/lib/firebase/storage"),
+        import("@/lib/firebase/errors"),
+      ]);
       const url = await uploadProjectCover(file, projectId);
       setCover(url);
       toast("Photo uploaded");
     } catch (error) {
+      const { firebaseErrorMessage } = await import("@/lib/firebase/errors");
       toast("Upload failed", firebaseErrorMessage(error));
     } finally {
       setUploading(false);
