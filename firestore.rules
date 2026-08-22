@@ -1,0 +1,77 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn() && (
+        request.auth.token.email == "novexahub.net@gmail.com" ||
+        request.auth.token.email == "admin@novexahub.live" ||
+        (
+          exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin"
+        )
+      );
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow create: if isOwner(uid);
+      allow update: if isOwner(uid)
+        && (!("role" in request.resource.data) || request.resource.data.role == resource.data.role || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    match /projects/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /reviews/{id} {
+      allow read: if true;
+      allow create: if signedIn();
+      allow update, delete: if isAdmin()
+        || (signedIn() && resource.data.email == request.auth.token.email);
+    }
+
+    match /notices/{id} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /contacts/{id} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin()
+        || (signedIn() && resource.data.email == request.auth.token.email);
+    }
+
+    match /customizations/{id} {
+      allow create: if signedIn();
+      allow read, update, delete: if isAdmin()
+        || (signedIn() && resource.data.email == request.auth.token.email);
+    }
+
+    match /orders/{id} {
+      allow create: if signedIn();
+      allow read, update: if isAdmin()
+        || (signedIn() && resource.data.email == request.auth.token.email);
+      allow delete: if isAdmin();
+    }
+
+    match /securityAlerts/{id} {
+      allow create: if request.resource.data.type == "admin_login_failed"
+        && request.resource.data.attemptedEmail is string
+        && request.resource.data.attemptedEmail.size() > 3
+        && request.resource.data.attemptedEmail.size() <= 320
+        && !("password" in request.resource.data);
+      allow read, delete: if isAdmin();
+      allow update: if false;
+    }
+  }
+}

@@ -1,0 +1,24 @@
+# Pending DNS for novexahub.net — do NOT publish in Cloudflare until testing is done.
+# When ready: Cloudflare → DNS → Records (DNS only / grey cloud during first tests).
+
+@       A or CNAME    → your hosting provider (Vercel / Firebase / etc.)
+www     CNAME         → novexahub.net
+admin   CNAME         → same target as root (admin panel subdomain)
+
+# Firebase Auth → Authorized domains (you added these — good):
+#   novexahub.net, www.novexahub.net, admin.novexahub.net, localhost
+# Optional for npm run dev:admin only: add admin.localhost in Firebase too
+
+# Local testing before DNS is live (macOS/Linux — edit /etc/hosts as admin):
+127.0.0.1 novexahub.net
+127.0.0.1 www.novexahub.net
+127.0.0.1 admin.novexahub.net
+127.0.0.1 admin.localhost
+
+# Then:
+npm run dev          → http://novexahub.net:3000 (main site)
+npm run dev:admin    → http://admin.localhost:3001 (admin subdomain locally)
+
+# Production URLs (after DNS + deploy):
+# Main:  https://novexahub.net
+# Admin: https://admin.novexahub.net  (opens /admin — sign in with novexahub.net@gmail.com)
