@@ -9,7 +9,7 @@
   "routes": [
     { "pattern": "novexahub.live/*", "zone_name": "novexahub.live" },
     { "pattern": "www.novexahub.live/*", "zone_name": "novexahub.live" },
-    { "pattern": "admin.novexahub.live", "custom_domain": true },
+    { "pattern": "admin.novexahub.live/*", "zone_name": "novexahub.live" },
   ],
   "assets": {
     "directory": ".open-next/assets",
