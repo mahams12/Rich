@@ -63,7 +63,7 @@ export interface Project {
   availability: Availability;
   support: string;
   cover?: string;
-  /** Up to 3 preview images for the project detail gallery. */
+  /** Up to 4 images for the project detail gallery (first also used as portfolio cover). */
   gallery?: string[];
   deleted?: boolean;
   visual: {

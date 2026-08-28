@@ -8,12 +8,16 @@ import { Button, Field, Section, inputClass } from "@/components/ui/Button";
 import { uid } from "@/lib/format";
 import type { CategoryId, Project } from "@/types";
 
-function emptyGallery(existing?: Project): [string, string, string] {
-  return [existing?.gallery?.[0] ?? "", existing?.gallery?.[1] ?? "", existing?.gallery?.[2] ?? ""];
+type GallerySlots = [string, string, string, string];
+
+function emptyGallery(existing?: Project): GallerySlots {
+  const g = existing?.gallery ?? [];
+  return [g[0] ?? existing?.cover ?? "", g[1] ?? "", g[2] ?? "", g[3] ?? ""];
 }
 
 function GalleryUpload({
   label,
+  hint,
   value,
   uploading,
   disabled,
@@ -21,6 +25,7 @@ function GalleryUpload({
   onRemove,
 }: {
   label: string;
+  hint?: string;
   value: string;
   uploading: boolean;
   disabled: boolean;
@@ -37,7 +42,7 @@ function GalleryUpload({
         onChange={(e) => onUpload(e.target.files?.[0])}
       />
       <p className="mt-2 text-xs text-muted">
-        {uploading ? "Uploading…" : "Choose a photo from your device (max 5 MB)."}
+        {uploading ? "Uploading…" : hint ?? "Choose a photo from your device (max 5 MB)."}
       </p>
       {value ? (
         <div className="mt-3 space-y-2">
@@ -54,14 +59,13 @@ function GalleryUpload({
 export function ProjectForm({ existing }: { existing?: Project }) {
   const { upsertProject, deleteProject, toast } = useApp();
   const router = useRouter();
-  const [cover, setCover] = useState(existing?.cover ?? "");
-  const [gallery, setGallery] = useState<[string, string, string]>(emptyGallery(existing));
-  const [uploadingSlot, setUploadingSlot] = useState<"cover" | 0 | 1 | 2 | null>(null);
+  const [gallery, setGallery] = useState<GallerySlots>(emptyGallery(existing));
+  const [uploadingSlot, setUploadingSlot] = useState<0 | 1 | 2 | 3 | null>(null);
   const [saving, setSaving] = useState(false);
   const projectId = existing?.id ?? uid("p");
   const uploading = uploadingSlot !== null;
 
-  async function onFile(slot: "cover" | 0 | 1 | 2, file?: File) {
+  async function onFile(slot: 0 | 1 | 2 | 3, file?: File) {
     if (!file) return;
     setUploadingSlot(slot);
     try {
@@ -70,8 +74,7 @@ export function ProjectForm({ existing }: { existing?: Project }) {
         import("@/lib/firebase/errors"),
       ]);
       const url = await uploadProjectCover(file, projectId);
-      if (slot === "cover") setCover(url);
-      else setGallery((current) => current.map((item, index) => (index === slot ? url : item)) as [string, string, string]);
+      setGallery((current) => current.map((item, index) => (index === slot ? url : item)) as GallerySlots);
       toast("Photo uploaded");
     } catch (error) {
       const { firebaseErrorMessage } = await import("@/lib/firebase/errors");
@@ -79,6 +82,10 @@ export function ProjectForm({ existing }: { existing?: Project }) {
     } finally {
       setUploadingSlot(null);
     }
+  }
+
+  function clearSlot(slot: 0 | 1 | 2 | 3) {
+    setGallery((current) => current.map((item, index) => (index === slot ? "" : item)) as GallerySlots);
   }
 
   function submit(e: FormEvent<HTMLFormElement>) {
@@ -125,13 +132,20 @@ export function ProjectForm({ existing }: { existing?: Project }) {
       deliveryDays: Number(data.get("deliveryDays")),
       featured: Boolean(data.get("featured")),
       status: "published",
-      cover: cover || "",
+      cover: cleanedGallery[0] || "",
       gallery: cleanedGallery.length ? cleanedGallery : undefined,
     };
     upsertProject(project);
     setSaving(false);
     router.push("/admin/projects");
   }
+
+  const labels = [
+    "Image 1 — main preview (also portfolio card)",
+    "Image 2 — optional thumbnail",
+    "Image 3 — optional thumbnail",
+    "Image 4 — optional thumbnail",
+  ] as const;
 
   return (
     <Section className="max-w-3xl">
@@ -163,41 +177,21 @@ export function ProjectForm({ existing }: { existing?: Project }) {
           <div className="rounded-2xl border border-black/10 bg-white/40 p-4">
             <p className="text-sm font-semibold text-ink">Project photos</p>
             <p className="mt-1 text-xs text-muted">
-              Cover appears on portfolio cards. Preview 1–3 are the three images on the live project page.
+              Upload 1 to 4 images. Image 1 is the large preview (and portfolio card). Images 2–4 appear as smaller thumbnails below — only uploaded ones are shown.
             </p>
             <div className="mt-4 grid gap-4">
-              <GalleryUpload
-                label="Cover photo (portfolio card)"
-                value={cover}
-                uploading={uploadingSlot === "cover"}
-                disabled={uploading}
-                onUpload={(file) => onFile("cover", file)}
-                onRemove={() => setCover("")}
-              />
-              <GalleryUpload
-                label="Preview image 1"
-                value={gallery[0]}
-                uploading={uploadingSlot === 0}
-                disabled={uploading}
-                onUpload={(file) => onFile(0, file)}
-                onRemove={() => setGallery((current) => ["", current[1], current[2]])}
-              />
-              <GalleryUpload
-                label="Preview image 2"
-                value={gallery[1]}
-                uploading={uploadingSlot === 1}
-                disabled={uploading}
-                onUpload={(file) => onFile(1, file)}
-                onRemove={() => setGallery((current) => [current[0], "", current[2]])}
-              />
-              <GalleryUpload
-                label="Preview image 3"
-                value={gallery[2]}
-                uploading={uploadingSlot === 2}
-                disabled={uploading}
-                onUpload={(file) => onFile(2, file)}
-                onRemove={() => setGallery((current) => [current[0], current[1], ""])}
-              />
+              {labels.map((label, slot) => (
+                <GalleryUpload
+                  key={label}
+                  label={label}
+                  hint={slot === 0 ? "Required for a custom look — otherwise the default stock image is used." : "Optional."}
+                  value={gallery[slot]}
+                  uploading={uploadingSlot === slot}
+                  disabled={uploading}
+                  onUpload={(file) => onFile(slot as 0 | 1 | 2 | 3, file)}
+                  onRemove={() => clearSlot(slot as 0 | 1 | 2 | 3)}
+                />
+              ))}
             </div>
           </div>
           <Field label="Tags (comma)"><input name="tags" defaultValue={existing?.tags.join(", ")} className={inputClass} /></Field>

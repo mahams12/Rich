@@ -14,7 +14,7 @@ import { isStudioAdmin } from "@/lib/admin";
 import { reviews as catalogReviews } from "@/data/content";
 import { relatedProjects } from "@/data/projects";
 import { countWords } from "@/lib/format";
-import { projectGalleryShots } from "@/lib/cover";
+import { projectGalleryImages } from "@/lib/cover";
 
 export function ProjectDetailView() {
   const { slug } = useParams<{ slug: string }>();
@@ -45,8 +45,10 @@ export function ProjectDetailView() {
 
   const remaining = project.maxCustomizationWords - countWords(words);
   const loved = isFavourite(project.id);
-  const shots = projectGalleryShots(project);
-  const activeShot = shots[gallery];
+  const images = projectGalleryImages(project);
+  const activeIndex = Math.min(gallery, Math.max(images.length - 1, 0));
+  const activeShot = images[activeIndex];
+  const thumbs = images.length > 1 ? images.length - 1 : 0;
   const extra = words.trim()
     ? `Customization notes:\n${words.trim()}`
     : undefined;
@@ -93,15 +95,39 @@ export function ProjectDetailView() {
                   className="h-full w-full"
                 />
               </TiltCard>
-              <Badge className="absolute left-4 top-4 z-40 bg-black/50 text-white">Preview {gallery + 1}/3</Badge>
+              {images.length > 1 ? (
+                <Badge className="absolute left-4 top-4 z-40 bg-black/50 text-white">
+                  Preview {activeIndex + 1}/{images.length}
+                </Badge>
+              ) : null}
             </div>
-            <div className="grid grid-cols-3 gap-2 p-2">
-              {[0, 1, 2].map((shot) => (
-                <button key={shot} type="button" onClick={() => setGallery(shot)} className={`h-20 overflow-hidden rounded-2xl ${gallery === shot ? "ring-2 ring-[#c45c3a]" : "opacity-70"}`}>
-                  <ProjectVisual kind={project.visual.kind} mood={project.visual.mood} title={`${project.title} ${shot + 1}`} cover={shots[shot]} className="h-full w-full" />
-                </button>
-              ))}
-            </div>
+            {images.length > 1 ? (
+              <div
+                className={`grid gap-2 p-2 ${
+                  thumbs === 1 ? "grid-cols-1" : thumbs === 2 ? "grid-cols-2" : "grid-cols-3"
+                }`}
+              >
+                {images
+                  .map((shot, shotIndex) => ({ shot, shotIndex }))
+                  .filter(({ shotIndex }) => shotIndex !== activeIndex)
+                  .map(({ shot, shotIndex }) => (
+                    <button
+                      key={`${shot}-${shotIndex}`}
+                      type="button"
+                      onClick={() => setGallery(shotIndex)}
+                      className="h-20 overflow-hidden rounded-2xl opacity-70 transition hover:opacity-100"
+                    >
+                      <ProjectVisual
+                        kind={project.visual.kind}
+                        mood={project.visual.mood}
+                        title={`${project.title} ${shotIndex + 1}`}
+                        cover={shot}
+                        className="h-full w-full"
+                      />
+                    </button>
+                  ))}
+              </div>
+            ) : null}
           </div>
           <div className="mt-6 flex gap-2">
             {(["overview", "features", "customize"] as const).map((item) => (
