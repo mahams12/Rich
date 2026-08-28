@@ -14,7 +14,7 @@ import { isStudioAdmin } from "@/lib/admin";
 import { reviews as catalogReviews } from "@/data/content";
 import { relatedProjects } from "@/data/projects";
 import { countWords } from "@/lib/format";
-import { projectCover } from "@/lib/cover";
+import { projectGalleryShots } from "@/lib/cover";
 
 export function ProjectDetailView() {
   const { slug } = useParams<{ slug: string }>();
@@ -45,7 +45,8 @@ export function ProjectDetailView() {
 
   const remaining = project.maxCustomizationWords - countWords(words);
   const loved = isFavourite(project.id);
-  const cover = projectCover(project);
+  const shots = projectGalleryShots(project);
+  const activeShot = shots[gallery];
   const extra = words.trim()
     ? `Customization notes:\n${words.trim()}`
     : undefined;
@@ -84,11 +85,11 @@ export function ProjectDetailView() {
             <div className="relative h-[360px] sm:h-[440px]">
               <TiltCard max={6} className="h-full w-full">
                 <ProjectVisual
-                  key={cover}
+                  key={activeShot}
                   kind={project.visual.kind}
                   mood={project.visual.mood}
                   title={project.title}
-                  cover={cover}
+                  cover={activeShot}
                   className="h-full w-full"
                 />
               </TiltCard>
@@ -97,7 +98,7 @@ export function ProjectDetailView() {
             <div className="grid grid-cols-3 gap-2 p-2">
               {[0, 1, 2].map((shot) => (
                 <button key={shot} type="button" onClick={() => setGallery(shot)} className={`h-20 overflow-hidden rounded-2xl ${gallery === shot ? "ring-2 ring-[#c45c3a]" : "opacity-70"}`}>
-                  <ProjectVisual kind={project.visual.kind} mood={project.visual.mood} title={`${project.title} ${shot}`} cover={cover} className="h-full w-full" />
+                  <ProjectVisual kind={project.visual.kind} mood={project.visual.mood} title={`${project.title} ${shot + 1}`} cover={shots[shot]} className="h-full w-full" />
                 </button>
               ))}
             </div>

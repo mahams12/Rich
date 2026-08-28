@@ -70,3 +70,9 @@ const byCategory: Record<string, string> = {
 export function projectCover(project: Project) {
   return project.cover || bySlug[project.slug] || byCategory[project.category] || byCategory.websites;
 }
+
+export function projectGalleryShots(project: Project): [string, string, string] {
+  const cover = projectCover(project);
+  const gallery = project.gallery ?? [];
+  return [gallery[0] || cover, gallery[1] || cover, gallery[2] || cover];
+}

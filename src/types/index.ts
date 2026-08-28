@@ -63,6 +63,8 @@ export interface Project {
   availability: Availability;
   support: string;
   cover?: string;
+  /** Up to 3 preview images for the project detail gallery. */
+  gallery?: string[];
   deleted?: boolean;
   visual: {
     kind: VisualKind;

@@ -145,6 +145,13 @@ export function saveProject(project: Project) {
   } else if (!project.cover) {
     delete payload.cover;
   }
+  if (project.gallery) {
+    const cleaned = project.gallery.map((item) => item.trim()).filter(Boolean);
+    if (cleaned.length) payload.gallery = cleaned;
+    else payload.gallery = deleteField();
+  } else {
+    delete payload.gallery;
+  }
   return write("projects", project.id, payload);
 }
 
