@@ -1,13 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import { useMemo } from "react";
 import { AdminGate, AdminNav } from "../AdminBits";
 import { useApp } from "@/components/providers/AppProvider";
 import { Button, Section } from "@/components/ui/Button";
+import { sortProjectsNewestFirst } from "@/data/projects";
 import { formatPrice } from "@/lib/format";
 
 export function AdminProjectsView() {
   const { projects, setProjectStatus, deleteProject } = useApp();
+  const sorted = useMemo(() => sortProjectsNewestFirst(projects), [projects]);
 
   return (
     <Section>
@@ -29,7 +32,7 @@ export function AdminProjectsView() {
               </tr>
             </thead>
             <tbody>
-              {projects.map((project) => (
+              {sorted.map((project) => (
                 <tr key={project.id} className="border-t border-black/10">
                   <td className="px-4 py-3">
                     <p className="font-semibold">{project.title}</p>

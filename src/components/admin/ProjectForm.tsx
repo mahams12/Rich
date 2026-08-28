@@ -99,6 +99,7 @@ export function ProjectForm({ existing }: { existing?: Project }) {
     const title = String(data.get("title"));
     const slug = existing?.slug || title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
     const cleanedGallery = gallery.map((item) => item.trim()).filter(Boolean);
+    const now = new Date().toISOString();
     const project: Project = {
       ...(existing ?? {
         id: projectId,
@@ -132,6 +133,8 @@ export function ProjectForm({ existing }: { existing?: Project }) {
       deliveryDays: Number(data.get("deliveryDays")),
       featured: Boolean(data.get("featured")),
       status: "published",
+      createdAt: existing?.createdAt ?? now,
+      publishedAt: now,
       cover: cleanedGallery[0] || "",
       gallery: cleanedGallery.length ? cleanedGallery : undefined,
     };

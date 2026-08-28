@@ -1217,8 +1217,23 @@ export const projects: Project[] = [
   },
 ];
 
+export function projectSortTime(project: Project) {
+  const raw = project.publishedAt || project.createdAt;
+  if (!raw) return 0;
+  const time = Date.parse(raw);
+  return Number.isNaN(time) ? 0 : time;
+}
+
+export function sortProjectsNewestFirst(list: Project[]) {
+  return [...list].sort((a, b) => {
+    const diff = projectSortTime(b) - projectSortTime(a);
+    if (diff !== 0) return diff;
+    return b.id.localeCompare(a.id);
+  });
+}
+
 export function getPublishedProjects(list: Project[] = projects) {
-  return list.filter((project) => project.status === "published");
+  return sortProjectsNewestFirst(list.filter((project) => project.status === "published"));
 }
 
 export function getProjectBySlug(slug: string, list: Project[] = projects) {

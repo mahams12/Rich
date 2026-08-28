@@ -10,12 +10,7 @@ import { projectCover } from "@/lib/cover";
 
 export function ProjectFan() {
   const { projects } = useApp();
-  const items = useMemo(() => {
-    const published = getPublishedProjects(projects);
-    const featured = published.filter((item) => item.featured);
-    const pool = featured.length >= 7 ? featured : published;
-    return pool.slice(0, 9);
-  }, [projects]);
+  const items = useMemo(() => getPublishedProjects(projects).slice(0, 9), [projects]);
 
   const [active, setActive] = useState(Math.floor(Math.min(items.length, 9) / 2));
   const [paused, setPaused] = useState(false);

@@ -66,6 +66,8 @@ export interface Project {
   /** Up to 4 images for the project detail gallery (first also used as portfolio cover). */
   gallery?: string[];
   deleted?: boolean;
+  createdAt?: string;
+  publishedAt?: string;
   visual: {
     kind: VisualKind;
     mood: VisualMood;

@@ -7,7 +7,7 @@ import { useApp } from "@/components/providers/AppProvider";
 import { Button, Section, inputClass } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { categories } from "@/data/content";
-import { getPublishedProjects } from "@/data/projects";
+import { getPublishedProjects, projectSortTime } from "@/data/projects";
 import type { CategoryId } from "@/types";
 
 export function ExploreView() {
@@ -16,7 +16,7 @@ export function ExploreView() {
   const { projects } = useApp();
   const [q, setQ] = useState(params.get("q") ?? "");
   const [category, setCategory] = useState<string>(params.get("category") ?? "all");
-  const [sort, setSort] = useState(params.get("sort") ?? "featured");
+  const [sort, setSort] = useState(params.get("sort") ?? "newest");
   const [maxDays, setMaxDays] = useState(21);
   const [mode, setMode] = useState<"all" | "ready" | "custom">("all");
   const [visible, setVisible] = useState(8);
@@ -39,8 +39,8 @@ export function ExploreView() {
     items = [...items].sort((a, b) => {
       if (sort === "delivery") return a.deliveryDays - b.deliveryDays;
       if (sort === "popular") return b.favourites - a.favourites;
-      if (sort === "newest") return b.id.localeCompare(a.id);
-      return Number(b.featured) - Number(a.featured) || b.rating - a.rating;
+      if (sort === "featured") return Number(b.featured) - Number(a.featured) || b.rating - a.rating;
+      return projectSortTime(b) - projectSortTime(a) || b.id.localeCompare(a.id);
     });
     return items;
   }, [category, maxDays, mode, projects, q, sort]);

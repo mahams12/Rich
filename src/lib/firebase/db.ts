@@ -12,7 +12,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { projects as seedProjects } from "@/data/projects";
+import { projects as seedProjects, sortProjectsNewestFirst } from "@/data/projects";
 import type {
   ContactRequest,
   CustomizationRequest,
@@ -33,7 +33,7 @@ function mergeProjects(remote: Project[]) {
     }
     byId.set(item.id, item);
   }
-  return Array.from(byId.values());
+  return sortProjectsNewestFirst(Array.from(byId.values()));
 }
 
 function sortByDate<T extends { createdAt?: string }>(items: T[]) {
@@ -152,6 +152,9 @@ export function saveProject(project: Project) {
   } else {
     delete payload.gallery;
   }
+  const now = new Date().toISOString();
+  if (!project.createdAt) payload.createdAt = now;
+  payload.publishedAt = project.publishedAt || now;
   return write("projects", project.id, payload);
 }
 

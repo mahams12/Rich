@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import { uid } from "@/lib/format";
+import { sortProjectsNewestFirst } from "@/data/projects";
 import {
   SHARED_KEY,
   emptyShared,
@@ -640,6 +641,13 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       else setNotices((items) => [notice, ...items]);
     }
     if (remote) {
+      setProjects((current) => {
+        const exists = current.some((item) => item.id === project.id);
+        const next = exists
+          ? current.map((item) => (item.id === project.id ? project : item))
+          : [project, ...current];
+        return sortProjectsNewestFirst(next);
+      });
       void saveProject(project)
         .then(() => toast("Project saved"))
         .catch((error) => toast("Could not save project", firebaseErrorMessage(error)));
@@ -647,7 +655,10 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
     }
     setProjects((current) => {
       const exists = current.some((item) => item.id === project.id);
-      return exists ? current.map((item) => (item.id === project.id ? project : item)) : [project, ...current];
+      const next = exists
+        ? current.map((item) => (item.id === project.id ? project : item))
+        : [project, ...current];
+      return sortProjectsNewestFirst(next);
     });
     toast("Project saved");
   }, [projects, toast]);

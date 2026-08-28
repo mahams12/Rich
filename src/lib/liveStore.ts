@@ -1,4 +1,4 @@
-import { projects as seedProjects } from "@/data/projects";
+import { projects as seedProjects, sortProjectsNewestFirst } from "@/data/projects";
 import type {
   ContactRequest,
   CustomizationRequest,
@@ -38,7 +38,8 @@ function mergeProjects(saved: Project[] | undefined): Project[] {
   if (!saved?.length) return seedProjects;
   const byId = new Map(saved.map((item) => [item.id, item]));
   const extras = seedProjects.filter((item) => !byId.has(item.id));
-  return extras.length ? [...saved, ...extras] : saved;
+  const merged = extras.length ? [...saved, ...extras] : saved;
+  return sortProjectsNewestFirst(merged);
 }
 
 export function emptyShared(): SharedState {
