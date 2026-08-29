@@ -23,7 +23,7 @@ export function PortfolioView() {
         {list.map((project) => (
           <Link key={project.id} href={`/projects/${project.slug}`} className="group block">
             <div className="overflow-hidden rounded-2xl border border-black/10 bg-card">
-              <div className="relative aspect-[4/3] overflow-hidden">
+              <div className="relative aspect-[4/3] overflow-hidden sm:aspect-[16/10]">
                 <ProjectVisual
                   kind={project.visual.kind}
                   mood={project.visual.mood}

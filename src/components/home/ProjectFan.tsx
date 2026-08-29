@@ -47,7 +47,7 @@ export function ProjectFan() {
             <Link
               key={project.id}
               href={`/projects/${project.slug}`}
-              className="relative h-[15.5rem] w-[68vw] max-w-[15rem] shrink-0 snap-center overflow-hidden rounded-[1.15rem] border border-black/10 bg-[#111] shadow-[0_12px_28px_rgba(22,17,14,0.12)]"
+              className="relative h-[14rem] w-[72vw] max-w-[16.5rem] shrink-0 snap-center overflow-hidden rounded-[1.15rem] border border-black/10 bg-[#2a2420] shadow-[0_12px_28px_rgba(22,17,14,0.12)]"
             >
               <ProjectVisual
                 kind={project.visual.kind}
@@ -69,7 +69,7 @@ export function ProjectFan() {
 
       {/* Desktop: arched fan */}
       <div
-        className="relative mx-auto mt-8 hidden h-[28rem] max-w-6xl md:block"
+        className="relative mx-auto mt-8 hidden h-[24rem] max-w-6xl md:block"
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
       >
@@ -90,7 +90,7 @@ export function ProjectFan() {
               key={project.id}
               type="button"
               onClick={() => setActive(index)}
-              className="absolute left-1/2 top-6 h-[22rem] w-[13.5rem] origin-bottom overflow-hidden rounded-[1.4rem] border border-black/10 bg-[#111] shadow-[0_18px_40px_rgba(22,17,14,0.16)]"
+              className="absolute left-1/2 top-6 h-[18.5rem] w-[12.5rem] origin-bottom overflow-hidden rounded-[1.4rem] border border-black/10 bg-[#2a2420] shadow-[0_18px_40px_rgba(22,17,14,0.16)]"
               style={{
                 zIndex: 40 - abs,
                 transform: `translateX(calc(-50% + ${x}px)) translateY(${y}px) rotate(${rotate}deg) scale(${scale})`,

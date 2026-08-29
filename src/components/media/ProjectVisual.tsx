@@ -18,23 +18,21 @@ const moods: Record<VisualMood, string> = {
 const FALLBACK_COVER =
   "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1400&q=80";
 
-function isUploadedCover(url?: string) {
-  if (!url) return false;
-  return url.includes("firebasestorage.googleapis.com") || url.includes("firebasestorage.app") || url.startsWith("blob:");
-}
-
 export function ProjectVisual({
   kind,
   mood,
   title,
   cover,
   className,
+  fit = "cover",
 }: {
   kind: VisualKind;
   mood: VisualMood;
   title: string;
   cover?: string;
   className?: string;
+  /** cover fills the frame; contain shows the full image (detail gallery). */
+  fit?: "cover" | "contain";
 }) {
   const [src, setSrc] = useState(cover);
   const [failed, setFailed] = useState(false);
@@ -45,23 +43,23 @@ export function ProjectVisual({
   }, [cover]);
 
   if (cover && src && !failed) {
-    const fit = isUploadedCover(cover) ? "object-contain" : "object-cover";
+    const imgFit = fit === "contain" ? "object-contain" : "object-cover object-top";
     return (
-      <div className={cn("relative overflow-hidden bg-[#1a1410]", className)}>
+      <div className={cn("relative overflow-hidden bg-[#2a2420]", className)}>
         <img
           key={src}
           src={src}
           alt={title}
           loading="eager"
           decoding="async"
-          className={cn("h-full w-full", fit)}
+          className={cn("h-full w-full", imgFit)}
           onError={() => {
             if (src !== FALLBACK_COVER) setSrc(FALLBACK_COVER);
             else setFailed(true);
           }}
         />
-        {!isUploadedCover(cover) ? (
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+        {fit === "cover" ? (
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
         ) : null}
       </div>
     );
