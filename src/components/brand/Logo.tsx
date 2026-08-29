@@ -13,11 +13,17 @@ export function LogoMark({ className }: { className?: string }) {
   );
 }
 
-export function Logo({ className, light = false }: { className?: string; light?: boolean }) {
+export function Logo({ className, light = false, compact = false }: { className?: string; light?: boolean; compact?: boolean }) {
   return (
-    <span className={cn("inline-flex items-center gap-2.5", className)}>
-      <LogoMark />
-      <span className={cn("font-display text-[1.05rem] font-extrabold tracking-tight", light ? "text-white" : "text-ink")}>
+    <span className={cn("inline-flex min-w-0 items-center gap-2", compact ? "gap-1.5 sm:gap-2.5" : "gap-2.5", className)}>
+      <LogoMark className={cn(compact && "h-8 w-8 sm:h-9 sm:w-9")} />
+      <span
+        className={cn(
+          "truncate font-display font-extrabold tracking-tight",
+          compact ? "hidden text-[1.05rem] sm:inline" : "text-[1.05rem]",
+          light ? "text-white" : "text-ink",
+        )}
+      >
         novexa<span className={light ? "text-white/70" : "text-[#c45c3a]"}>hub</span>
       </span>
     </span>

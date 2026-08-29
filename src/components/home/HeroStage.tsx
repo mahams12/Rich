@@ -8,19 +8,20 @@ import { site } from "@/data/site";
 export function HeroStage() {
   return (
     <section className="relative bg-[#ece7e0] p-2 sm:p-3">
-      <div className="h-[min(78svh,640px)] min-h-[440px] sm:h-[calc(100svh-5.5rem)] sm:min-h-[520px]">
+      <div className="h-auto min-h-[32rem] sm:h-[calc(100svh-5.5rem)] sm:min-h-[520px]">
         <TiltCard
-          className="rounded-2xl bg-black shadow-[0_20px_60px_rgba(0,0,0,0.18)] ring-1 ring-black/10 sm:rounded-[1.35rem]"
+          className="min-h-[32rem] rounded-2xl bg-[#1a1410] shadow-[0_20px_60px_rgba(0,0,0,0.18)] ring-1 ring-black/10 sm:min-h-0 sm:rounded-[1.35rem]"
           max={8}
           smoke
         >
+          {/* Mobile: full photo visible (no crop). Desktop: cinematic cover. */}
           <img
             src="/brand/hero-studio.jpg"
             alt="NovexaHub studio"
-            className="absolute inset-0 h-full w-full object-cover object-[center_28%] sm:object-[78%_center]"
+            className="absolute inset-0 h-full w-full object-contain object-center sm:object-cover sm:object-[78%_center]"
           />
-          <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black via-black/70 to-black/25 sm:bg-gradient-to-r sm:from-black sm:via-black/55 sm:to-transparent" />
-          <div className="relative z-30 flex h-full max-w-3xl flex-col justify-end px-4 pb-8 pt-14 sm:justify-center sm:px-10 sm:py-16 lg:px-16">
+          <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black via-black/75 to-black/20 sm:bg-gradient-to-r sm:from-black sm:via-black/55 sm:to-transparent" />
+          <div className="relative z-30 flex min-h-[32rem] max-w-3xl flex-col justify-end px-4 pb-8 pt-36 sm:min-h-0 sm:justify-center sm:px-10 sm:py-16 sm:pt-16 lg:px-16">
             <p className="font-display text-lg tracking-tight text-white/80 sm:text-xl">novexa</p>
             <h1 className="mt-2 max-w-xl text-[1.75rem] font-extrabold leading-[1.1] tracking-tight text-white sm:mt-3 sm:text-4xl md:text-6xl">
               Find it. Customize it. Build it.

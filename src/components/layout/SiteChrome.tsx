@@ -36,9 +36,9 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 max-w-[100vw] overflow-x-clip">
         <div className="bg-paper/85 px-2 pt-2 pb-2 backdrop-blur-xl sm:px-4">
-        <div className="glass flex min-w-0 items-center gap-1 rounded-full px-2 py-1.5 sm:gap-3 sm:px-3 sm:py-2">
-          <Link href="/" className="min-w-0 shrink px-0.5 sm:px-1" aria-label="NovexaHub home">
-            <Logo className="scale-[0.92] origin-left sm:scale-100" />
+        <div className="glass flex min-w-0 items-center gap-1.5 rounded-full px-2 py-1.5 sm:gap-3 sm:px-3 sm:py-2">
+          <Link href="/" className="min-w-0 max-w-[42%] shrink-0 sm:max-w-none" aria-label="NovexaHub home">
+            <Logo compact />
           </Link>
           <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Primary">
             {nav.map((item) => (
@@ -54,7 +54,7 @@ export function SiteHeader() {
               </Link>
             ))}
           </nav>
-          <form onSubmit={search} className="relative ml-auto hidden min-w-0 flex-1 md:block lg:max-w-[220px]">
+          <form onSubmit={search} className="relative mx-2 hidden min-w-0 flex-1 md:block lg:max-w-[220px]">
             <Icon name="search" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/40" />
             <input
               value={q}
@@ -64,10 +64,12 @@ export function SiteHeader() {
               aria-label="Search projects"
             />
           </form>
+          <span className="min-w-0 flex-1 md:hidden" aria-hidden />
+          <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
           <NotificationBell />
           <Link
             href="/favourites"
-            className="relative grid h-9 w-9 shrink-0 place-items-center rounded-full hover:bg-black/[0.04] sm:h-10 sm:w-10"
+            className="relative hidden h-9 w-9 shrink-0 place-items-center rounded-full hover:bg-black/[0.04] sm:grid sm:h-10 sm:w-10"
             aria-label="Favourites"
           >
             <Icon name="heart" />
@@ -92,27 +94,29 @@ export function SiteHeader() {
               </button>
             </div>
           ) : (
-            <Button href="/login" variant="ghost" className="hidden px-3 py-2 sm:inline-flex">
+            <Button href="/login" variant="ghost" className="hidden px-3 py-2 lg:inline-flex">
               Login
             </Button>
           )}
-          <Button href="/contact" className="hidden md:inline-flex">
+          <Button href="/contact" className="hidden px-4 py-2 lg:inline-flex">
             Talk to studio
           </Button>
-          <button type="button" className="grid h-9 w-9 shrink-0 place-items-center rounded-full md:hidden" aria-label="Open menu" onClick={() => setOpen((v) => !v)}>
+          <button type="button" className="grid h-9 w-9 shrink-0 place-items-center rounded-full lg:hidden" aria-label="Open menu" onClick={() => setOpen((v) => !v)}>
             <Icon name={open ? "close" : "menu"} />
           </button>
+          </div>
         </div>
         {open ? (
-          <div className="glass mt-2 max-h-[min(70svh,520px)] space-y-1 overflow-y-auto rounded-3xl p-3 md:hidden">
+          <div className="glass mt-2 max-h-[min(70svh,520px)] space-y-1 overflow-y-auto rounded-3xl p-3 lg:hidden">
             {nav.map((item) => (
               <Link key={item.href} href={item.href} onClick={() => setOpen(false)} className="block rounded-2xl px-3 py-2.5 text-sm">
                 {item.label}
               </Link>
             ))}
-            <Link href="/contact" onClick={() => setOpen(false)} className="block rounded-2xl bg-[#16110e] px-3 py-2.5 text-center text-sm font-semibold text-white">
+            <Link href="/contact" onClick={() => setOpen(false)} className="block rounded-2xl bg-[#16110e] px-3 py-2.5 text-center text-sm font-semibold !text-white">
               Talk to studio
             </Link>
+            <Link href="/favourites" onClick={() => setOpen(false)} className="block rounded-2xl px-3 py-2.5 text-sm">Favourites</Link>
             <Link href="/notifications" onClick={() => setOpen(false)} className="block rounded-2xl px-3 py-2.5 text-sm">Notifications</Link>
             {user ? (
               <>
