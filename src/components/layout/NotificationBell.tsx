@@ -33,7 +33,7 @@ export function NotificationBell() {
     return (
       <Link
         href="/login?next=/notifications"
-        className="grid h-10 w-10 place-items-center rounded-full hover:bg-black/[0.04]"
+        className="grid h-9 w-9 shrink-0 place-items-center rounded-full hover:bg-black/[0.04] sm:h-10 sm:w-10"
         aria-label="Login for notifications"
       >
         <Icon name="bell" />
@@ -48,7 +48,7 @@ export function NotificationBell() {
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className="relative grid h-10 w-10 place-items-center rounded-full hover:bg-black/[0.04]"
+        className="relative grid h-9 w-9 shrink-0 place-items-center rounded-full hover:bg-black/[0.04] sm:h-10 sm:w-10"
         aria-label="Notifications"
       >
         <Icon name="bell" />

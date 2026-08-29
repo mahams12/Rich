@@ -16,6 +16,10 @@ export function ProjectFan() {
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
+    setActive(Math.floor(Math.min(items.length, 9) / 2));
+  }, [items.length]);
+
+  useEffect(() => {
     if (paused || items.length < 2) return;
     const id = window.setInterval(() => {
       setActive((current) => (current + 1) % items.length);
@@ -26,17 +30,46 @@ export function ProjectFan() {
   if (!items.length) return null;
 
   return (
-    <section className="overflow-hidden px-4 py-16 sm:px-6">
+    <section className="overflow-hidden px-3 py-12 sm:px-6 sm:py-16">
       <div className="mx-auto max-w-3xl text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#6d655d]">Industries</p>
-        <h2 className="display mt-3 text-3xl tracking-tight sm:text-5xl">Built for every business</h2>
-        <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-[#6d655d]">
+        <h2 className="display mt-2 text-2xl tracking-tight sm:mt-3 sm:text-3xl md:text-5xl">Built for every business</h2>
+        <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-[#6d655d] sm:mt-4">
           Real projects for real businesses, from clinics and shops to apps, automation and student kits.
         </p>
       </div>
 
+      {/* Mobile: swipeable row with peek of next card */}
+      <div className="mt-6 md:hidden">
+        <p className="mb-3 text-center text-xs text-[#6d655d]">Swipe to explore projects →</p>
+        <div className="flex gap-3 overflow-x-auto pb-2 pl-0.5 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {items.map((project) => (
+            <Link
+              key={project.id}
+              href={`/projects/${project.slug}`}
+              className="relative h-[15.5rem] w-[68vw] max-w-[15rem] shrink-0 snap-center overflow-hidden rounded-[1.15rem] border border-black/10 bg-[#111] shadow-[0_12px_28px_rgba(22,17,14,0.12)]"
+            >
+              <ProjectVisual
+                kind={project.visual.kind}
+                mood={project.visual.mood}
+                title={project.title}
+                cover={projectCover(project)}
+                className="h-full w-full"
+              />
+              <span className="absolute inset-x-2.5 bottom-2.5 rounded-xl bg-black/55 px-2.5 py-2 text-left text-white backdrop-blur-sm">
+                <span className="block text-[9px] font-semibold uppercase tracking-[0.14em] text-white/70">
+                  {project.subcategory}
+                </span>
+                <span className="mt-0.5 block text-xs font-semibold leading-tight">{project.title}</span>
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Desktop: arched fan */}
       <div
-        className="relative mx-auto mt-8 h-[28rem] max-w-6xl"
+        className="relative mx-auto mt-8 hidden h-[28rem] max-w-6xl md:block"
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
       >

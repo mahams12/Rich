@@ -62,7 +62,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <AppProvider>
           <SiteHeader />
           <AdminBar />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1 overflow-x-clip max-w-full">{children}</main>
           <SiteFooter />
           <WhatsAppFab />
         </AppProvider>

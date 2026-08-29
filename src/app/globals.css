@@ -30,6 +30,14 @@ body {
   color: var(--ink);
 }
 
+@media (max-width: 767px) {
+  html,
+  body {
+    overflow-x: clip;
+    max-width: 100%;
+  }
+}
+
 body {
   font-family: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
 }

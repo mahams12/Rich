@@ -34,11 +34,11 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-50">
-        <div className="bg-paper/85 px-3 pt-3 pb-2 backdrop-blur-xl sm:px-4">
-        <div className="glass flex items-center gap-3 rounded-full px-3 py-2">
-          <Link href="/" className="shrink-0 px-1" aria-label="NovexaHub home">
-            <Logo />
+    <header className="sticky top-0 z-50 max-w-[100vw] overflow-x-clip">
+        <div className="bg-paper/85 px-2 pt-2 pb-2 backdrop-blur-xl sm:px-4">
+        <div className="glass flex min-w-0 items-center gap-1 rounded-full px-2 py-1.5 sm:gap-3 sm:px-3 sm:py-2">
+          <Link href="/" className="min-w-0 shrink px-0.5 sm:px-1" aria-label="NovexaHub home">
+            <Logo className="scale-[0.92] origin-left sm:scale-100" />
           </Link>
           <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Primary">
             {nav.map((item) => (
@@ -67,7 +67,7 @@ export function SiteHeader() {
           <NotificationBell />
           <Link
             href="/favourites"
-            className="relative grid h-10 w-10 place-items-center rounded-full hover:bg-black/[0.04]"
+            className="relative grid h-9 w-9 shrink-0 place-items-center rounded-full hover:bg-black/[0.04] sm:h-10 sm:w-10"
             aria-label="Favourites"
           >
             <Icon name="heart" />
@@ -96,21 +96,24 @@ export function SiteHeader() {
               Login
             </Button>
           )}
-          <Button href="/contact" className="hidden sm:inline-flex">
+          <Button href="/contact" className="hidden md:inline-flex">
             Talk to studio
           </Button>
-          <button type="button" className="grid h-10 w-10 place-items-center rounded-full lg:hidden" aria-label="Open menu" onClick={() => setOpen((v) => !v)}>
+          <button type="button" className="grid h-9 w-9 shrink-0 place-items-center rounded-full md:hidden" aria-label="Open menu" onClick={() => setOpen((v) => !v)}>
             <Icon name={open ? "close" : "menu"} />
           </button>
         </div>
         {open ? (
-          <div className="glass mt-2 space-y-1 rounded-3xl p-4 lg:hidden">
+          <div className="glass mt-2 max-h-[min(70svh,520px)] space-y-1 overflow-y-auto rounded-3xl p-3 md:hidden">
             {nav.map((item) => (
-              <Link key={item.href} href={item.href} onClick={() => setOpen(false)} className="block rounded-2xl px-3 py-2">
+              <Link key={item.href} href={item.href} onClick={() => setOpen(false)} className="block rounded-2xl px-3 py-2.5 text-sm">
                 {item.label}
               </Link>
             ))}
-            <Link href="/notifications" onClick={() => setOpen(false)} className="block rounded-2xl px-3 py-2">Notifications</Link>
+            <Link href="/contact" onClick={() => setOpen(false)} className="block rounded-2xl bg-[#16110e] px-3 py-2.5 text-center text-sm font-semibold text-white">
+              Talk to studio
+            </Link>
+            <Link href="/notifications" onClick={() => setOpen(false)} className="block rounded-2xl px-3 py-2.5 text-sm">Notifications</Link>
             {user ? (
               <>
                 <p className="rounded-2xl px-3 py-2 text-sm text-ink/80">Welcome, {user.name.split(" ")[0]}</p>
@@ -131,7 +134,7 @@ export function SiteHeader() {
                 </button>
               </>
             ) : (
-              <Link href="/login" onClick={() => setOpen(false)} className="block rounded-2xl px-3 py-2">Login</Link>
+              <Link href="/login" onClick={() => setOpen(false)} className="block rounded-2xl px-3 py-2.5 text-sm">Login</Link>
             )}
           </div>
         ) : null}
@@ -196,7 +199,7 @@ export function WhatsAppFab() {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 rounded-full px-4 py-3 text-sm font-semibold"
+      className="fixed bottom-4 right-4 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full sm:bottom-5 sm:right-5 sm:h-auto sm:w-auto sm:gap-2 sm:px-4 sm:py-3 sm:text-sm sm:font-semibold"
       style={{ background: "#25D366", color: "#052e16" }}
       aria-label="Chat on WhatsApp"
     >
