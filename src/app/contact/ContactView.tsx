@@ -1,28 +1,49 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { useApp } from "@/components/providers/AppProvider";
 import { Badge, Button, Field, Section, inputClass } from "@/components/ui/Button";
 import { ContactActions } from "@/components/ui/ContactActions";
 import { openMailClient, whatsappUrl } from "@/lib/contact";
+import { trackMetaLead } from "@/lib/meta-pixel";
 import { Icon } from "@/components/ui/Icon";
 import { site } from "@/data/site";
 
 export function ContactView() {
   const { addContact, user } = useApp();
   const [sent, setSent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const leadTrackedForSubmission = useRef(false);
 
-  function submit(e: FormEvent<HTMLFormElement>) {
+  async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const data = new FormData(e.currentTarget);
-    addContact({
-      name: String(data.get("name") || ""),
-      email: String(data.get("email") || ""),
-      project: String(data.get("project") || ""),
-      message: String(data.get("message") || ""),
-    });
-    setSent(true);
-    e.currentTarget.reset();
+    if (submitting) return;
+
+    const form = e.currentTarget;
+    const data = new FormData(form);
+    setSubmitting(true);
+    leadTrackedForSubmission.current = false;
+
+    try {
+      const ok = await addContact({
+        name: String(data.get("name") || ""),
+        email: String(data.get("email") || ""),
+        project: String(data.get("project") || ""),
+        message: String(data.get("message") || ""),
+      });
+
+      if (!ok) return;
+
+      if (!leadTrackedForSubmission.current) {
+        trackMetaLead();
+        leadTrackedForSubmission.current = true;
+      }
+
+      setSent(true);
+      form.reset();
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -59,7 +80,9 @@ export function ContactView() {
           <Field label="Message">
             <textarea name="message" required minLength={12} className={`${inputClass} min-h-36`} />
           </Field>
-          <Button type="submit">Send request</Button>
+          <Button type="submit" disabled={submitting}>
+            {submitting ? "Sending…" : "Send request"}
+          </Button>
           {sent ? <p className="text-sm text-[#c45c3a]">Request sent. We will reply on WhatsApp or email.</p> : null}
         </form>
         <aside className="space-y-4 rounded-[2rem] border border-black/10 p-6">

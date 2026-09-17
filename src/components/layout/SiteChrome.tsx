@@ -15,6 +15,7 @@ import { cn } from "@/lib/cn";
 
 const nav = [
   { href: "/portfolio", label: "Portfolio" },
+  { href: "/blog", label: "Blog" },
   { href: "/services", label: "Services" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
@@ -37,8 +38,13 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 max-w-[100vw] overflow-x-clip">
         <div className="bg-paper/85 px-2 pt-2 pb-2 backdrop-blur-xl sm:px-4">
         <div className="glass flex min-w-0 items-center gap-1.5 rounded-full px-2 py-1.5 sm:gap-3 sm:px-3 sm:py-2">
-          <Link href="/" className="min-w-0 max-w-[42%] shrink-0 sm:max-w-none" aria-label="NovexaHub home">
-            <Logo compact />
+          <Link href="/" className="min-w-0 shrink-0 lg:px-1" aria-label="NovexaHub home">
+            <span className="lg:hidden">
+              <Logo compact />
+            </span>
+            <span className="hidden lg:block">
+              <Logo />
+            </span>
           </Link>
           <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Primary">
             {nav.map((item) => (
@@ -54,29 +60,28 @@ export function SiteHeader() {
               </Link>
             ))}
           </nav>
-          <form onSubmit={search} className="relative mx-2 hidden min-w-0 flex-1 md:block lg:max-w-[220px]">
-            <Icon name="search" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/40" />
+          <form onSubmit={search} className="relative min-w-0 flex-1 md:ml-auto lg:max-w-[220px]">
+            <Icon name="search" className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink/40 md:left-3 md:h-4 md:w-4" />
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Search"
-              className="w-full rounded-full border border-black/10 bg-white py-2 pl-9 pr-3 text-sm outline-none"
+              className="w-full rounded-full border border-black/10 bg-white py-1.5 pl-8 pr-2 text-xs outline-none md:py-2 md:pl-9 md:pr-3 md:text-sm"
               aria-label="Search projects"
             />
           </form>
-          <span className="min-w-0 flex-1 md:hidden" aria-hidden />
           <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
           <NotificationBell />
           <Link
             href="/favourites"
-            className="relative hidden h-9 w-9 shrink-0 place-items-center rounded-full hover:bg-black/[0.04] sm:grid sm:h-10 sm:w-10"
+            className="relative hidden h-9 w-9 shrink-0 place-items-center rounded-full hover:bg-black/[0.04] lg:grid lg:h-10 lg:w-10"
             aria-label="Favourites"
           >
             <Icon name="heart" />
             {favourites.length ? <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-[#c45c3a]" /> : null}
           </Link>
           {user ? (
-            <div className="hidden items-center gap-2 sm:flex">
+            <div className="hidden items-center gap-2 lg:flex">
               <span className="max-w-[9rem] truncate text-sm text-ink/80">
                 Welcome, {user.name.split(" ")[0]}
               </span>
@@ -94,13 +99,17 @@ export function SiteHeader() {
               </button>
             </div>
           ) : (
-            <Button href="/login" variant="ghost" className="hidden px-3 py-2 lg:inline-flex">
-              Login
-            </Button>
+            <span className="hidden lg:contents">
+              <Button href="/login" variant="ghost" className="px-3 py-2">
+                Login
+              </Button>
+            </span>
           )}
-          <Button href="/contact" className="hidden px-4 py-2 lg:inline-flex">
-            Talk to studio
-          </Button>
+          <span className="hidden lg:contents">
+            <Button href="/contact" className="px-4 py-2">
+              Talk to studio
+            </Button>
+          </span>
           <button type="button" className="grid h-9 w-9 shrink-0 place-items-center rounded-full lg:hidden" aria-label="Open menu" onClick={() => setOpen((v) => !v)}>
             <Icon name={open ? "close" : "menu"} />
           </button>
@@ -159,6 +168,7 @@ export function SiteFooter() {
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6d655d]">Studio</p>
           <div className="mt-3 space-y-2 text-sm">
             <Link href="/portfolio" className="block hover:text-[#c45c3a]">Portfolio</Link>
+            <Link href="/blog" className="block hover:text-[#c45c3a]">Blog</Link>
             <Link href="/services" className="block hover:text-[#c45c3a]">Services</Link>
             <Link href="/features" className="block hover:text-[#c45c3a]">Feature modules</Link>
             <Link href="/contact" className="block hover:text-[#c45c3a]">WhatsApp & email</Link>

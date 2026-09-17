@@ -13,7 +13,9 @@ import {
   where,
 } from "firebase/firestore";
 import { projects as seedProjects, sortProjectsNewestFirst } from "@/data/projects";
+import { posts as seedPosts, sortPostsNewestFirst } from "@/data/posts";
 import type {
+  BlogPost,
   ContactRequest,
   CustomizationRequest,
   Notice,
@@ -23,10 +25,15 @@ import type {
 } from "@/types";
 import { getFirebaseDb } from "./client";
 
+function isBlogRemoteDoc(data: Record<string, unknown>, id: string) {
+  return data._kind === "blog" || id.startsWith("blog_");
+}
+
 function mergeProjects(remote: Project[]) {
-  if (!remote.length) return seedProjects;
+  const onlyProjects = remote.filter((item) => !isBlogRemoteDoc(item as unknown as Record<string, unknown>, item.id));
+  if (!onlyProjects.length) return seedProjects;
   const byId = new Map(seedProjects.map((item) => [item.id, item]));
-  for (const item of remote) {
+  for (const item of onlyProjects) {
     if (item.deleted) {
       byId.delete(item.id);
       continue;
@@ -34,6 +41,27 @@ function mergeProjects(remote: Project[]) {
     byId.set(item.id, item);
   }
   return sortProjectsNewestFirst(Array.from(byId.values()));
+}
+
+function mergePosts(remote: BlogPost[]) {
+  if (!remote.length) return seedPosts;
+  const byId = new Map(seedPosts.map((item) => [item.id, item]));
+  for (const item of remote) {
+    if (item.deleted) {
+      byId.delete(item.id);
+      continue;
+    }
+    byId.set(item.id, item);
+  }
+  return sortPostsNewestFirst(Array.from(byId.values()));
+}
+
+function mapBlogDoc(id: string, data: Record<string, unknown>): BlogPost {
+  const rawId = typeof data.id === "string" ? data.id : id.replace(/^blog_/, "");
+  return {
+    ...(data as unknown as BlogPost),
+    id: rawId,
+  };
 }
 
 function sortByDate<T extends { createdAt?: string }>(items: T[]) {
@@ -57,6 +85,26 @@ export function subscribeProjects(onData: (items: Project[]) => void) {
     ...(data as unknown as Project),
     id,
   }));
+}
+
+/**
+ * Blog posts are stored in the public `projects` collection as `_kind: "blog"` docs
+ * (doc id `blog_{id}`) because production Firestore rules already allow public read /
+ * admin write there. Dedicated `posts` rules can be added later without breaking this.
+ */
+export function subscribePosts(onData: (items: BlogPost[]) => void) {
+  const db = getFirebaseDb();
+  if (!db) return () => undefined;
+  return onSnapshot(collection(db, "projects"), (snap) => {
+    const remote = snap.docs
+      .map((item) => {
+        const data = item.data() as Record<string, unknown>;
+        if (!isBlogRemoteDoc(data, item.id)) return null;
+        return mapBlogDoc(item.id, data);
+      })
+      .filter((item): item is BlogPost => Boolean(item));
+    onData(mergePosts(remote));
+  });
 }
 
 export function subscribeReviews(onData: (items: Review[]) => void) {
@@ -158,12 +206,48 @@ export function saveProject(project: Project) {
   return write("projects", project.id, payload);
 }
 
+export function savePost(post: BlogPost) {
+  const payload = { ...post, _kind: "blog" } as Record<string, unknown>;
+  if (post.cover === "") {
+    payload.cover = deleteField();
+  } else if (!post.cover) {
+    delete payload.cover;
+  }
+  if (post.gallery) {
+    const cleaned = post.gallery.map((item) => item.trim()).filter(Boolean);
+    if (cleaned.length) payload.gallery = cleaned;
+    else payload.gallery = deleteField();
+  } else {
+    delete payload.gallery;
+  }
+  // Firestore docs max ~1MB — keep local data-URL covers from blowing up the write.
+  if (typeof payload.cover === "string" && payload.cover.startsWith("data:") && payload.cover.length > 700_000) {
+    throw new Error("Image is too large to save. Use a smaller JPG/PNG (under ~1 MB) or re-upload after signing in again.");
+  }
+  const now = new Date().toISOString();
+  if (!post.createdAt) payload.createdAt = now;
+  payload.publishedAt = post.publishedAt || now;
+  payload.updatedAt = now;
+  // Public-readable path (same rules as portfolio projects).
+  return write("projects", `blog_${post.id}`, payload);
+}
+
 export async function deleteProjectRemote(id: string) {
   const db = getFirebaseDb();
   if (!db) throw new Error("Firebase is not configured.");
   await setDoc(
     doc(db, "projects", id),
     { id, deleted: true, status: "archived", updatedAt: serverTimestamp() },
+    { merge: true },
+  );
+}
+
+export async function deletePostRemote(id: string) {
+  const db = getFirebaseDb();
+  if (!db) throw new Error("Firebase is not configured.");
+  await setDoc(
+    doc(db, "projects", `blog_${id}`),
+    { id, _kind: "blog", deleted: true, status: "archived", updatedAt: serverTimestamp() },
     { merge: true },
   );
 }
@@ -190,6 +274,10 @@ export function saveOrder(item: Order) {
 
 export async function patchProjectStatus(project: Project, status: Project["status"]) {
   return saveProject({ ...project, status });
+}
+
+export async function patchPostStatus(post: BlogPost, status: BlogPost["status"]) {
+  return savePost({ ...post, status });
 }
 
 export async function patchOrderStatus(id: string, status: Order["status"]) {

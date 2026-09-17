@@ -9,6 +9,7 @@ import {
 } from "react";
 import { uid } from "@/lib/format";
 import { sortProjectsNewestFirst } from "@/data/projects";
+import { sortPostsNewestFirst } from "@/data/posts";
 import {
   SHARED_KEY,
   emptyShared,
@@ -35,12 +36,15 @@ import {
 import {
   markNoticeReadRemote,
   deleteProjectRemote,
+  deletePostRemote,
   patchOrderStatus,
   patchProjectStatus,
+  patchPostStatus,
   saveContact,
   saveCustomization,
   saveNotice,
   saveOrder,
+  savePost,
   saveProject,
   saveReview,
   removeDoc,
@@ -48,6 +52,7 @@ import {
   subscribeCustomizations,
   subscribeNotices,
   subscribeOrders,
+  subscribePosts,
   subscribeProjects,
   subscribeReviews,
   toggleFavouriteRemote,
@@ -56,6 +61,7 @@ import { firebaseErrorMessage, resolveAuthErrorMessage } from "@/lib/firebase/er
 import { ADMIN_INVALID_CREDENTIALS, INVALID_CREDENTIALS } from "@/lib/auth/messages";
 import { reportAdminLoginFailed } from "@/lib/security/reportAdminLoginFailed";
 import type {
+  BlogPost,
   ContactRequest,
   CustomizationRequest,
   Notice,
@@ -78,6 +84,7 @@ const remote = isFirebaseConfigured();
 
 function applyShared(shared: SharedState, setters: {
   setProjects: (value: Project[]) => void;
+  setPosts: (value: BlogPost[]) => void;
   setNotices: (value: Notice[]) => void;
   setReviews: (value: Review[]) => void;
   setContacts: (value: ContactRequest[]) => void;
@@ -87,6 +94,7 @@ function applyShared(shared: SharedState, setters: {
   setReadByUser: (value: Record<string, string[]>) => void;
 }) {
   setters.setProjects(shared.projects);
+  setters.setPosts(shared.posts);
   setters.setNotices(shared.notices);
   setters.setReviews(shared.reviews);
   setters.setContacts(shared.contacts);
@@ -108,6 +116,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
   const [contacts, setContacts] = useState<ContactRequest[]>([]);
   const [customizations, setCustomizations] = useState<CustomizationRequest[]>([]);
   const [projects, setProjects] = useState<Project[]>(emptyShared().projects);
+  const [posts, setPosts] = useState<BlogPost[]>(emptyShared().posts);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [notices, setNotices] = useState<Notice[]>([]);
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -131,6 +140,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
     if (remote) {
       let stopAuth: (() => void) | undefined;
       let stopProjects: (() => void) | undefined;
+      let stopPosts: (() => void) | undefined;
       let stopReviews: (() => void) | undefined;
       let cancelled = false;
 
@@ -169,6 +179,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
           },
         );
         stopProjects = subscribeProjects(setProjects);
+        stopPosts = subscribePosts(setPosts);
         stopReviews = subscribeReviews(setReviews);
       })();
 
@@ -176,6 +187,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
         cancelled = true;
         stopAuth?.();
         stopProjects?.();
+        stopPosts?.();
         stopReviews?.();
       };
     }
@@ -183,6 +195,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
     const shared = readShared();
     applyShared(shared, {
       setProjects,
+      setPosts,
       setNotices,
       setReviews,
       setContacts,
@@ -224,6 +237,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
     if (!ready || remote) return;
     const state: SharedState = {
       projects,
+      posts,
       notices,
       reviews,
       contacts,
@@ -234,7 +248,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
     };
     writeShared(state);
     sharedJson.current = JSON.stringify(state);
-  }, [ready, projects, notices, reviews, contacts, customizations, orders, favouritesByUser, readByUser]);
+  }, [ready, projects, posts, notices, reviews, contacts, customizations, orders, favouritesByUser, readByUser]);
 
   useEffect(() => {
     if (remote) return;
@@ -244,6 +258,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       sharedJson.current = raw;
       applyShared(readShared(), {
         setProjects,
+        setPosts,
         setNotices,
         setReviews,
         setContacts,
@@ -510,11 +525,20 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
   }, [checkout, projects, toast, user]);
 
   const addContact = useCallback(
-    (input: Omit<ContactRequest, "id" | "createdAt">) => {
+    async (input: Omit<ContactRequest, "id" | "createdAt">): Promise<boolean> => {
       const item: ContactRequest = { ...input, id: uid("msg"), createdAt: new Date().toISOString() };
-      if (remote) void saveContact(item).catch((error) => toast("Could not send", firebaseErrorMessage(error)));
-      else setContacts((current) => [item, ...current]);
+      if (remote) {
+        try {
+          await saveContact(item);
+        } catch (error) {
+          toast("Could not send", firebaseErrorMessage(error));
+          return false;
+        }
+      } else {
+        setContacts((current) => [item, ...current]);
+      }
       toast("Request sent", "The studio can see this in the inbox.");
+      return true;
     },
     [toast],
   );
@@ -675,6 +699,42 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
     toast("Project deleted");
   }, [toast]);
 
+  const upsertPost = useCallback((post: BlogPost) => {
+    if (remote) {
+      setPosts((current) => {
+        const exists = current.some((item) => item.id === post.id);
+        const next = exists
+          ? current.map((item) => (item.id === post.id ? post : item))
+          : [post, ...current];
+        return sortPostsNewestFirst(next);
+      });
+      void savePost(post)
+        .then(() => toast("Post saved"))
+        .catch((error) => toast("Could not save post", firebaseErrorMessage(error)));
+      return;
+    }
+    setPosts((current) => {
+      const exists = current.some((item) => item.id === post.id);
+      const next = exists
+        ? current.map((item) => (item.id === post.id ? post : item))
+        : [post, ...current];
+      return sortPostsNewestFirst(next);
+    });
+    toast("Post saved");
+  }, [toast]);
+
+  const setPostStatus = useCallback((id: string, status: BlogPost["status"]) => {
+    const post = posts.find((item) => item.id === id);
+    if (remote && post) void patchPostStatus(post, status);
+    else setPosts((current) => current.map((item) => (item.id === id ? { ...item, status } : item)));
+  }, [posts]);
+
+  const deletePost = useCallback((id: string) => {
+    if (remote) void deletePostRemote(id).catch((error) => toast("Could not delete post", firebaseErrorMessage(error)));
+    setPosts((current) => current.filter((item) => item.id !== id));
+    toast("Post deleted");
+  }, [toast]);
+
   const setOrderStatus = useCallback((id: string, status: Order["status"]) => {
     if (remote) void patchOrderStatus(id, status);
     else setOrders((current) => current.map((item) => (item.id === id ? { ...item, status } : item)));
@@ -690,6 +750,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       contacts,
       customizations,
       projects,
+      posts,
       reviews,
       notices,
       unreadNotices,
@@ -720,6 +781,9 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       upsertProject,
       deleteProject,
       setProjectStatus,
+      upsertPost,
+      deletePost,
+      setPostStatus,
       setOrderStatus,
       toast,
     }),
@@ -744,6 +808,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       notices,
       orders,
       placeOrder,
+      posts,
       projects,
       pushNotice,
       ready,
@@ -760,6 +825,9 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       unreadCount,
       upsertProject,
       deleteProject,
+      upsertPost,
+      deletePost,
+      setPostStatus,
       user,
     ],
   );

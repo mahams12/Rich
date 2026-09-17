@@ -37,6 +37,7 @@ export function AdminNav() {
   const links = [
     ["/admin", "Overview"],
     ["/admin/projects", "Projects"],
+    ["/admin/blog", "Blog"],
     ["/admin/notifications", "Notifications"],
     ["/admin/requests", "Requests"],
   ];
@@ -52,11 +53,13 @@ export function AdminNav() {
 }
 
 export function AdminHome() {
-  const { projects, contacts, customizations, favourites, notices } = useApp();
+  const { projects, posts, contacts, customizations, favourites, notices } = useApp();
   const published = projects.filter((item) => item.status === "published").length;
+  const publishedPosts = posts.filter((item) => item.status === "published").length;
 
   const cards = [
     ["Published projects", published],
+    ["Published posts", publishedPosts],
     ["Contact requests", contacts.length],
     ["Customizations", customizations.length],
     ["Favourites saved", favourites.length],
@@ -68,7 +71,7 @@ export function AdminHome() {
       <AdminGate>
         <Badge>Admin</Badge>
         <h1 className="display mt-3 text-4xl">Marketplace control</h1>
-        <p className="mt-2 text-muted">Listings, requests and enquiries. Clients purchase through WhatsApp or email.</p>
+        <p className="mt-2 text-muted">Listings, blog, requests and enquiries. Clients purchase through WhatsApp or email.</p>
         <div className="mt-8">
           <AdminNav />
         </div>
@@ -80,9 +83,10 @@ export function AdminHome() {
             </article>
           ))}
         </div>
-        <div className="mt-8 flex gap-3">
+        <div className="mt-8 flex flex-wrap gap-3">
           <Button href="/admin/notifications">Push a notification</Button>
           <Button href="/admin/projects" variant="ghost">Manage projects</Button>
+          <Button href="/admin/blog" variant="ghost">Manage blog</Button>
         </div>
       </AdminGate>
     </Section>

@@ -108,6 +108,30 @@ export interface FeatureModule {
   tags: string[];
 }
 
+export type BlogStatus = "published" | "draft" | "archived";
+
+export interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  cover?: string;
+  gallery?: string[];
+  tags: string[];
+  keywords: string[];
+  seoTitle?: string;
+  seoDescription?: string;
+  featured: boolean;
+  trending: boolean;
+  status: BlogStatus;
+  author: string;
+  deleted?: boolean;
+  createdAt?: string;
+  publishedAt?: string;
+  updatedAt?: string;
+}
+
 export interface UserAccount {
   uid?: string;
   name: string;

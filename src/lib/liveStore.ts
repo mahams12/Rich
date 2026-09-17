@@ -1,5 +1,7 @@
 import { projects as seedProjects, sortProjectsNewestFirst } from "@/data/projects";
+import { posts as seedPosts, sortPostsNewestFirst } from "@/data/posts";
 import type {
+  BlogPost,
   ContactRequest,
   CustomizationRequest,
   Notice,
@@ -16,6 +18,7 @@ export const LIVE_CHANNEL = "novexahub-live";
 
 export interface SharedState {
   projects: Project[];
+  posts: BlogPost[];
   notices: Notice[];
   reviews: Review[];
   contacts: ContactRequest[];
@@ -32,6 +35,7 @@ interface LegacyState {
   contacts?: ContactRequest[];
   customizations?: CustomizationRequest[];
   projects?: Project[];
+  posts?: BlogPost[];
 }
 
 function mergeProjects(saved: Project[] | undefined): Project[] {
@@ -42,9 +46,18 @@ function mergeProjects(saved: Project[] | undefined): Project[] {
   return sortProjectsNewestFirst(merged);
 }
 
+function mergePosts(saved: BlogPost[] | undefined): BlogPost[] {
+  if (!saved?.length) return seedPosts;
+  const byId = new Map(saved.map((item) => [item.id, item]));
+  const extras = seedPosts.filter((item) => !byId.has(item.id));
+  const merged = extras.length ? [...saved, ...extras] : saved;
+  return sortPostsNewestFirst(merged);
+}
+
 export function emptyShared(): SharedState {
   return {
     projects: seedProjects,
+    posts: seedPosts,
     notices: [],
     reviews: [],
     contacts: [],
@@ -64,6 +77,7 @@ export function readShared(): SharedState {
         ...emptyShared(),
         ...parsed,
         projects: mergeProjects(parsed.projects),
+        posts: mergePosts(parsed.posts),
         notices: parsed.notices ?? [],
         reviews: parsed.reviews ?? [],
         contacts: parsed.contacts ?? [],
@@ -83,6 +97,7 @@ export function readShared(): SharedState {
     return {
       ...emptyShared(),
       projects: mergeProjects(legacy.projects),
+      posts: mergePosts(legacy.posts),
       contacts: legacy.contacts ?? [],
       customizations: legacy.customizations ?? [],
       orders: legacy.orders ?? [],

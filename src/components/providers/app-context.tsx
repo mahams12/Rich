@@ -2,6 +2,7 @@
 
 import { createContext, useContext } from "react";
 import type {
+  BlogPost,
   ContactRequest,
   CustomizationRequest,
   Notice,
@@ -29,6 +30,7 @@ export interface AppContextValue {
   contacts: ContactRequest[];
   customizations: CustomizationRequest[];
   projects: Project[];
+  posts: BlogPost[];
   reviews: Review[];
   notices: Notice[];
   unreadNotices: Notice[];
@@ -48,7 +50,7 @@ export interface AppContextValue {
   startCheckout: (draft: CheckoutDraft) => void;
   clearCheckout: () => void;
   placeOrder: (express?: boolean) => Order | null;
-  addContact: (input: Omit<ContactRequest, "id" | "createdAt">) => void;
+  addContact: (input: Omit<ContactRequest, "id" | "createdAt">) => Promise<boolean>;
   addCustomization: (input: Omit<CustomizationRequest, "id" | "createdAt">) => void;
   deleteContact: (id: string) => void;
   deleteCustomization: (id: string) => void;
@@ -59,6 +61,9 @@ export interface AppContextValue {
   upsertProject: (project: Project) => void;
   deleteProject: (id: string) => void;
   setProjectStatus: (id: string, status: Project["status"]) => void;
+  upsertPost: (post: BlogPost) => void;
+  deletePost: (id: string) => void;
+  setPostStatus: (id: string, status: BlogPost["status"]) => void;
   setOrderStatus: (id: string, status: Order["status"]) => void;
   toast: (title: string, detail?: string) => void;
 }
@@ -74,6 +79,7 @@ export const stubAppValue: AppContextValue = {
   contacts: [],
   customizations: [],
   projects: [],
+  posts: [],
   reviews: [],
   notices: [],
   unreadNotices: [],
@@ -93,7 +99,7 @@ export const stubAppValue: AppContextValue = {
   startCheckout: () => undefined,
   clearCheckout: () => undefined,
   placeOrder: () => null,
-  addContact: () => undefined,
+  addContact: async () => false,
   addCustomization: () => undefined,
   deleteContact: () => undefined,
   deleteCustomization: () => undefined,
@@ -104,6 +110,9 @@ export const stubAppValue: AppContextValue = {
   upsertProject: () => undefined,
   deleteProject: () => undefined,
   setProjectStatus: () => undefined,
+  upsertPost: () => undefined,
+  deletePost: () => undefined,
+  setPostStatus: () => undefined,
   setOrderStatus: () => undefined,
   toast: () => undefined,
 };

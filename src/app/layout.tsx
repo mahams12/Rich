@@ -1,5 +1,7 @@
 import { Plus_Jakarta_Sans } from "next/font/google";
 import type { Metadata } from "next";
+import { Suspense } from "react";
+import { MetaPixel } from "@/components/analytics/MetaPixel";
 import { AppProvider } from "@/components/providers/AppProvider";
 import { AdminBar } from "@/components/admin/AdminBar";
 import { SiteFooter, SiteHeader, WhatsAppFab } from "@/components/layout/SiteChrome";
@@ -39,6 +41,7 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
   alternates: { canonical: site.url },
   icons: { icon: "/brand/icon.svg" },
+  appleWebApp: { capable: false },
 };
 
 const jsonLd = {
@@ -59,6 +62,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className={`${jakarta.variable} h-full antialiased`} data-scroll-behavior="smooth">
       <body className="flex min-h-full flex-col bg-paper text-ink">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        <Suspense fallback={null}>
+          <MetaPixel />
+        </Suspense>
         <AppProvider>
           <SiteHeader />
           <AdminBar />
