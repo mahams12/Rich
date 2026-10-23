@@ -12,6 +12,7 @@ export const site = {
   email: "novexahub.net@gmail.com",
   whatsapp: "923124724327",
   whatsappDisplay: "+92 312 4724327",
+  address: "Flat # 401, Building A-1, Sheranwala Heighs, Lahore, Pakistan",
   keywords: [
     "digital services studio",
     "custom websites",

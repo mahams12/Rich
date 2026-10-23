@@ -104,6 +104,10 @@ export function ContactView() {
             <Icon name="whatsapp" className="h-4 w-4 shrink-0 text-[#25D366]" />
             <span>WhatsApp {site.whatsappDisplay}</span>
           </a>
+          <div className="flex items-start gap-3 rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-[#16110e]">
+            <Icon name="pin" className="mt-0.5 h-4 w-4 shrink-0 text-[#c45c3a]" />
+            <span>{site.address}</span>
+          </div>
           <p className="text-xs leading-5 text-muted">Tap email to open Gmail compose to the studio, or WhatsApp to message directly.</p>
         </aside>
       </div>

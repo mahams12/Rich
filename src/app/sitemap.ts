@@ -15,6 +15,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/about",
     "/reviews",
     "/contact",
+    "/privacy-policy",
+    "/terms",
+    "/refund-policy",
+    "/delivery-policy",
   ].map((path) => ({
     url: `${site.url}${path}`,
     lastModified: new Date(),

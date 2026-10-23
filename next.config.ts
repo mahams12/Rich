@@ -34,6 +34,19 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "*.firebasestorage.app", pathname: "/**" },
     ],
   },
+  async redirects() {
+    // Canonical homes for common legal-page URLs payment reviewers use.
+    return [
+      { source: "/terms-and-conditions", destination: "/terms", permanent: true },
+      { source: "/terms-of-service", destination: "/terms", permanent: true },
+      { source: "/privacy", destination: "/privacy-policy", permanent: true },
+      { source: "/shipping-policy", destination: "/delivery-policy", permanent: true },
+      { source: "/shipping", destination: "/delivery-policy", permanent: true },
+      { source: "/returns", destination: "/refund-policy", permanent: true },
+      { source: "/return-policy", destination: "/refund-policy", permanent: true },
+      { source: "/cancellation-policy", destination: "/refund-policy", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

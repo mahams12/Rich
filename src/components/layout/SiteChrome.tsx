@@ -159,7 +159,7 @@ export function SiteHeader() {
 export function SiteFooter() {
   return (
     <footer className="mt-8 border-t border-black/10 bg-[#ebe6de]">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-4 lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 sm:grid-cols-2 lg:grid-cols-5 lg:px-8">
         <div className="space-y-3">
           <Logo />
           <p className="text-sm text-[#6d655d]">{site.tagline} A digital studio. Enquire on WhatsApp or email — nothing is purchased on the site.</p>
@@ -196,12 +196,36 @@ export function SiteFooter() {
             >
               {site.email}
             </a>
-            <Link href="/contact" className="block hover:text-[#c45c3a]">WhatsApp & email</Link>
+            <a
+              href={`https://wa.me/${site.whatsapp}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block hover:text-[#c45c3a]"
+            >
+              WhatsApp {site.whatsappDisplay}
+            </a>
             <Link href="/contact" className="block hover:text-[#c45c3a]">Contact form</Link>
           </div>
         </div>
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6d655d]">Legal</p>
+          <div className="mt-3 space-y-2 text-sm">
+            <Link href="/privacy-policy" className="block hover:text-[#c45c3a]">Privacy Policy</Link>
+            <Link href="/terms" className="block hover:text-[#c45c3a]">Terms &amp; Conditions</Link>
+            <Link href="/refund-policy" className="block hover:text-[#c45c3a]">Refund Policy</Link>
+            <Link href="/delivery-policy" className="block hover:text-[#c45c3a]">Delivery Policy</Link>
+          </div>
+        </div>
       </div>
-      <p className="border-t border-black/10 py-4 text-center text-xs text-muted">© 2026 {site.domain}</p>
+      <div className="flex flex-col items-center justify-center gap-2 border-t border-black/10 py-4 text-xs text-muted sm:flex-row sm:gap-4">
+        <p>© 2026 {site.domain}</p>
+        <nav className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1" aria-label="Legal">
+          <Link href="/privacy-policy" className="hover:text-[#c45c3a]">Privacy</Link>
+          <Link href="/terms" className="hover:text-[#c45c3a]">Terms</Link>
+          <Link href="/refund-policy" className="hover:text-[#c45c3a]">Refunds</Link>
+          <Link href="/delivery-policy" className="hover:text-[#c45c3a]">Delivery</Link>
+        </nav>
+      </div>
     </footer>
   );
 }

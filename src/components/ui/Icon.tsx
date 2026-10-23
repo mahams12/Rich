@@ -31,6 +31,7 @@ export function Icon({
     | "monitor"
     | "phone"
     | "mail"
+    | "pin"
     | "bell";
   className?: string;
 }) {
@@ -202,6 +203,13 @@ export function Icon({
         <svg className={common} viewBox="0 0 24 24" fill="none" aria-hidden>
           <rect x="3.5" y="6" width="17" height="12" rx="2" stroke="currentColor" strokeWidth="1.7" />
           <path d="m5 8 7 5 7-5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+    case "pin":
+      return (
+        <svg className={common} viewBox="0 0 24 24" fill="none" aria-hidden>
+          <path d="M12 21s-6.5-5.3-6.5-10a6.5 6.5 0 1 1 13 0c0 4.7-6.5 10-6.5 10Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+          <circle cx="12" cy="11" r="2.2" stroke="currentColor" strokeWidth="1.7" />
         </svg>
       );
     case "bell":
