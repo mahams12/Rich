@@ -191,7 +191,7 @@ export const posts: BlogPost[] = [
       "Measure whether the website is doing its job. Track meaningful actions such as successful enquiry submissions, qualified calls, booking completions, and clicks to contact channels. Avoid relying only on page views. Review the data periodically and improve the pages where visitors leave or struggle to complete an action.",
       "A launch checklist is not a one-time task. After launch, check broken links, form delivery, page speed, mobile layouts, backups, and analytics regularly. Update service information when the business changes and keep useful articles current. A smaller, fast, trustworthy website is usually a better starting point than a large site full of pages that do not answer customer questions.",
       "If your business needs a new website, ecommerce experience, mobile app, or custom software workflow, NovexaHub can help scope the right solution. Explore the portfolio at https://novexahub.live/portfolio or describe your requirements at https://novexahub.live/contact so the work can be matched to your goals rather than a generic template."
-    ].join("\\n\\n"),
+    ].join("\n\n"),
     tags: ["business website", "website development", "SEO", "mobile UX", "NovexaHub"],
     keywords: [
       "business website checklist 2026",
