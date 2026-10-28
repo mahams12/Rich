@@ -55,10 +55,6 @@ export function ExploreView() {
 
   return (
     <Section>
-      <p className="text-xs uppercase tracking-[0.2em] text-[#c45c3a]">Explore</p>
-      <h1 className="display mt-2 text-4xl">Every digital product, visually</h1>
-      <p className="mt-3 max-w-2xl text-muted">Search websites of any kind, mobile apps, ecommerce, AI automation, UI/UX, posters, banners, product design, ads, video editing, posting, cart/chat/calling/reels/pages, customized builds, final-year kits and assignment writing.</p>
-
       <div className="mt-8 grid gap-4 lg:grid-cols-[260px_1fr]">
         <aside className="glass h-max space-y-4 rounded-3xl p-4">
           <label className="block">
