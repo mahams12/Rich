@@ -56,7 +56,7 @@ export function ServicesCarousel() {
             className="relative h-[22rem] w-[76vw] max-w-[16.5rem] shrink-0 snap-center overflow-hidden rounded-[1.35rem] bg-[#111] sm:h-[34rem] sm:w-[min(72vw,22rem)] sm:max-w-none sm:rounded-[2rem] sm:snap-align-none"
           >
             {item.image ? (
-              <img src={item.image} alt="" className="absolute inset-0 h-full w-full object-cover" />
+              <img src={item.image} alt={`${item.title} — ${item.kicker} service by NovexaHub`} className="absolute inset-0 h-full w-full object-cover" />
             ) : null}
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/10" />
             <div className="absolute left-3 top-3 grid h-9 w-9 place-items-center rounded-full border border-white/40 bg-black/20 text-white sm:left-4 sm:top-4 sm:h-11 sm:w-11">
