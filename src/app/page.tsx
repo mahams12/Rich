@@ -4,7 +4,7 @@ import { HomeView } from "./HomeView";
 export const metadata: Metadata = {
   title: { absolute: "NovexaHub | Buy Ready-Made Digital Products & Custom Software" },
   description:
-    "NovexaHub.live is a Pinterest-inspired marketplace for ready-made websites, mobile apps, ecommerce, AI automation, UI/UX design, custom software features and creative services.",
+    "Explore ready-made websites, mobile apps, ecommerce solutions and AI automation, or hire NovexaHub for custom software and UI/UX design.",
 };
 
 export default function Page() {
