@@ -48,10 +48,12 @@ function mergeProjects(saved: Project[] | undefined): Project[] {
 
 function mergePosts(saved: BlogPost[] | undefined): BlogPost[] {
   if (!saved?.length) return seedPosts;
-  const byId = new Map(saved.map((item) => [item.id, item]));
-  const extras = seedPosts.filter((item) => !byId.has(item.id));
-  const merged = extras.length ? [...saved, ...extras] : saved;
-  return sortPostsNewestFirst(merged);
+  const byId = new Map(seedPosts.map((item) => [item.id, item]));
+  for (const item of saved) {
+    const seed = byId.get(item.id);
+    byId.set(item.id, { ...seed, ...item, cover: item.cover || seed?.cover });
+  }
+  return sortPostsNewestFirst(Array.from(byId.values()));
 }
 
 export function emptyShared(): SharedState {
