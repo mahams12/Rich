@@ -51,7 +51,14 @@ function mergePosts(remote: BlogPost[]) {
       byId.delete(item.id);
       continue;
     }
-    byId.set(item.id, item);
+    // Preserve editorial defaults such as seeded cover art when older Firestore
+    // blog documents do not yet contain those optional fields.
+    const seed = byId.get(item.id);
+    byId.set(item.id, {
+      ...seed,
+      ...item,
+      cover: item.cover || seed?.cover,
+    });
   }
   return sortPostsNewestFirst(Array.from(byId.values()));
 }
