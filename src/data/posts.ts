@@ -4,6 +4,7 @@ export const posts: BlogPost[] = [
   {
     id: "b01",
     slug: "how-to-choose-a-software-project-partner-novexahub",
+    cover: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1200&q=82",
     title: "How to Choose a Software Project Partner (And Why NovexaHub)",
     excerpt:
       "Looking for a software project studio? Learn how NovexaHub helps businesses and students ship websites, apps, and custom software without endless agency delays.",
@@ -35,6 +36,7 @@ export const posts: BlogPost[] = [
   {
     id: "b02",
     slug: "ready-made-websites-vs-custom-software-projects",
+    cover: "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?auto=format&fit=crop&w=1200&q=82",
     title: "Ready-Made Websites vs Custom Software Projects: What Should You Buy?",
     excerpt:
       "Not every business needs a six-month build. Compare ready-made websites and custom software projects — and see how NovexaHub offers both paths.",
@@ -62,6 +64,7 @@ export const posts: BlogPost[] = [
   {
     id: "b03",
     slug: "mobile-app-and-flutter-software-projects-for-startups",
+    cover: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1200&q=82",
     title: "Mobile App & Flutter Software Projects for Startups",
     excerpt:
       "Planning a mobile app software project? Learn what MVP scope looks like and how NovexaHub helps startups move from idea to Flutter-ready screens.",
@@ -89,6 +92,7 @@ export const posts: BlogPost[] = [
   {
     id: "b04",
     slug: "final-year-software-project-ideas-and-studio-support",
+    cover: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=82",
     title: "Final-Year Software Project Ideas (With Studio Support)",
     excerpt:
       "Students searching for final-year software project ideas can use NovexaHub as a reference portfolio and enquire for academic kits, documentation support, and custom builds.",
@@ -116,6 +120,7 @@ export const posts: BlogPost[] = [
   {
     id: "b05",
     slug: "ai-automation-software-projects-for-growing-businesses",
+    cover: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1200&q=82",
     title: "AI Automation Software Projects for Growing Businesses",
     excerpt:
       "From lead intake to posting assistants, AI automation software projects help teams move faster. See how NovexaHub approaches practical automation builds.",
@@ -143,6 +148,7 @@ export const posts: BlogPost[] = [
   {
     id: "b06",
     slug: "what-is-novexahub-digital-studio-explained",
+    cover: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=82",
     title: "What Is NovexaHub? The Digital Studio Explained",
     excerpt:
       "NovexaHub is the studio behind novexahub.live — ready-made digital products, custom software, and creative work. Here’s what we do and how to enquire.",
@@ -175,6 +181,7 @@ export const posts: BlogPost[] = [
   {
     id: "b07",
     slug: "business-website-checklist-2026",
+    cover: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=82",
     title: "Business Website Checklist for 2026: What Every Website Needs",
     excerpt:
       "Planning a business website in 2026? Use this practical checklist for mobile UX, speed, trust signals, SEO, lead generation, security, and analytics before launch.",
