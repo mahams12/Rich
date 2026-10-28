@@ -171,6 +171,47 @@ export const posts: BlogPost[] = [
     createdAt: "2026-08-25T10:00:00.000Z",
     publishedAt: "2026-08-25T10:00:00.000Z",
   },
+
+  {
+    id: "b07",
+    slug: "business-website-checklist-2026",
+    title: "Business Website Checklist for 2026: What Every Website Needs",
+    excerpt:
+      "Planning a business website in 2026? Use this practical checklist for mobile UX, speed, trust signals, SEO, lead generation, security, and analytics before launch.",
+    content: [
+      "A business website should do more than look attractive. It needs to explain what you offer, build trust quickly, work smoothly on phones, and make the next step obvious. Before investing in a redesign or a new build, use this checklist to identify what your website needs to turn visitors into genuine enquiries.",
+      "Start with a clear value proposition. The first screen should tell visitors who you help, what problem you solve, and what they can do next. Use a specific headline instead of vague claims such as “best quality” or “innovative solutions.” Add one primary action, such as Request a Quote, Book a Consultation, or View Services, and make sure it leads to a working destination.",
+      "Make mobile usability a priority. Many visitors will arrive on a phone, so menus, buttons, forms, and text must be comfortable to use on a small screen. Check that important content does not sit behind overlays, tap targets have enough space, and forms ask only for the information you actually need. Test real devices as well as browser previews.",
+      "Speed matters to both visitors and search visibility. Resize and compress images, avoid loading large media before it is needed, reduce unnecessary scripts, and use caching where appropriate. Measure real pages with tools such as PageSpeed Insights and focus on practical improvements to Core Web Vitals rather than adding animations that make the site feel slower.",
+      "Build trust with verifiable information. Include accurate business contact details, a professional email address, a clear service description, and relevant examples of your work. If you publish case studies or testimonials, use real projects and obtain permission where needed. Do not invent customer logos, reviews, certifications, results, or guarantees to make a new website appear established.",
+      "Give every important service its own useful page. A single generic services page may not answer the different questions people have about ecommerce, custom software, mobile app development, booking systems, or automation. Each page should explain who the service is for, what is included, the typical process, relevant examples, and how to enquire. Link related pages naturally so visitors and search engines can discover them.",
+      "Set up the SEO basics before launch. Use a descriptive page title and meta description, one clear main heading, meaningful subheadings, readable URLs, descriptive image alt text, canonical URLs where appropriate, and an XML sitemap. Add relevant structured data only when it accurately represents the business or page. Submit the sitemap to Google Search Console and Bing Webmaster Tools, then monitor indexing and crawl errors.",
+      "Make lead generation easy. Put contact options where people expect them, provide a short enquiry form, and explain what happens after someone submits it. For a service business, useful fields might include name, work email, service required, and a short project description. Test form delivery, confirmation messages, spam protection, and mobile keyboard behaviour before launch.",
+      "Treat security and privacy as part of the product. Use HTTPS, keep dependencies updated, restrict admin access, validate inputs on the server, protect private routes, and collect only the personal data you need. Publish privacy and relevant business policies, and check that analytics or marketing tools are configured in line with the applicable privacy requirements.",
+      "Measure whether the website is doing its job. Track meaningful actions such as successful enquiry submissions, qualified calls, booking completions, and clicks to contact channels. Avoid relying only on page views. Review the data periodically and improve the pages where visitors leave or struggle to complete an action.",
+      "A launch checklist is not a one-time task. After launch, check broken links, form delivery, page speed, mobile layouts, backups, and analytics regularly. Update service information when the business changes and keep useful articles current. A smaller, fast, trustworthy website is usually a better starting point than a large site full of pages that do not answer customer questions.",
+      "If your business needs a new website, ecommerce experience, mobile app, or custom software workflow, NovexaHub can help scope the right solution. Explore the portfolio at https://novexahub.live/portfolio or describe your requirements at https://novexahub.live/contact so the work can be matched to your goals rather than a generic template."
+    ].join("\\n\\n"),
+    tags: ["business website", "website development", "SEO", "mobile UX", "NovexaHub"],
+    keywords: [
+      "business website checklist 2026",
+      "website development",
+      "business website SEO",
+      "mobile friendly website",
+      "website performance",
+      "custom website development",
+      "NovexaHub"
+    ],
+    seoTitle: "Business Website Checklist for 2026 | NovexaHub",
+    seoDescription:
+      "Use this 2026 business website checklist for mobile UX, speed, SEO, trust, security, and lead generation before launching or redesigning your site.",
+    featured: false,
+    trending: false,
+    status: "published",
+    author: "NovexaHub Studio",
+    createdAt: "2026-10-29T07:00:00.000Z",
+    publishedAt: "2026-10-29T07:00:00.000Z"
+  },
 ];
 
 export function sortPostsNewestFirst(items: BlogPost[]): BlogPost[] {
