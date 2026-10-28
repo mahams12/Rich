@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ExploreView } from "./ExploreView";
+import { Section } from "@/components/ui/Button";
 
 export const metadata: Metadata = {
   title: "Explore Digital Products",
@@ -11,8 +12,15 @@ export const metadata: Metadata = {
 
 export default function ExplorePage() {
   return (
-    <Suspense fallback={<div className="px-6 py-20 text-muted">Loading marketplace…</div>}>
-      <ExploreView />
-    </Suspense>
+    <>
+      <Section>
+        <p className="text-xs uppercase tracking-[0.2em] text-[#c45c3a]">Explore</p>
+        <h1 className="display mt-2 text-4xl">Every digital product, visually</h1>
+        <p className="mt-3 max-w-2xl text-muted">Search websites of any kind, mobile apps, ecommerce, AI automation, UI/UX, posters, banners, product design, ads, video editing, posting, cart/chat/calling/reels/pages, customized builds, final-year kits and assignment writing.</p>
+      </Section>
+      <Suspense fallback={<Section><p className="py-8 text-muted">Loading marketplace…</p></Section>}>
+        <ExploreView />
+      </Suspense>
+    </>
   );
 }
