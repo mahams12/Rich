@@ -16,16 +16,27 @@ function formatDate(value?: string) {
   }
 }
 
+const fallbackCovers: Record<string, string> = {
+  "how-to-choose-a-software-project-partner-novexahub": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1200&q=82",
+  "ready-made-websites-vs-custom-software-projects": "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?auto=format&fit=crop&w=1200&q=82",
+  "mobile-app-and-flutter-software-projects-for-startups": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1200&q=82",
+  "final-year-software-project-ideas-and-studio-support": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=82",
+  "ai-automation-software-projects-for-growing-businesses": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1200&q=82",
+  "what-is-novexahub-digital-studio-explained": "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=82",
+  "business-website-checklist-2026": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=82",
+};
+
 function PostCard({ post }: { post: BlogPost }) {
+  const cover = post.cover || fallbackCovers[post.slug];
   return (
     <Link
       href={`/blog/${post.slug}`}
       className="group glass overflow-hidden rounded-[1.75rem] no-underline transition hover:-translate-y-0.5"
     >
-      {post.cover ? (
+      {cover ? (
         <div className="h-44 w-full overflow-hidden bg-[#f3efe8]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={post.cover} alt={`${post.title} — NovexaHub blog article cover`} className="h-full w-full object-cover object-center" />
+          <img src={cover} alt={`${post.title} — NovexaHub blog article cover`} className="h-full w-full object-cover object-center" />
         </div>
       ) : (
         <div className="flex h-44 items-end bg-[#16110e] p-5">
