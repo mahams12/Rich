@@ -25,7 +25,7 @@ function PostCard({ post }: { post: BlogPost }) {
       {post.cover ? (
         <div className="h-44 w-full overflow-hidden bg-[#f3efe8]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={post.cover} alt="" className="h-full w-full object-cover object-center" />
+          <img src={post.cover} alt={`${post.title} — NovexaHub blog article cover`} className="h-full w-full object-cover object-center" />
         </div>
       ) : (
         <div className="flex h-44 items-end bg-[#16110e] p-5">
