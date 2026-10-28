@@ -6,12 +6,14 @@ import { Icon } from "@/components/ui/Icon";
 import { site } from "@/data/site";
 
 function HeroCopy({ stacked }: { stacked?: boolean }) {
+  const Heading = stacked ? "h2" : "h1";
+
   return (
     <>
       <p className="font-display text-lg tracking-tight text-white/80 sm:text-xl">novexa</p>
-      <h1 className="mt-2 max-w-xl text-[1.75rem] font-extrabold leading-[1.1] tracking-tight text-white sm:mt-3 sm:text-4xl md:text-6xl">
+      <Heading className="mt-2 max-w-xl text-[1.75rem] font-extrabold leading-[1.1] tracking-tight text-white sm:mt-3 sm:text-4xl md:text-6xl">
         Find it. Customize it. Build it.
-      </h1>
+      </Heading>
       <p className="mt-3 max-w-lg text-sm leading-relaxed text-white/75 sm:mt-5 sm:text-base md:text-lg">
         Ready-made websites, apps, ecommerce, automation and studio work. Message WhatsApp or email to purchase or customize.
       </p>
@@ -50,7 +52,7 @@ export function HeroStage() {
           <div className="relative aspect-[9/16] w-full max-h-[min(72svh,40rem)]">
             <img
               src="/brand/hero-studio-mobile.jpg"
-              alt="NovexaHub studio"
+              alt="NovexaHub digital studio showcasing software and web services"
               className="absolute inset-0 h-full w-full object-cover object-center"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/10" />
@@ -70,7 +72,7 @@ export function HeroStage() {
         >
           <img
             src="/brand/hero-studio.jpg"
-            alt="NovexaHub studio"
+            alt="NovexaHub digital studio showcasing software and web services"
             className="absolute inset-0 h-full w-full object-cover object-[78%_center]"
           />
           <div className="absolute inset-0 z-[1] bg-gradient-to-r from-black via-black/55 to-transparent" />
