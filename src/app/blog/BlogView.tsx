@@ -27,7 +27,7 @@ const fallbackCovers: Record<string, string> = {
 };
 
 function PostCard({ post }: { post: BlogPost }) {
-  const cover = post.cover || fallbackCovers[post.slug];
+  const cover = post.cover || fallbackCovers[post.slug] || "/blog-cover-fallback.svg";
   return (
     <Link
       href={`/blog/${post.slug}`}
@@ -36,7 +36,7 @@ function PostCard({ post }: { post: BlogPost }) {
       {cover ? (
         <div className="h-44 w-full overflow-hidden bg-[#f3efe8]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={cover} alt={`${post.title} — NovexaHub blog article cover`} className="h-full w-full object-cover object-center" />
+          <img src={cover} alt={`${post.title} — NovexaHub blog article cover`} className="h-full w-full object-cover object-center" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = "/blog-cover-fallback.svg"; }} />
         </div>
       ) : (
         <div className="flex h-44 items-end bg-[#16110e] p-5">
