@@ -283,12 +283,16 @@ export function getPublishedPosts(items: BlogPost[] = posts): BlogPost[] {
  * Bundled covers fill missing cover fields on older live records. */
 export function getBlogPostsWithFallback(liveItems: BlogPost[] = []): BlogPost[] {
   const liveSlugs = new Set(liveItems.map((item) => item.slug));
+  const liveIds = new Set(liveItems.map((item) => item.id));
   const bundledBySlug = new Map(posts.map((item) => [item.slug, item]));
-  const liveWithCovers = liveItems.map((item) => ({
-    ...item,
-    cover: item.cover || bundledBySlug.get(item.slug)?.cover,
-  }));
-  const missingBundled = getPublishedPosts(posts).filter((item) => !liveSlugs.has(item.slug));
+  const bundledById = new Map(posts.map((item) => [item.id, item]));
+  const liveWithCovers = liveItems.map((item) => {
+    const bundled = bundledBySlug.get(item.slug) || bundledById.get(item.id);
+    return { ...item, cover: item.cover || bundled?.cover };
+  });
+  const missingBundled = getPublishedPosts(posts).filter(
+    (item) => !liveSlugs.has(item.slug) && !liveIds.has(item.id),
+  );
   return sortPostsNewestFirst([...liveWithCovers, ...missingBundled]);
 }
 
