@@ -62,12 +62,12 @@ export function BlogPostView() {
       <p className="mt-3 text-sm text-muted">By {post.author}</p>
 
       {post.cover ? (
-        <div className="mt-8 w-full overflow-hidden rounded-md border border-black/10 bg-[#f3efe8]">
+        <div className="mx-auto mt-8 aspect-[16/9] w-full max-w-4xl overflow-hidden rounded-2xl border border-black/10 bg-[#f3efe8] sm:max-h-[360px]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={post.cover}
             alt={post.title}
-            className="mx-auto block h-auto w-full object-contain"
+            className="block h-full w-full object-cover object-center"
             onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = "/blog-cover-fallback.svg"; }}
           />
         </div>
@@ -82,9 +82,9 @@ export function BlogPostView() {
       {post.gallery && post.gallery.length > 1 ? (
         <div className="mt-8 grid gap-3 sm:grid-cols-3">
           {post.gallery.slice(1).map((src) => (
-            <div key={src} className="overflow-hidden rounded-md border border-black/10 bg-[#f3efe8]">
+            <div key={src} className="aspect-[4/3] overflow-hidden rounded-xl border border-black/10 bg-[#f3efe8]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={src} alt="" className="mx-auto block h-auto max-h-56 w-full object-contain" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = "/blog-cover-fallback.svg"; }} />
+              <img src={src} alt="" className="block h-full w-full object-cover" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = "/blog-cover-fallback.svg"; }} />
             </div>
           ))}
         </div>
