@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { useMemo } from "react";
 import { useApp } from "@/components/providers/AppProvider";
 import { Badge, Button, Section } from "@/components/ui/Button";
-import { getPublishedPosts } from "@/data/posts";
+import { getBlogPostsWithFallback } from "@/data/posts";
 import { isStudioAdmin } from "@/lib/admin";
 
 function formatDate(value?: string) {
@@ -20,13 +20,14 @@ function formatDate(value?: string) {
 export function BlogPostView() {
   const { slug } = useParams<{ slug: string }>();
   const { posts, user } = useApp();
+  const availablePosts = useMemo(() => getBlogPostsWithFallback(posts), [posts]);
   const post = useMemo(
-    () => posts.find((item) => item.slug === slug && !item.deleted),
-    [posts, slug],
+    () => availablePosts.find((item) => item.slug === slug && !item.deleted),
+    [availablePosts, slug],
   );
   const related = useMemo(() => {
     if (!post) return [];
-    return getPublishedPosts(posts)
+    return getBlogPostsWithFallback(posts)
       .filter((item) => item.id !== post.id)
       .slice(0, 3);
   }, [post, posts]);
