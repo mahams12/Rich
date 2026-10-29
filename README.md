@@ -11,6 +11,10 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Deployment
+
+Production deploys to Cloudflare Workers from the `main` branch through the connected GitHub repository. The configured OpenNext commands are available as `npm run deploy` and `npm run preview`.
+
 ## Demo accounts
 
 - Client: `client@novexahub.live` (any 6+ character password)
