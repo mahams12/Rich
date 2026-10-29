@@ -31,20 +31,12 @@ function PostCard({ post }: { post: BlogPost }) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group glass overflow-hidden rounded-[1.75rem] no-underline transition hover:-translate-y-0.5"
+      className="group glass overflow-hidden rounded-[1.5rem] no-underline transition hover:-translate-y-0.5"
     >
-      {cover ? (
-        <div className="h-44 w-full overflow-hidden bg-[#f3efe8]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={cover} alt={`${post.title} — NovexaHub blog article cover`} className="h-full w-full object-cover object-center" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = "/blog-cover-fallback.svg"; }} />
-        </div>
-      ) : (
-        <div className="flex h-44 items-end bg-[#16110e] p-5">
-          <span className="text-xs font-semibold uppercase tracking-[0.16em] text-[#c45c3a]">
-            {post.trending ? "Trending" : post.featured ? "Featured" : "Blog"}
-          </span>
-        </div>
-      )}
+      <div className="h-32 w-full overflow-hidden bg-[#f3efe8] sm:h-36">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={cover} alt={`${post.title} — NovexaHub blog article cover`} className="h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.03]" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = "/blog-cover-fallback.svg"; }} />
+      </div>
       <div className="space-y-2 p-5">
         <p className="text-xs text-muted">{formatDate(post.publishedAt || post.createdAt)}</p>
         <h2 className="font-display text-lg font-bold leading-snug text-ink group-hover:text-[#c45c3a]">{post.title}</h2>
