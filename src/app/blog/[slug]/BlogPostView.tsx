@@ -68,6 +68,7 @@ export function BlogPostView() {
             src={post.cover}
             alt={post.title}
             className="mx-auto block h-auto w-full object-contain"
+            onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = "/blog-cover-fallback.svg"; }}
           />
         </div>
       ) : null}
@@ -83,7 +84,7 @@ export function BlogPostView() {
           {post.gallery.slice(1).map((src) => (
             <div key={src} className="overflow-hidden rounded-md border border-black/10 bg-[#f3efe8]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={src} alt="" className="mx-auto block h-auto max-h-56 w-full object-contain" />
+              <img src={src} alt="" className="mx-auto block h-auto max-h-56 w-full object-contain" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = "/blog-cover-fallback.svg"; }} />
             </div>
           ))}
         </div>
