@@ -278,6 +278,20 @@ export function getPublishedPosts(items: BlogPost[] = posts): BlogPost[] {
   return sortPostsNewestFirst(items.filter((item) => item.status === "published" && !item.deleted));
 }
 
+/** Combine Firestore posts with bundled published articles so code-published posts
+ * remain discoverable until the live database is updated. Live records win by slug.
+ * Bundled covers fill missing cover fields on older live records. */
+export function getBlogPostsWithFallback(liveItems: BlogPost[] = []): BlogPost[] {
+  const liveSlugs = new Set(liveItems.map((item) => item.slug));
+  const bundledBySlug = new Map(posts.map((item) => [item.slug, item]));
+  const liveWithCovers = liveItems.map((item) => ({
+    ...item,
+    cover: item.cover || bundledBySlug.get(item.slug)?.cover,
+  }));
+  const missingBundled = getPublishedPosts(posts).filter((item) => !liveSlugs.has(item.slug));
+  return sortPostsNewestFirst([...liveWithCovers, ...missingBundled]);
+}
+
 export function getPostBySlug(slug: string, items: BlogPost[] = posts): BlogPost | undefined {
   return items.find((item) => item.slug === slug && !item.deleted);
 }
