@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { useApp } from "@/components/providers/AppProvider";
 import { Badge, Button, Section } from "@/components/ui/Button";
-import { getPublishedPosts } from "@/data/posts";
+import { getBlogPostsWithFallback } from "@/data/posts";
 import type { BlogPost } from "@/types";
 
 function formatDate(value?: string) {
@@ -56,7 +56,7 @@ function PostCard({ post }: { post: BlogPost }) {
 
 export function BlogView() {
   const { posts } = useApp();
-  const published = useMemo(() => getPublishedPosts(posts), [posts]);
+  const published = useMemo(() => getBlogPostsWithFallback(posts), [posts]);
   const featured = published.filter((item) => item.featured || item.trending).slice(0, 3);
 
   return (
