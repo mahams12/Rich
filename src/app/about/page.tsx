@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: "About NovexaHub",
   description:
     "NovexaHub is a digital studio. Discover ready-made websites, apps, design packs, ads, video, software features, final-year kits and assignment writing — then message WhatsApp or email to start.",
+  alternates: { canonical: `${site.url}/about` },
 };
 
 export default function AboutPage() {

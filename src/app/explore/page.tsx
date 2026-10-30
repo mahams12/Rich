@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { site } from "@/data/site";
 import { ExploreView } from "./ExploreView";
 import { Section } from "@/components/ui/Button";
 
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
   description:
     "Search websites, mobile apps, ecommerce, AI automation, UI/UX, posters, banners, product design, ads, video editing, custom software features, final-year kits and assignment writing on NovexaHub.",
   keywords: ["explore digital products", "website studio", "mobile app development", "AI automation"],
+  alternates: { canonical: `${site.url}/explore` },
 };
 
 export default function ExplorePage() {
