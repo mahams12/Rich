@@ -42,7 +42,16 @@ export function BlogPostView() {
     );
   }
 
-  const contentBlocks = post.content.split(/\n\n+/).map((item) => item.trim()).filter(Boolean);
+  const novexaLinks = Array.from(
+    new Set(
+      [...post.content.matchAll(/https?:\/\/(?:www\.)?novexahub\.live(\/[a-zA-Z0-9/_-]*)?/g)]
+        .map((match) => match[1] || "/")
+    )
+  );
+  const contentBlocks = post.content
+    .split(/\n\n+/)
+    .map((item) => item.replace(/https?:\/\/(?:www\.)?novexahub\.live(?:\/[a-zA-Z0-9/_-]*)?/g, "").trim())
+    .filter(Boolean);
 
   return (
     <Section className="max-w-5xl">
@@ -91,6 +100,15 @@ export function BlogPostView() {
           return <p key={key}>{block}</p>;
         })}
       </article>
+
+      {novexaLinks.length ? (
+        <div className="mx-auto mt-8 flex max-w-3xl flex-wrap gap-3">
+          {novexaLinks.map((href) => {
+            const label = href.startsWith("/services") ? "Explore services" : href.startsWith("/portfolio") ? "View portfolio" : href.startsWith("/contact") ? "Discuss your project" : "Visit NovexaHub";
+            return <Button key={href} href={href}>{label}</Button>;
+          })}
+        </div>
+      ) : null}
 
       {post.gallery && post.gallery.length > 1 ? (
         <div className="mx-auto mt-8 grid max-w-3xl gap-3 sm:grid-cols-3">
