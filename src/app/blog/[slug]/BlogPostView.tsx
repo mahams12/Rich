@@ -42,7 +42,7 @@ export function BlogPostView() {
     );
   }
 
-  const paragraphs = post.content.split(/\n\n+/).map((item) => item.trim()).filter(Boolean);
+  const contentBlocks = post.content.split(/\n\n+/).map((item) => item.trim()).filter(Boolean);
 
   return (
     <Section className="max-w-5xl">
@@ -74,9 +74,22 @@ export function BlogPostView() {
       ) : null}
 
       <article className="mx-auto mt-8 max-w-3xl space-y-5 text-[1.05rem] leading-8 text-ink">
-        {paragraphs.map((paragraph) => (
-          <p key={paragraph.slice(0, 48)}>{paragraph}</p>
-        ))}
+        {contentBlocks.map((block, index) => {
+          const key = `${index}-${block.slice(0, 32)}`;
+          if (block.startsWith("### ")) {
+            return <h3 key={key} className="pt-3 text-xl font-bold leading-snug text-ink">{block.slice(4)}</h3>;
+          }
+          if (block.startsWith("## ")) {
+            return <h2 key={key} className="pt-5 text-2xl font-bold leading-snug text-ink">{block.slice(3)}</h2>;
+          }
+          if (block.split("\n").every((line) => line.startsWith("- "))) {
+            return <ul key={key} className="list-disc space-y-2 pl-6">{block.split("\n").map((line, itemIndex) => <li key={itemIndex}>{line.slice(2)}</li>)}</ul>;
+          }
+          if (block.split("\n").every((line) => /^\d+\. /.test(line))) {
+            return <ol key={key} className="list-decimal space-y-2 pl-6">{block.split("\n").map((line, itemIndex) => <li key={itemIndex}>{line.replace(/^\d+\. /, "")}</li>)}</ol>;
+          }
+          return <p key={key}>{block}</p>;
+        })}
       </article>
 
       {post.gallery && post.gallery.length > 1 ? (
