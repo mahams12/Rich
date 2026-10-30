@@ -15,7 +15,7 @@ const founders: Founder[] = [
   {
     name: "Syed Hamza Mehdi",
     role: "Co-founder · Full-Stack Software Engineer",
-    photo: "/founders/hamza-mehdi.png",
+    photo: "/founders/hamza-mehdi.jpg",
     profile: "https://hamza-portfolio-livid.vercel.app/",
   },
   {
@@ -132,7 +132,7 @@ function ProfileOverlay({ founder, onClose }: { founder: Founder; onClose: () =>
               href={founder.profile}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-1.5 text-xs font-semibold text-white/80 transition hover:bg-white/10"
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-white/20"
             >
               Open in new tab
               <Icon name="arrow-ne" className="h-3 w-3" />
@@ -141,7 +141,7 @@ function ProfileOverlay({ founder, onClose }: { founder: Founder; onClose: () =>
               type="button"
               onClick={onClose}
               aria-label="Close profile"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/15 text-white/80 transition hover:bg-white/10"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white transition hover:bg-white/20"
             >
               <Icon name="close" className="h-4 w-4" />
             </button>
