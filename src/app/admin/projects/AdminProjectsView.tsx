@@ -8,7 +8,6 @@ import { Button, Section } from "@/components/ui/Button";
 import { projects as seedProjects, sortProjectsNewestFirst } from "@/data/projects";
 import { formatPrice } from "@/lib/format";
 import { readShared } from "@/lib/liveStore";
-import { saveProject } from "@/lib/firebase/db";
 
 export function AdminProjectsView() {
   const { projects, setProjectStatus, deleteProject, toast, firebaseReady } = useApp();
@@ -38,6 +37,7 @@ export function AdminProjectsView() {
       }
 
       if (firebaseReady) {
+        const { saveProject } = await import("@/lib/firebase/db");
         await Promise.all(candidates.map((project) => saveProject(project)));
       } else {
         toast("Firebase is not connected", "These projects cannot be restored to the live site until Firebase is connected.");

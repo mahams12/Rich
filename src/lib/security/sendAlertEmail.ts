@@ -70,7 +70,15 @@ async function sendViaResend(input: AdminLoginFailedAlert) {
 }
 
 export async function sendAdminLoginFailedAlert(input: AdminLoginFailedAlert) {
-  if (await sendViaGmail(input)) return { sent: true, provider: "gmail" as const };
-  if (await sendViaResend(input)) return { sent: true, provider: "resend" as const };
+  try {
+    if (await sendViaGmail(input)) return { sent: true, provider: "gmail" as const };
+  } catch {
+    // A failing email provider must not fail the request; try the next one.
+  }
+  try {
+    if (await sendViaResend(input)) return { sent: true, provider: "resend" as const };
+  } catch {
+    // No provider succeeded; report unsent instead of throwing.
+  }
   return { sent: false, provider: null };
 }
