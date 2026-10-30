@@ -263,7 +263,7 @@ export const posts: BlogPost[] = [
     author: "NovexaHub Studio",
     createdAt: "2026-10-29T06:58:29.000Z",
     publishedAt: "2026-10-29T06:58:29.000Z"
-  },,
+  },
 
   {
     id: "b09",
