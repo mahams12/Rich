@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { FoundersSection } from "@/components/home/FoundersSection";
 import { HeroStage } from "@/components/home/HeroStage";
 import { ProjectFan } from "@/components/home/ProjectFan";
 import { ServicesCarousel } from "@/components/home/ServicesCarousel";
@@ -88,6 +89,8 @@ export function HomeView() {
           </div>
         ) : null}
       </Section>
+
+      <FoundersSection />
 
       <Section>
         <h2 className="display text-3xl tracking-tight">Questions</h2>
