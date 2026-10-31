@@ -36,6 +36,19 @@ export function ProjectVisual({
 }) {
   const [src, setSrc] = useState(cover);
   const [failed, setFailed] = useState(false);
+  const optimizedSrc = (() => {
+    if (!src || !src.startsWith("https://images.unsplash.com/")) return src;
+    try {
+      const url = new URL(src);
+      url.searchParams.set("w", "800");
+      url.searchParams.set("q", "72");
+      url.searchParams.set("auto", "format");
+      url.searchParams.set("fit", "crop");
+      return url.toString();
+    } catch {
+      return src;
+    }
+  })();
 
   useEffect(() => {
     setSrc(cover);
@@ -48,9 +61,9 @@ export function ProjectVisual({
       <div className={cn("relative overflow-hidden bg-[#2a2420]", className)}>
         <img
           key={src}
-          src={src}
+          src={optimizedSrc}
           alt={title}
-          loading="eager"
+          loading="lazy"
           decoding="async"
           className={cn("h-full w-full", imgFit)}
           onError={() => {
