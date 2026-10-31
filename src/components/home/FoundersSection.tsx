@@ -8,21 +8,30 @@ type Founder = {
   name: string;
   role: string;
   photo: string;
+  email: string;
+  phone: string;
   profile: string;
+  /** Covers the real portrait inside the embedded profile (position tuned to that site's hero). */
+  coverClass?: string;
 };
 
 const founders: Founder[] = [
   {
     name: "Syed Hamza Mehdi",
     role: "Co-founder · Full-Stack Software Engineer",
-    photo: "/founders/hamza-mehdi.jpg",
+    photo: "/founders/hamza-mehdi-avatar.png",
+    email: "mehihamza1@gmail.com",
+    phone: "+92 304 4319234",
     profile: "https://hamza-portfolio-livid.vercel.app/",
   },
   {
     name: "Maham Saeed",
     role: "Co-founder · Software Engineer",
-    photo: "/founders/maham-saeed.jpg",
+    photo: "/founders/maham-saeed-avatar.png",
+    email: "maham.inbox@gmail.com",
+    phone: "+92 309 6557185",
     profile: "https://maham-profile.vercel.app/",
+    coverClass: "left-[55.5%] top-[42%] w-[14%]",
   },
 ];
 
@@ -81,28 +90,30 @@ function FounderCard({ founder, onOpen }: { founder: Founder; onOpen: () => void
       type="button"
       onClick={onOpen}
       aria-label={`Open ${founder.name}'s profile`}
-      className="group overflow-hidden rounded-3xl border border-black/10 bg-card text-left transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c45c3a]"
+      className="group rounded-3xl border border-black/10 bg-card px-6 py-7 text-center transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c45c3a]"
     >
-      <div className="relative aspect-[4/5] overflow-hidden bg-[#ebe6de]">
-        <img
-          src={founder.photo}
-          alt={`${founder.name}, ${founder.role} at NovexaHub`}
-          loading="lazy"
-          className="h-full w-full object-cover object-top transition duration-500 group-hover:scale-[1.04]"
-        />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/35 to-transparent" />
-        <span className="absolute bottom-3 left-4 inline-flex items-center gap-1.5 rounded-full bg-black/55 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-white backdrop-blur-sm">
-          View profile
-          <Icon name="arrow-ne" className="h-3 w-3" />
+      <img
+        src={founder.photo}
+        alt={`${founder.name}, ${founder.role} at NovexaHub`}
+        loading="lazy"
+        className="mx-auto h-28 w-28 rounded-full object-cover shadow-md ring-4 ring-[#ebe6de] transition duration-300 group-hover:scale-105 sm:h-32 sm:w-32"
+      />
+      <p className="mt-4 font-semibold">{founder.name}</p>
+      <p className="mt-0.5 text-sm text-[#6d655d]">{founder.role}</p>
+      <div className="mt-3 flex flex-col items-center gap-1 text-sm text-[#6d655d]">
+        <span className="inline-flex items-center gap-1.5 break-all">
+          <Icon name="mail" className="h-3.5 w-3.5 shrink-0 text-[#c45c3a]" />
+          {founder.email}
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <Icon name="phone" className="h-3.5 w-3.5 shrink-0 text-[#c45c3a]" />
+          {founder.phone}
         </span>
       </div>
-      <div className="flex items-center justify-between gap-3 px-5 py-4">
-        <div>
-          <p className="font-semibold">{founder.name}</p>
-          <p className="mt-0.5 text-sm text-[#6d655d]">{founder.role}</p>
-        </div>
-        <Icon name="user" className="h-5 w-5 shrink-0 text-[#c45c3a]" />
-      </div>
+      <span className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-[#c45c3a]/40 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#c45c3a] transition group-hover:bg-[#c45c3a] group-hover:text-white">
+        View profile
+        <Icon name="arrow-ne" className="h-3 w-3" />
+      </span>
     </button>
   );
 }
@@ -147,7 +158,17 @@ function ProfileOverlay({ founder, onClose }: { founder: Founder; onClose: () =>
             </button>
           </div>
         </div>
-        <iframe src={founder.profile} title={`${founder.name} — profile`} className="h-full w-full flex-1 bg-white" />
+        <div className="relative flex-1">
+          <iframe src={founder.profile} title={`${founder.name} — profile`} className="h-full w-full bg-white" />
+          {founder.coverClass ? (
+            <img
+              src={founder.photo}
+              alt=""
+              aria-hidden="true"
+              className={`pointer-events-none absolute z-20 aspect-square rounded-full object-cover shadow-lg ${founder.coverClass}`}
+            />
+          ) : null}
+        </div>
       </div>
     </div>
   );
