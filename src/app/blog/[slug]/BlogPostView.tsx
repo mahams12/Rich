@@ -17,6 +17,24 @@ function formatDate(value?: string) {
   }
 }
 
+
+function renderInlineLinks(value: string) {
+  return value.split(/(\[[^\]]+\]\(https?:\/\/[^)\s]+\))/g).map((part, index) => {
+    const match = part.match(/^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/);
+    return match ? (
+      <a
+        key={index}
+        href={match[2]}
+        target="_blank"
+        rel="noreferrer"
+        className="font-semibold text-[#c45c3a] underline decoration-[#c45c3a]/40 underline-offset-4 hover:decoration-current"
+      >
+        {match[1]}
+      </a>
+    ) : part;
+  });
+}
+
 export function BlogPostView() {
   const { slug } = useParams<{ slug: string }>();
   const { posts, user } = useApp();
@@ -97,7 +115,7 @@ export function BlogPostView() {
           if (block.split("\n").every((line) => /^\d+\. /.test(line))) {
             return <ol key={key} className="list-decimal space-y-2 pl-6">{block.split("\n").map((line, itemIndex) => <li key={itemIndex}>{line.replace(/^\d+\. /, "")}</li>)}</ol>;
           }
-          return <p key={key}>{block}</p>;
+          return <p key={key}>{renderInlineLinks(block)}</p>;
         })}
       </article>
 
