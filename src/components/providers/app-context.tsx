@@ -1,6 +1,8 @@
 "use client";
 
 import { createContext, useContext } from "react";
+import { projects as seedProjects } from "@/data/projects";
+import { posts as seedPosts } from "@/data/posts";
 import type {
   BlogPost,
   ContactRequest,
@@ -78,8 +80,8 @@ export const stubAppValue: AppContextValue = {
   orders: [],
   contacts: [],
   customizations: [],
-  projects: [],
-  posts: [],
+  projects: seedProjects,
+  posts: seedPosts,
   reviews: [],
   notices: [],
   unreadNotices: [],
