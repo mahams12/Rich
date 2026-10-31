@@ -169,13 +169,16 @@ export function FoundersSection() {
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#c45c3a]">Founders</p>
         <h2 className="display mt-2 text-3xl tracking-tight">The people behind NovexaHub</h2>
         <p className="mx-auto mt-3 max-w-xl text-sm text-[#6d655d]">
-          Two engineers building every product and custom project. Tap a photo to see their work — it opens right here.
+          Meet the founders leading our studio and explore their work and professional profiles.
         </p>
       </div>
       <div className="mx-auto mt-8 grid max-w-3xl gap-5 sm:grid-cols-2">
         {founders.map((founder) => (
           <FounderCard key={founder.name} founder={founder} onOpen={() => setActive(founder)} />
         ))}
+      </div>
+      <div className="mt-8 text-center">
+        <a href="/our-team" className="inline-flex items-center gap-2 rounded-full bg-[#1a1410] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#c45c3a]">Meet the full team <Icon name="arrow-ne" className="h-4 w-4" /></a>
       </div>
       <div className="mt-10 text-center">
         <CountUp target={CUSTOMER_COUNT} />
