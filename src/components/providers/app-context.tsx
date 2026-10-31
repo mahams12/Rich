@@ -3,6 +3,8 @@
 import { createContext, useContext } from "react";
 import { projects as seedProjects } from "@/data/projects";
 import { posts as seedPosts } from "@/data/posts";
+import { projects as seedProjects } from "@/data/projects";
+import { posts as seedPosts } from "@/data/posts";
 import type {
   BlogPost,
   ContactRequest,
