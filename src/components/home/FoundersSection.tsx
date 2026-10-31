@@ -178,7 +178,7 @@ export function FoundersSection() {
         ))}
       </div>
       <div className="mt-8 text-center">
-        <a href="/our-team" className="inline-flex items-center gap-2 rounded-full bg-[#1a1410] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#c45c3a]">Meet the full team <Icon name="arrow-ne" className="h-4 w-4" /></a>
+        <a href="/our-team" className="inline-flex items-center gap-2 rounded-full bg-[#1a1410] px-5 py-3 text-sm font-semibold !text-white transition hover:bg-[#c45c3a] hover:!text-white">Meet the full team <Icon name="arrow-ne" className="h-4 w-4" /></a>
       </div>
       <div className="mt-10 text-center">
         <CountUp target={CUSTOMER_COUNT} />
