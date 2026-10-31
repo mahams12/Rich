@@ -39,6 +39,7 @@ const team = [
     description:
       "Builds client relationships and helps businesses find the right digital solution. Focuses on sales coordination, understanding project requirements, communicating value and supporting marketing initiatives that grow the NovexaHub brand.",
     email: "zukhruf@novexahub.live",
+    photo: "/founders/zukhruf-fatima-avatar.svg",
     initials: "ZF",
   },
   {
@@ -47,6 +48,7 @@ const team = [
     description:
       "Works across native Android and iOS application development, mobile architecture, platform-specific integrations and performance-focused engineering. Helps turn product requirements into reliable mobile experiences across devices.",
     email: "ahmadmazhar2555@gmail.com",
+    photo: "/founders/ahmad-mazhar-avatar.svg",
     initials: "AM",
   },
 ];
