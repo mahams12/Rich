@@ -144,6 +144,12 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       let stopReviews: (() => void) | undefined;
       let cancelled = false;
 
+      // Public catalogue data is independent of auth. Subscribe immediately so the
+      // homepage does not wait for Google redirect resolution before receiving projects.
+      stopProjects = subscribeProjects(setProjects);
+      stopPosts = subscribePosts(setPosts);
+      stopReviews = subscribeReviews(setReviews);
+
       void (async () => {
         // Must finish redirect BEFORE attaching auth listener (Firebase requirement).
         const account = await firebaseGoogleRedirectResult();
@@ -178,9 +184,6 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
             if (!cancelled) setReady(true);
           },
         );
-        stopProjects = subscribeProjects(setProjects);
-        stopPosts = subscribePosts(setPosts);
-        stopReviews = subscribeReviews(setReviews);
       })();
 
       return () => {
