@@ -18,6 +18,7 @@ const nav = [
   { href: "/blog", label: "Blog" },
   { href: "/services", label: "Services" },
   { href: "/about", label: "About" },
+  { href: "/our-team", label: "Our Team" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -178,6 +179,7 @@ export function SiteFooter() {
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">Company</p>
           <div className="mt-3 space-y-2 text-sm">
             <Link href="/about" className="block hover:text-[#c45c3a]">About</Link>
+            <Link href="/our-team" className="block hover:text-[#c45c3a]">Our Team</Link>
             <Link href="/reviews" className="block hover:text-[#c45c3a]">Reviews</Link>
             <Link href="/contact" className="block hover:text-[#c45c3a]">Contact</Link>
             <Link href="/login" className="block hover:text-[#c45c3a]">Client login</Link>
