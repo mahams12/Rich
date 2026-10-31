@@ -18,7 +18,6 @@ const nav = [
   { href: "/blog", label: "Blog" },
   { href: "/services", label: "Services" },
   { href: "/about", label: "About" },
-  { href: "/our-team", label: "Our Team" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -196,7 +195,7 @@ export function SiteFooter() {
               }}
               className="block hover:text-[#c45c3a]"
             >
-              {site.email}
+              Email
             </a>
             <a
               href={`https://wa.me/${site.whatsapp}`}
@@ -204,7 +203,7 @@ export function SiteFooter() {
               rel="noopener noreferrer"
               className="block hover:text-[#c45c3a]"
             >
-              WhatsApp {site.whatsappDisplay}
+              WhatsApp
             </a>
             <Link href="/contact" className="block hover:text-[#c45c3a]">Contact form</Link>
           </div>
