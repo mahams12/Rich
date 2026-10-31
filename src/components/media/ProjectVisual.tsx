@@ -49,6 +49,19 @@ export function ProjectVisual({
       return src;
     }
   })();
+  const optimizedSrc = (() => {
+    if (!src || !src.startsWith("https://images.unsplash.com/")) return src;
+    try {
+      const url = new URL(src);
+      url.searchParams.set("w", "800");
+      url.searchParams.set("q", "72");
+      url.searchParams.set("auto", "format");
+      url.searchParams.set("fit", "crop");
+      return url.toString();
+    } catch {
+      return src;
+    }
+  })();
 
   useEffect(() => {
     setSrc(cover);
