@@ -53,10 +53,8 @@ const team = [
 
 function PersonCard({
   person,
-  founder = false,
 }: {
   person: (typeof founders)[number] | (typeof team)[number];
-  founder?: boolean;
 }) {
   const photo = "photo" in person ? person.photo : undefined;
   const profile = "profile" in person ? person.profile : undefined;
@@ -108,7 +106,7 @@ export default function OurTeamPage() {
           <p className="mt-2 max-w-2xl text-sm text-[#6d655d]">The co-founders guiding the studio’s direction, product thinking and technical delivery.</p>
         </div>
         <div className="grid gap-5 md:grid-cols-2">
-          {founders.map((person) => <PersonCard key={person.name} person={person} founder />)}
+          {founders.map((person) => <PersonCard key={person.name} person={person} />)}
         </div>
       </Section>
       <Section className="pt-0">
