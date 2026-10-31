@@ -11,8 +11,6 @@ type Founder = {
   email: string;
   phone: string;
   profile: string;
-  /** Covers the real portrait inside the embedded profile (position tuned to that site's hero). */
-  coverClass?: string;
 };
 
 const founders: Founder[] = [
@@ -31,7 +29,6 @@ const founders: Founder[] = [
     email: "maham.inbox@gmail.com",
     phone: "+92 309 6557185",
     profile: "https://maham-profile.vercel.app/",
-    coverClass: "left-[62%] top-[36%] w-[22%]",
   },
 ];
 
@@ -158,17 +155,7 @@ function ProfileOverlay({ founder, onClose }: { founder: Founder; onClose: () =>
             </button>
           </div>
         </div>
-        <div className="relative flex-1">
-          <iframe src={founder.profile} title={`${founder.name} — profile`} className="h-full w-full bg-white" />
-          {founder.coverClass ? (
-            <img
-              src={founder.photo}
-              alt=""
-              aria-hidden="true"
-              className={`pointer-events-none absolute z-20 aspect-square rounded-full object-cover shadow-lg ${founder.coverClass}`}
-            />
-          ) : null}
-        </div>
+        <iframe src={founder.profile} title={`${founder.name} — profile`} className="h-full w-full flex-1 bg-white" />
       </div>
     </div>
   );
