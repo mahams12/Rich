@@ -31,7 +31,7 @@ const founders: Founder[] = [
     email: "maham.inbox@gmail.com",
     phone: "+92 309 6557185",
     profile: "https://maham-profile.vercel.app/",
-    coverClass: "left-[55.5%] top-[42%] w-[14%]",
+    coverClass: "left-[62%] top-[36%] w-[22%]",
   },
 ];
 
