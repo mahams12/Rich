@@ -244,7 +244,7 @@ export const posts: BlogPost[] = [
     author: "NovexaHub Studio",
     createdAt: "2026-10-30T06:57:04.000Z",
     publishedAt: "2026-10-30T06:57:04.000Z"
-  },,
+  },
   {
     "id": "b10",
     "slug": "core-web-vitals-single-page-apps-practical-audit-guide",
