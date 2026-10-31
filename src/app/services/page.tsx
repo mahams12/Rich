@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "All Digital Services",
   description:
     "NovexaHub studio services: any category of website or app, ecommerce, AI automation, UI/UX, posters, banners, product design, social posting, ads, video editing, feature modules, final-year projects and assignment writing kits.",
+  alternates: { canonical: `${site.url}/services` },
 };
 
 const packs = [

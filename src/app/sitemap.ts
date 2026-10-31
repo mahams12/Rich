@@ -21,14 +21,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/delivery-policy",
   ].map((path) => ({
     url: `${site.url}${path}`,
-    lastModified: new Date(),
     changeFrequency: "weekly" as const,
     priority: path === "" ? 1 : path === "/blog" ? 0.9 : 0.8,
   }));
 
   const projectRoutes = projects.map((project) => ({
     url: `${site.url}/projects/${project.slug}`,
-    lastModified: new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.7,
   }));

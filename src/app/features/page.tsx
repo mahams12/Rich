@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import { site } from "@/data/site";
 import { FeaturesView } from "./FeaturesView";
 
 export const metadata: Metadata = {
   title: "Feature modules — Cart, Chat, Reels, Payments, Pages",
   description:
     "Add individual software features: cart, chat, calling, reels, authentication, payments, frontend pages, maps, notifications, booking, CMS and admin dashboards. Enquire on WhatsApp or email.",
+  alternates: { canonical: `${site.url}/features` },
 };
 
 export default function FeaturesPage() {

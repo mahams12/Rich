@@ -35,5 +35,13 @@ export const site = {
     "Novexa Hub",
     "Novexa",
     "novexahub.live",
+    "NovexaHub software house",
+    "software house Lahore",
+    "web development company Pakistan",
+    "hire software developers",
+    "Syed Hamza Mehdi",
+    "Hamza Mehdi",
+    "Maham Saeed",
+    "NovexaHub founders",
   ],
 };
