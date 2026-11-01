@@ -12,7 +12,6 @@ import { projects as seedProjects, sortProjectsNewestFirst } from "@/data/projec
 import { posts as seedPosts, sortPostsNewestFirst } from "@/data/posts";
 import {
   SHARED_KEY,
-  emptyShared,
   readSessionUser,
   readShared,
   writeSessionUser,
@@ -139,7 +138,6 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
     if (remote) {
       let stopAuth: (() => void) | undefined;
       let stopProjects: (() => void) | undefined;
-      let stopPosts: (() => void) | undefined;
       let stopReviews: (() => void) | undefined;
       let cancelled = false;
 
@@ -191,7 +189,6 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
         cancelled = true;
         stopAuth?.();
         stopProjects?.();
-        stopPosts?.();
         stopReviews?.();
       };
     }
