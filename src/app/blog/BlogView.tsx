@@ -31,9 +31,9 @@ function PostCard({ post }: { post: BlogPost }) {
   const category = post.tags?.[0] || (post.trending ? "Trending" : "Insights");
   return (
     <Link href={`/blog/${post.slug}`} className="group block overflow-hidden rounded-2xl border border-black/[0.09] bg-[#fffcf8] no-underline transition duration-200 hover:-translate-y-1 hover:shadow-[0_16px_34px_rgba(22,17,14,0.08)]">
-      <div className="aspect-[16/9] max-h-[132px] overflow-hidden bg-[#e8e1d7]">
+      <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#e8e1d7]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={cover} alt={`${post.title} article cover`} loading="lazy" className="h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.025]" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = "/blog-cover-fallback.svg"; }} />
+        <img src={cover} alt={`${post.title} article cover`} loading="lazy" className="absolute inset-0 h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.025]" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = "/blog-cover-fallback.svg"; }} />
       </div>
       <div className="p-5">
         <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#a14b30]">

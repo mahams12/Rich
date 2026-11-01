@@ -67,8 +67,8 @@ export function BlogPostView() {
     )
   );
   const contentBlocks = post.content
-    .split(/\n\n+/)
-    .map((item) => item.replace(/https?:\/\/(?:www\.)?novexahub\.live(?:\/[a-zA-Z0-9/_-]*)?/g, "").trim())
+    .split(/\n\s*\n+/)
+    .map((item) => item.replace(/https?:\/\/(?:www\.)?novexahub\.live(?:\/[a-zA-Z0-9/_-]*)?/g, "").replace(/\n[\t ]+/g, "\n").trim())
     .filter(Boolean);
 
   return (
@@ -89,12 +89,12 @@ export function BlogPostView() {
       <p className="mt-3 text-sm text-muted">By {post.author}</p>
 
       {post.cover ? (
-        <div className="mx-auto mt-7 aspect-[16/9] w-full max-w-3xl overflow-hidden rounded-xl border border-black/10 bg-[#e8e1d7] sm:max-h-[280px]">
+        <div className="relative mx-auto mt-7 aspect-[16/9] w-full max-w-3xl overflow-hidden rounded-xl border border-black/10 bg-[#e8e1d7]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={post.cover}
             alt={post.title}
-            className="block h-full w-full object-cover object-center"
+            className="absolute inset-0 h-full w-full object-cover object-center"
             onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = "/blog-cover-fallback.svg"; }}
           />
         </div>
@@ -131,9 +131,9 @@ export function BlogPostView() {
       {post.gallery && post.gallery.length > 1 ? (
         <div className="mx-auto mt-8 grid max-w-3xl gap-3 sm:grid-cols-3">
           {post.gallery.slice(1).map((src) => (
-            <div key={src} className="aspect-[4/3] overflow-hidden rounded-xl border border-black/10 bg-[#e8e1d7]">
+            <div key={src} className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-black/10 bg-[#e8e1d7]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={src} alt="" className="block h-full w-full object-cover" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = "/blog-cover-fallback.svg"; }} />
+              <img src={src} alt="" className="absolute inset-0 h-full w-full object-cover object-center" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = "/blog-cover-fallback.svg"; }} />
             </div>
           ))}
         </div>
