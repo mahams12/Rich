@@ -2,11 +2,6 @@ import type { NextConfig } from "next";
 
 const workerSafeAliases = {
   protobufjs: "protobufjs/minimal",
-  // Firestore's browser transport does not use the Node gRPC stack. Keep
-  // grpc/proto-loader out of the Cloudflare Worker bundle: proto-loader
-  // dynamically generates functions with new Function(), which Workers block.
-  "@grpc/proto-loader": false,
-  "@grpc/grpc-js": false,
 };
 
 const nextConfig: NextConfig = {
@@ -30,8 +25,6 @@ const nextConfig: NextConfig = {
     config.resolve.alias = {
       ...config.resolve.alias,
       protobufjs: "protobufjs/minimal",
-      "@grpc/proto-loader$": false,
-      "@grpc/grpc-js$": false,
     };
     return config;
   },
