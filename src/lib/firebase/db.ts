@@ -87,30 +87,26 @@ export function subscribeCollection<T extends { id: string }>(
   });
 }
 
-export function subscribeProjects(onData: (items: Project[]) => void) {
-  return subscribeCollection<Project>("projects", (items) => onData(mergeProjects(items)), (id, data) => ({
-    ...(data as unknown as Project),
-    id,
-  }));
-}
-
 /**
- * Blog posts are stored in the public `projects` collection as `_kind: "blog"` docs
- * (doc id `blog_{id}`) because production Firestore rules already allow public read /
- * admin write there. Dedicated `posts` rules can be added later without breaking this.
+ * Projects and blog posts share the public `projects` collection. Keep one
+ * snapshot listener and split the documents in memory so both catalogues update
+ * together without opening two listeners against the same collection.
  */
-export function subscribePosts(onData: (items: BlogPost[]) => void) {
+export function subscribeCatalog(onData: (projects: Project[], posts: BlogPost[]) => void) {
   const db = getFirebaseDb();
   if (!db) return () => undefined;
   return onSnapshot(collection(db, "projects"), (snap) => {
-    const remote = snap.docs
-      .map((item) => {
-        const data = item.data() as Record<string, unknown>;
-        if (!isBlogRemoteDoc(data, item.id)) return null;
-        return mapBlogDoc(item.id, data);
-      })
-      .filter((item): item is BlogPost => Boolean(item));
-    onData(mergePosts(remote));
+    const remoteProjects: Project[] = [];
+    const remotePosts: BlogPost[] = [];
+    for (const item of snap.docs) {
+      const data = item.data() as Record<string, unknown>;
+      if (isBlogRemoteDoc(data, item.id)) {
+        remotePosts.push(mapBlogDoc(item.id, data));
+      } else {
+        remoteProjects.push({ ...(data as unknown as Project), id: item.id });
+      }
+    }
+    onData(mergeProjects(remoteProjects), mergePosts(remotePosts));
   });
 }
 

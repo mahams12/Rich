@@ -8,8 +8,8 @@ import {
   useState,
 } from "react";
 import { uid } from "@/lib/format";
-import { sortProjectsNewestFirst } from "@/data/projects";
-import { sortPostsNewestFirst } from "@/data/posts";
+import { projects as seedProjects, sortProjectsNewestFirst } from "@/data/projects";
+import { posts as seedPosts, sortPostsNewestFirst } from "@/data/posts";
 import {
   SHARED_KEY,
   emptyShared,
@@ -52,8 +52,7 @@ import {
   subscribeCustomizations,
   subscribeNotices,
   subscribeOrders,
-  subscribePosts,
-  subscribeProjects,
+  subscribeCatalog,
   subscribeReviews,
   toggleFavouriteRemote,
 } from "@/lib/firebase/db";
@@ -115,8 +114,8 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [contacts, setContacts] = useState<ContactRequest[]>([]);
   const [customizations, setCustomizations] = useState<CustomizationRequest[]>([]);
-  const [projects, setProjects] = useState<Project[]>(emptyShared().projects);
-  const [posts, setPosts] = useState<BlogPost[]>(emptyShared().posts);
+  const [projects, setProjects] = useState<Project[]>(seedProjects);
+  const [posts, setPosts] = useState<BlogPost[]>(seedPosts);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [notices, setNotices] = useState<Notice[]>([]);
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -146,8 +145,10 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
 
       // Public catalogue data is independent of auth. Subscribe immediately so the
       // homepage does not wait for Google redirect resolution before receiving projects.
-      stopProjects = subscribeProjects(setProjects);
-      stopPosts = subscribePosts(setPosts);
+      stopProjects = subscribeCatalog((nextProjects, nextPosts) => {
+        setProjects(nextProjects);
+        setPosts(nextPosts);
+      });
       stopReviews = subscribeReviews(setReviews);
 
       void (async () => {
