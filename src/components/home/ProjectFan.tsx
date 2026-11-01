@@ -23,7 +23,7 @@ function useMobileFan() {
 }
 
 export function ProjectFan() {
-  const { projects } = useApp();
+  const { projects, catalogReady } = useApp();
   const items = useMemo(() => getPublishedProjects(projects).slice(0, 9), [projects]);
   const mobile = useMobileFan();
 
@@ -42,7 +42,7 @@ export function ProjectFan() {
     return () => window.clearInterval(id);
   }, [items.length, paused]);
 
-  if (!items.length) return null;
+  if (!catalogReady || !items.length) return null;
 
   const xStep = mobile ? 46 : 118;
   const rotateStep = mobile ? 7 : 9;

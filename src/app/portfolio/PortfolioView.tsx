@@ -9,7 +9,7 @@ import { getPublishedProjects } from "@/data/projects";
 import { projectCover } from "@/lib/cover";
 
 export function PortfolioView() {
-  const { projects } = useApp();
+  const { projects, catalogReady } = useApp();
   const list = useMemo(() => getPublishedProjects(projects), [projects]);
 
   return (
@@ -20,7 +20,13 @@ export function PortfolioView() {
         Every listing the studio publishes — image, description, and a direct line to WhatsApp or email. Nothing is sold through checkout on this site.
       </p>
       <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {list.map((project, index) => (
+        {!catalogReady ? Array.from({ length: 6 }).map((_, index) => (
+          <div key={index} className="overflow-hidden rounded-2xl border border-black/10 bg-card animate-pulse">
+            <div className="aspect-[4/3] bg-black/[0.06] sm:aspect-[16/10]" />
+            <div className="space-y-3 p-5"><div className="h-3 w-1/3 rounded bg-black/[0.07]" /><div className="h-5 w-3/4 rounded bg-black/[0.07]" /><div className="h-3 w-full rounded bg-black/[0.05]" /><div className="h-3 w-2/3 rounded bg-black/[0.05]" /></div>
+          </div>
+        )) : null}
+        {catalogReady ? list.map((project, index) => (
           <Link key={project.id} href={`/projects/${project.slug}`} className="group block">
             <div className="overflow-hidden rounded-2xl border border-black/10 bg-card">
               <div className="relative aspect-[4/3] overflow-hidden sm:aspect-[16/10]">
@@ -40,7 +46,7 @@ export function PortfolioView() {
               </div>
             </div>
           </Link>
-        ))}
+        )) : null}
       </div>
     </Section>
   );

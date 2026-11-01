@@ -12,8 +12,8 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { projects as seedProjects, sortProjectsNewestFirst } from "@/data/projects";
-import { posts as seedPosts, sortPostsNewestFirst } from "@/data/posts";
+import { sortProjectsNewestFirst } from "@/data/projects";
+import { sortPostsNewestFirst } from "@/data/posts";
 import type {
   BlogPost,
   ContactRequest,
@@ -30,37 +30,16 @@ function isBlogRemoteDoc(data: Record<string, unknown>, id: string) {
 }
 
 function mergeProjects(remote: Project[]) {
-  const onlyProjects = remote.filter((item) => !isBlogRemoteDoc(item as unknown as Record<string, unknown>, item.id));
-  if (!onlyProjects.length) return seedProjects;
-  const byId = new Map(seedProjects.map((item) => [item.id, item]));
-  for (const item of onlyProjects) {
-    if (item.deleted) {
-      byId.delete(item.id);
-      continue;
-    }
-    byId.set(item.id, item);
-  }
-  return sortProjectsNewestFirst(Array.from(byId.values()));
+  return sortProjectsNewestFirst(
+    remote.filter((item) =>
+      !item.deleted &&
+      !isBlogRemoteDoc(item as unknown as Record<string, unknown>, item.id),
+    ),
+  );
 }
 
 function mergePosts(remote: BlogPost[]) {
-  if (!remote.length) return seedPosts;
-  const byId = new Map(seedPosts.map((item) => [item.id, item]));
-  for (const item of remote) {
-    if (item.deleted) {
-      byId.delete(item.id);
-      continue;
-    }
-    // Preserve editorial defaults such as seeded cover art when older Firestore
-    // blog documents do not yet contain those optional fields.
-    const seed = byId.get(item.id);
-    byId.set(item.id, {
-      ...seed,
-      ...item,
-      cover: item.cover || seed?.cover,
-    });
-  }
-  return sortPostsNewestFirst(Array.from(byId.values()));
+  return sortPostsNewestFirst(remote.filter((item) => !item.deleted));
 }
 
 function mapBlogDoc(id: string, data: Record<string, unknown>): BlogPost {
@@ -82,7 +61,8 @@ export function subscribeCollection<T extends { id: string }>(
 ) {
   const db = getFirebaseDb();
   if (!db) return () => undefined;
-  return onSnapshot(collection(db, name), (snap) => {
+  return onSnapshot(collection(db, name), { includeMetadataChanges: true }, (snap) => {
+    if (snap.metadata.fromCache) return;
     onData(snap.docs.map((item) => map(item.id, item.data() as Record<string, unknown>)));
   });
 }
@@ -95,7 +75,8 @@ export function subscribeCollection<T extends { id: string }>(
 export function subscribeCatalog(onData: (projects: Project[], posts: BlogPost[]) => void) {
   const db = getFirebaseDb();
   if (!db) return () => undefined;
-  return onSnapshot(collection(db, "projects"), (snap) => {
+  return onSnapshot(collection(db, "projects"), { includeMetadataChanges: true }, (snap) => {
+    if (snap.metadata.fromCache) return;
     const remoteProjects: Project[] = [];
     const remotePosts: BlogPost[] = [];
     for (const item of snap.docs) {
@@ -139,7 +120,8 @@ export function subscribeOwned<T extends { id: string; createdAt?: string }>(
   const ref = admin
     ? collection(db, name)
     : query(collection(db, name), where("email", "==", email));
-  return onSnapshot(ref, (snap) => {
+  return onSnapshot(ref, { includeMetadataChanges: true }, (snap) => {
+    if (snap.metadata.fromCache) return;
     onData(sortByDate(snap.docs.map((item) => map(item.id, item.data() as Record<string, unknown>))));
   });
 }

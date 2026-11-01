@@ -113,8 +113,9 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [contacts, setContacts] = useState<ContactRequest[]>([]);
   const [customizations, setCustomizations] = useState<CustomizationRequest[]>([]);
-  const [projects, setProjects] = useState<Project[]>(seedProjects);
-  const [posts, setPosts] = useState<BlogPost[]>(seedPosts);
+  const [projects, setProjects] = useState<Project[]>(remote ? [] : seedProjects);
+  const [posts, setPosts] = useState<BlogPost[]>(remote ? [] : seedPosts);
+  const [catalogReady, setCatalogReady] = useState(!remote);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [notices, setNotices] = useState<Notice[]>([]);
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -146,6 +147,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       stopProjects = subscribeCatalog((nextProjects, nextPosts) => {
         setProjects(nextProjects);
         setPosts(nextPosts);
+        setCatalogReady(true);
       });
       stopReviews = subscribeReviews(setReviews);
 
@@ -752,6 +754,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       customizations,
       projects,
       posts,
+      catalogReady,
       reviews,
       notices,
       unreadNotices,
@@ -795,6 +798,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       deleteCustomization,
       addReview,
       checkout,
+      catalogReady,
       clearCheckout,
       contacts,
       customizations,

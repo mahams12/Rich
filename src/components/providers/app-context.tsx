@@ -3,6 +3,7 @@
 import { createContext, useContext } from "react";
 import { projects as seedProjects } from "@/data/projects";
 import { posts as seedPosts } from "@/data/posts";
+import { isFirebaseConfigured } from "@/lib/firebase/config";
 import type {
   BlogPost,
   ContactRequest,
@@ -33,6 +34,7 @@ export interface AppContextValue {
   customizations: CustomizationRequest[];
   projects: Project[];
   posts: BlogPost[];
+  catalogReady: boolean;
   reviews: Review[];
   notices: Notice[];
   unreadNotices: Notice[];
@@ -80,8 +82,9 @@ export const stubAppValue: AppContextValue = {
   orders: [],
   contacts: [],
   customizations: [],
-  projects: seedProjects,
-  posts: seedPosts,
+  projects: isFirebaseConfigured() ? [] : seedProjects,
+  posts: isFirebaseConfigured() ? [] : seedPosts,
+  catalogReady: !isFirebaseConfigured(),
   reviews: [],
   notices: [],
   unreadNotices: [],
