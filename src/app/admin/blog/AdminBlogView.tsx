@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { AdminGate, AdminNav } from "../AdminBits";
 import { useApp } from "@/components/providers/AppProvider";
 import { Button, Section } from "@/components/ui/Button";
 import { sortPostsNewestFirst } from "@/data/posts";
 
 export function AdminBlogView() {
-  const { posts, setPostStatus, deletePost } = useApp();
+  const { posts, setPostStatus, deletePost, importSeedPosts, firebaseReady } = useApp();
+  const [syncing, setSyncing] = useState(false);
   const sorted = useMemo(() => sortPostsNewestFirst(posts), [posts]);
 
   return (
@@ -17,7 +18,26 @@ export function AdminBlogView() {
         <AdminNav />
         <div className="mb-6 flex items-center justify-between gap-3">
           <h1 className="display text-3xl">Blog</h1>
-          <Button href="/admin/blog/new">New post</Button>
+          <div className="flex items-center gap-2">
+            {firebaseReady ? (
+              <button
+                type="button"
+                disabled={syncing}
+                onClick={async () => {
+                  setSyncing(true);
+                  try {
+                    await importSeedPosts();
+                  } finally {
+                    setSyncing(false);
+                  }
+                }}
+                className="rounded-full border border-black/15 px-4 py-3 text-sm font-semibold transition hover:bg-black/[0.04] disabled:cursor-wait disabled:opacity-50"
+              >
+                {syncing ? "Syncing…" : "Sync missing GitHub blogs"}
+              </button>
+            ) : null}
+            <Button href="/admin/blog/new">New post</Button>
+          </div>
         </div>
         <div className="overflow-x-auto rounded-[1.5rem] border border-black/10">
           <table className="min-w-full text-left text-sm">

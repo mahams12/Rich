@@ -726,6 +726,41 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
     toast("Post saved");
   }, [toast]);
 
+  const importSeedPosts = useCallback(async () => {
+    if (!remote) {
+      const error = "Connect Firebase before importing blog posts.";
+      toast("Import unavailable", error);
+      return { imported: 0, skipped: 0, error };
+    }
+
+    const existingSlugs = new Set(posts.map((post) => post.slug));
+    const missing = seedPosts.filter((post) => !existingSlugs.has(post.slug));
+    if (!missing.length) {
+      toast("Blogs are up to date", "No missing GitHub seed posts were found.");
+      return { imported: 0, skipped: seedPosts.length };
+    }
+
+    try {
+      // Write only missing slugs. Existing Firebase posts and their statuses remain untouched.
+      for (const post of missing) {
+        await savePost({ ...post });
+      }
+      setPosts((current) => {
+        const currentSlugs = new Set(current.map((post) => post.slug));
+        return sortPostsNewestFirst([
+          ...current,
+          ...missing.filter((post) => !currentSlugs.has(post.slug)),
+        ]);
+      });
+      toast("Blog sync complete", `${missing.length} missing posts imported; existing posts were left unchanged.`);
+      return { imported: missing.length, skipped: seedPosts.length - missing.length };
+    } catch (error) {
+      const message = firebaseErrorMessage(error);
+      toast("Blog sync incomplete", message);
+      return { imported: 0, skipped: seedPosts.length - missing.length, error: message };
+    }
+  }, [posts, toast]);
+
   const setPostStatus = useCallback((id: string, status: BlogPost["status"]) => {
     const post = posts.find((item) => item.id === id);
     if (remote && post) void patchPostStatus(post, status);
@@ -786,6 +821,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       deleteProject,
       setProjectStatus,
       upsertPost,
+      importSeedPosts,
       deletePost,
       setPostStatus,
       setOrderStatus,
@@ -831,6 +867,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       upsertProject,
       deleteProject,
       upsertPost,
+      importSeedPosts,
       deletePost,
       setPostStatus,
       user,

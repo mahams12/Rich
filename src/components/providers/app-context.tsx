@@ -66,6 +66,7 @@ export interface AppContextValue {
   deleteProject: (id: string) => void;
   setProjectStatus: (id: string, status: Project["status"]) => void;
   upsertPost: (post: BlogPost) => void;
+  importSeedPosts: () => Promise<{ imported: number; skipped: number; error?: string }>;
   deletePost: (id: string) => void;
   setPostStatus: (id: string, status: BlogPost["status"]) => void;
   setOrderStatus: (id: string, status: Order["status"]) => void;
@@ -116,6 +117,7 @@ export const stubAppValue: AppContextValue = {
   deleteProject: () => undefined,
   setProjectStatus: () => undefined,
   upsertPost: () => undefined,
+  importSeedPosts: async () => ({ imported: 0, skipped: 0, error: "Firebase is not connected." }),
   deletePost: () => undefined,
   setPostStatus: () => undefined,
   setOrderStatus: () => undefined,
