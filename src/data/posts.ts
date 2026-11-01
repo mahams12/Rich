@@ -278,7 +278,7 @@ export const posts: BlogPost[] = [
     "author": "NovexaHub Studio",
     "createdAt": "2026-10-31T07:01:46.000Z",
     "publishedAt": "2026-10-31T07:01:46.000Z"
-  }
+  },
   {
     id: "b11",
     slug: "shopify-expiring-offline-access-token-migration-2027",
