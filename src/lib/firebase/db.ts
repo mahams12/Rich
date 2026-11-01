@@ -26,7 +26,15 @@ import type {
 import { getFirebaseDb } from "./client";
 
 function isBlogRemoteDoc(data: Record<string, unknown>, id: string) {
-  return data._kind === "blog" || id.startsWith("blog_");
+  return (
+    data._kind === "blog" ||
+    id.startsWith("blog_") ||
+    // Older blog documents may predate the _kind marker and blog_ ID prefix.
+    // A full article body + excerpt + slug distinguishes them from projects.
+    (typeof data.content === "string" &&
+      typeof data.excerpt === "string" &&
+      typeof data.slug === "string")
+  );
 }
 
 function mergeProjects(remote: Project[]) {
