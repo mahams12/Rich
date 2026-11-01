@@ -25,6 +25,7 @@ export function ProjectVisual({
   cover,
   className,
   fit = "cover",
+  priority = false,
 }: {
   kind: VisualKind;
   mood: VisualMood;
@@ -33,6 +34,8 @@ export function ProjectVisual({
   className?: string;
   /** cover fills the frame; contain shows the full image (detail gallery). */
   fit?: "cover" | "contain";
+  /** Prioritize images in the initial viewport. */
+  priority?: boolean;
 }) {
   const [src, setSrc] = useState(cover);
   const [failed, setFailed] = useState(false);
@@ -63,7 +66,8 @@ export function ProjectVisual({
           key={src}
           src={optimizedSrc}
           alt={title}
-          loading="lazy"
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : "auto"}
           decoding="async"
           className={cn("h-full w-full", imgFit)}
           onError={() => {

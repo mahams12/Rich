@@ -20,7 +20,7 @@ export function PortfolioView() {
         Every listing the studio publishes — image, description, and a direct line to WhatsApp or email. Nothing is sold through checkout on this site.
       </p>
       <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {list.map((project) => (
+        {list.map((project, index) => (
           <Link key={project.id} href={`/projects/${project.slug}`} className="group block">
             <div className="overflow-hidden rounded-2xl border border-black/10 bg-card">
               <div className="relative aspect-[4/3] overflow-hidden sm:aspect-[16/10]">
@@ -29,6 +29,7 @@ export function PortfolioView() {
                   mood={project.visual.mood}
                   title={project.title}
                   cover={projectCover(project)}
+                  priority={index < 3}
                   className="h-full w-full transition duration-700 group-hover:scale-[1.03]"
                 />
               </div>
