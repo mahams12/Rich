@@ -113,10 +113,10 @@ export function BlogPostView() {
             return <h2 key={key} className="pt-5 text-2xl font-bold leading-snug text-ink">{block.slice(3)}</h2>;
           }
           if (block.split("\n").every((line) => line.startsWith("- "))) {
-            return <ul key={key} className="list-disc space-y-2 pl-6">{block.split("\n").map((line, itemIndex) => <li key={itemIndex}>{line.slice(2)}</li>)}</ul>;
+            return <ul key={key} className="list-disc space-y-2 pl-6">{block.split("\n").map((line, itemIndex) => <li key={itemIndex}>{renderInlineLinks(line.slice(2))}</li>)}</ul>;
           }
           if (block.split("\n").every((line) => /^\d+\. /.test(line))) {
-            return <ol key={key} className="list-decimal space-y-2 pl-6">{block.split("\n").map((line, itemIndex) => <li key={itemIndex}>{line.replace(/^\d+\. /, "")}</li>)}</ol>;
+            return <ol key={key} className="list-decimal space-y-2 pl-6">{block.split("\n").map((line, itemIndex) => <li key={itemIndex}>{renderInlineLinks(line.replace(/^\d+\. /, ""))}</li>)}</ol>;
           }
           return <p key={key}>{renderInlineLinks(block)}</p>;
         })}
