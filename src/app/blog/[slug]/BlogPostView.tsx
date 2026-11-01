@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
+import { recordBlogVisit, rememberBlogNavigation } from "@/lib/blogAnalytics";
 import { useApp } from "@/components/providers/AppProvider";
 import { Badge, Button, Section } from "@/components/ui/Button";
 import { getBlogPostsWithFallback } from "@/data/posts";
@@ -39,6 +40,9 @@ export function BlogPostView() {
     () => availablePosts.find((item) => item.slug === slug && !item.deleted),
     [availablePosts, slug],
   );
+  useEffect(() => {
+    if (post?.status === "published" && !isStudioAdmin(user)) void recordBlogVisit(post.slug).catch(() => undefined);
+  }, [post?.slug, post?.status, user]);
   const related = useMemo(() => {
     if (!post) return [];
     const currentTags = new Set((post.tags || []).map((tag) => tag.toLowerCase()));
@@ -166,7 +170,7 @@ export function BlogPostView() {
           </div>
           <div className="grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((item) => (
-              <Link key={item.id} href={`/blog/${item.slug}`} className="group block overflow-hidden rounded-2xl border border-black/[0.09] bg-[#fffcf8] no-underline transition hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(22,17,14,0.08)]">
+              <Link key={item.id} href={`/blog/${item.slug}`} onClick={() => rememberBlogNavigation(item.slug)} className="group block overflow-hidden rounded-2xl border border-black/[0.09] bg-[#fffcf8] no-underline transition hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(22,17,14,0.08)]">
                 <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#e8e1d7]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={item.cover || "/blog-cover-fallback.svg"} alt={`${item.title} article cover`} loading="lazy" className="absolute inset-0 h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.025]" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = "/blog-cover-fallback.svg"; }} />

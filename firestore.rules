@@ -33,6 +33,17 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    match /blogVisits/{id} {
+      allow read: if isAdmin();
+      allow create: if request.resource.data.keys().hasOnly(["slug", "source", "at"])
+        && request.resource.data.keys().hasAll(["slug", "source", "at"])
+        && request.resource.data.slug is string
+        && request.resource.data.slug.matches("^[a-z0-9-]{1,160}$")
+        && request.resource.data.source in ["blog_listing", "internal", "external", "direct"]
+        && request.resource.data.at == request.time;
+      allow update, delete: if false;
+    }
+
     match /posts/{id} {
       allow read: if true;
       allow write: if isAdmin();
