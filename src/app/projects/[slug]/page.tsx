@@ -4,7 +4,9 @@ import { site } from "@/data/site";
 import { ProjectDetailView } from "./ProjectDetailView";
 
 export function generateStaticParams() {
-  return projects.map((project) => ({ slug: project.slug }));
+  return projects
+    .filter((project) => project.status === "published" && !project.deleted)
+    .map((project) => ({ slug: project.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {

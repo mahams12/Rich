@@ -14,7 +14,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/builder",
     "/about",
     "/our-team",
-    "/our-team",
     "/reviews",
     "/contact",
     "/privacy-policy",
@@ -27,11 +26,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: path === "" ? 1 : path === "/blog" ? 0.9 : 0.8,
   }));
 
-  const projectRoutes = projects.map((project) => ({
-    url: `${site.url}/projects/${project.slug}`,
-    changeFrequency: "weekly" as const,
-    priority: 0.7,
-  }));
+  const projectRoutes = projects
+    .filter((project) => project.status === "published" && !project.deleted)
+    .map((project) => ({
+      url: `${site.url}/projects/${project.slug}`,
+      lastModified: new Date(project.publishedAt || project.createdAt || Date.now()),
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    }));
 
   const postRoutes = posts
     .filter((post) => post.status === "published")
