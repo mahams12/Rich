@@ -19,19 +19,15 @@ function formatDate(value?: string) {
 
 
 function renderInlineLinks(value: string) {
-  return value.split(/(\[[^\]]+\]\(https?:\/\/[^)\s]+\))/g).map((part, index) => {
-    const match = part.match(/^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/);
-    return match ? (
-      <a
-        key={index}
-        href={match[2]}
-        target="_blank"
-        rel="noreferrer"
-        className="font-semibold text-[#c45c3a] underline decoration-[#c45c3a]/40 underline-offset-4 hover:decoration-current"
-      >
-        {match[1]}
-      </a>
-    ) : part;
+  return value.split(/(\[[^\]]+\]\(https?:\/\/[^)\s]+\)|\*\*[^*]+\*\*)/g).map((part, index) => {
+    const link = part.match(/^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/);
+    if (link) {
+      return <a key={index} href={link[2]} target="_blank" rel="noreferrer" className="font-semibold text-[#c45c3a] underline decoration-[#c45c3a]/40 underline-offset-4 hover:decoration-current">{link[1]}</a>;
+    }
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={index} className="font-semibold text-ink">{part.slice(2, -2)}</strong>;
+    }
+    return part;
   });
 }
 
@@ -45,9 +41,16 @@ export function BlogPostView() {
   );
   const related = useMemo(() => {
     if (!post) return [];
+    const currentTags = new Set((post.tags || []).map((tag) => tag.toLowerCase()));
     return getBlogPostsWithFallback(posts)
-      .filter((item) => item.id !== post.id)
-      .slice(0, 3);
+      .filter((item) => item.id !== post.id && item.status === "published" && !item.deleted)
+      .map((item) => ({
+        item,
+        score: (item.tags || []).filter((tag) => currentTags.has(tag.toLowerCase())).length,
+      }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3)
+      .map(({ item }) => item);
   }, [post, posts]);
 
   if (!post || (post.status !== "published" && !isStudioAdmin(user))) {
@@ -156,18 +159,28 @@ export function BlogPostView() {
       </div>
 
       {related.length ? (
-        <div className="mx-auto mt-12 max-w-3xl">
-          <h2 className="display text-2xl">Related reading</h2>
-          <ul className="mt-4 space-y-3">
+        <section className="mx-auto mt-12 max-w-5xl">
+          <div className="mb-5 flex items-end justify-between gap-4 border-b border-black/10 pb-3">
+            <h2 className="display text-2xl">Related reading</h2>
+            <Link href="/blog" className="text-sm font-semibold text-[#c45c3a] hover:underline">All articles</Link>
+          </div>
+          <div className="grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((item) => (
-              <li key={item.id}>
-                <Link href={`/blog/${item.slug}`} className="font-semibold text-[#c45c3a] hover:underline">
-                  {item.title}
-                </Link>
-              </li>
+              <Link key={item.id} href={`/blog/${item.slug}`} className="group block overflow-hidden rounded-2xl border border-black/[0.09] bg-[#fffcf8] no-underline transition hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(22,17,14,0.08)]">
+                <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#e8e1d7]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={item.cover || "/blog-cover-fallback.svg"} alt={`${item.title} article cover`} loading="lazy" className="absolute inset-0 h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.025]" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = "/blog-cover-fallback.svg"; }} />
+                </div>
+                <div className="p-4">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#a14b30]">{item.tags?.[0] || "Insights"}</p>
+                  <h3 className="mt-2 line-clamp-2 text-base font-bold leading-snug text-[#211a16] group-hover:text-[#a14b30]">{item.title}</h3>
+                  <p className="mt-2 line-clamp-2 text-sm leading-6 text-[#756b63]">{item.excerpt}</p>
+                  <span className="mt-3 inline-flex text-sm font-semibold text-[#211a16]">Read article →</span>
+                </div>
+              </Link>
             ))}
-          </ul>
-        </div>
+          </div>
+        </section>
       ) : null}
     </Section>
   );
