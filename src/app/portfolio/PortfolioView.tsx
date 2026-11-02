@@ -41,6 +41,7 @@ export function PortfolioView({ initialProjects }: { initialProjects?: Project[]
                   title={project.title}
                   cover={projectCover(project)}
                   priority={index < 3}
+                  preload={index === 0}
                   className="h-full w-full transition duration-700 group-hover:scale-[1.03]"
                 />
               </div>

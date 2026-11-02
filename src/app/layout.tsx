@@ -1,6 +1,7 @@
 import { Plus_Jakarta_Sans } from "next/font/google";
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { preconnect } from "react-dom";
 import { MetaPixel } from "@/components/analytics/MetaPixel";
 import { AppProvider } from "@/components/providers/AppProvider";
 import { AdminBar } from "@/components/admin/AdminBar";
@@ -125,6 +126,9 @@ const jsonLd = {
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
+  preconnect("https://firestore.googleapis.com");
+  preconnect("https://firebasestorage.googleapis.com");
+  preconnect("https://firebase.googleapis.com");
   return (
     <html lang="en" className={`${jakarta.variable} h-full antialiased`} data-scroll-behavior="smooth">
       <body className="flex min-h-full flex-col bg-paper text-ink">

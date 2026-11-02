@@ -27,6 +27,7 @@ export function ProjectVisual({
   className,
   fit = "cover",
   priority = false,
+  preload = false,
 }: {
   kind: VisualKind;
   mood: VisualMood;
@@ -37,6 +38,8 @@ export function ProjectVisual({
   fit?: "cover" | "contain";
   /** Prioritize images in the initial viewport. */
   priority?: boolean;
+  /** Emit a <link rel="preload"> for the LCP image. Mutually exclusive with loading. */
+  preload?: boolean;
 }) {
   const [brokenSrcs, setBrokenSrcs] = useState<ReadonlySet<string>>(() => new Set());
   const markBroken = (url: string) =>
@@ -80,8 +83,9 @@ export function ProjectVisual({
           alt={title}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          loading={priority ? "eager" : "lazy"}
-          fetchPriority={priority ? "high" : "auto"}
+          {...(preload
+            ? { preload: true }
+            : { loading: priority ? ("eager" as const) : ("lazy" as const), fetchPriority: priority ? ("high" as const) : ("auto" as const) })}
           className={cn("h-full w-full", imgFit)}
           onError={() => markBroken(src)}
         />
