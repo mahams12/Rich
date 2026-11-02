@@ -38,17 +38,23 @@ function isAllowed(src: string): boolean {
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const src = searchParams.get("url");
+  let src = searchParams.get("url");
+  // The pipeline decodes the query once before this route runs, so a
+  // double-encoded url arrives still encoded; decode the last layer here.
+  if (src?.startsWith("http%3A") || src?.startsWith("https%3A")) {
+    try {
+      src = decodeURIComponent(src);
+    } catch {
+      src = null;
+    }
+  }
   const width = Number(searchParams.get("w"));
   const quality = Number(searchParams.get("q") ?? "75");
   if (!src || !isAllowed(src) || !WIDTHS.has(width) || quality < 1 || quality > 100) {
     return new Response("Bad request", { status: 400 });
   }
 
-  // Double-encode the inner url: the subrequest transport decodes the
-  // query string once, and /_next/image decodes it again — the firebase
-  // fetch must still see %2F-encoded object paths after both layers.
-  const proxyPath = `/_next/image?url=${encodeURIComponent(encodeURIComponent(src))}&w=${width}&q=${quality}`;
+  const proxyPath = `/_next/image?url=${encodeURIComponent(src)}&w=${width}&q=${quality}`;
   const accept = request.headers.get("accept") ?? "image/avif,image/webp,*/*";
 
   let env: Env = {};
