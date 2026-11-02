@@ -76,7 +76,8 @@ export async function GET(request: Request) {
   }
 
   if (!upstream?.ok || !upstream.body) {
-    return new Response(`Upstream error: ${upstream?.status ?? "no-response"}`, { status: 502 });
+    const detail = upstream ? await upstream.text().catch(() => "") : "";
+    return new Response(`Upstream error: ${upstream?.status ?? "no-response"} ${detail.slice(0, 300)}`, { status: 502 });
   }
 
   const headers = new Headers(upstream.headers);
