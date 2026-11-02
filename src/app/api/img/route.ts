@@ -5,6 +5,8 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 // Storage and Unsplash upstreams are not "immutable"), so every visit
 // re-downloaded every image. Responses from this route are cached for a week.
 const CACHE_CONTROL = "public, max-age=604800, stale-while-revalidate=86400";
+const FETCH_TIMEOUT_MS = 8_000;
+const MAX_REDIRECTS = 4;
 
 const ALLOWED_HOSTS = [
   "images.unsplash.com",
@@ -19,7 +21,7 @@ const WIDTHS = new Set([16, 32, 48, 64, 96, 128, 256, 384, 640, 750, 828, 1080, 
 type ImagesBinding = {
   input(body: ReadableStream): {
     transform(options: { width: number; fit: string }): {
-      output(options: { format: string; quality: number }): Promise<{ response(): Response }>;
+      output(options: { format: string; quality: number }): Promise<{ image(): ReadableStream }>;
     };
   };
 };
@@ -34,6 +36,22 @@ function isAllowed(src: string): boolean {
   } catch {
     return false;
   }
+}
+
+// Mirrors the built-in image handler: redirect: "manual" is required —
+// a default "follow" fetch re-parses the target URL and strips the %2F
+// encoding Firebase Storage needs in its object path.
+async function fetchUpstream(url: string, redirectsLeft: number): Promise<Response | null> {
+  const response = await fetch(url, {
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+    redirect: "manual",
+  });
+  if ([301, 302, 303, 307, 308].includes(response.status)) {
+    const location = response.headers.get("location");
+    if (location === null || redirectsLeft < 1) return null;
+    return fetchUpstream(new URL(location, url).href, redirectsLeft - 1);
+  }
+  return response;
 }
 
 function passthrough(body: ReadableStream | null, contentType: string) {
@@ -54,9 +72,9 @@ export async function GET(request: Request) {
     return new Response("Bad request", { status: 400 });
   }
 
-  const upstream = await fetch(src, { signal: AbortSignal.timeout(8_000) });
-  if (!upstream.ok || !upstream.body) {
-    return new Response("Upstream error", { status: 502 });
+  const upstream = await fetchUpstream(new URL(src).href, MAX_REDIRECTS);
+  if (!upstream?.ok || !upstream.body) {
+    return new Response(`Upstream error: ${upstream?.status ?? "no-response"}`, { status: 502 });
   }
   const type = upstream.headers.get("content-type") ?? "";
 
@@ -81,18 +99,20 @@ export async function GET(request: Request) {
       .input(upstream.body)
       .transform({ width, fit: "scale-down" })
       .output({ format, quality });
-    const result = optimized.response();
-    const headers = new Headers(result.headers);
-    headers.set("cache-control", CACHE_CONTROL);
-    headers.set("vary", "Accept");
-    return new Response(result.body, { status: result.status, headers });
+    return new Response(optimized.image(), {
+      headers: {
+        "content-type": format,
+        "cache-control": CACHE_CONTROL,
+        vary: "Accept",
+      },
+    });
   } catch {
     // Transform failed — refetch and serve the original bytes.
-    const retry = await fetch(src, { signal: AbortSignal.timeout(8_000) });
-    return new Response(retry.body, {
-      status: retry.ok ? 200 : 502,
+    const retry = await fetchUpstream(new URL(src).href, MAX_REDIRECTS);
+    return new Response(retry?.body ?? null, {
+      status: retry?.ok ? 200 : 502,
       headers: {
-        "content-type": retry.headers.get("content-type") ?? "application/octet-stream",
+        "content-type": retry?.headers.get("content-type") ?? "application/octet-stream",
         "cache-control": CACHE_CONTROL,
       },
     });
