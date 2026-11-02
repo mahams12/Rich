@@ -35,9 +35,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     }));
 
-  const postRoutes = posts
-    .filter((post) => post.status === "published")
-    .map((post) => ({
+  // Every code-published blog in src/data/posts.ts is included automatically.
+  // Keep this data-driven: never hardcode individual article slugs here.
+  const postRoutes = Array.from(
+    new Map(
+      posts
+        .filter((post) => post.status === "published" && !post.deleted && post.slug)
+        .map((post) => [post.slug, post]),
+    ).values(),
+  ).map((post) => ({
       url: `${site.url}/blog/${post.slug}`,
       lastModified: new Date(post.updatedAt || post.publishedAt || post.createdAt || Date.now()),
       changeFrequency: "weekly" as const,
