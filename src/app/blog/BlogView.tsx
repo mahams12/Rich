@@ -27,14 +27,30 @@ const fallbackCovers: Record<string, string> = {
   "business-website-checklist-2026": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=82",
 };
 
-function PostCard({ post }: { post: BlogPost }) {
+function optimizedBlogCover(source: string, width: number) {
+  if (!source.startsWith("https://images.unsplash.com/")) return source;
+  try {
+    const url = new URL(source);
+    url.searchParams.set("auto", "format");
+    url.searchParams.set("fit", "crop");
+    url.searchParams.set("w", String(width));
+    url.searchParams.set("q", "65");
+    return url.toString();
+  } catch {
+    return source;
+  }
+}
+
+function PostCard({ post, index }: { post: BlogPost; index: number }) {
   const cover = post.cover || fallbackCovers[post.slug] || "/blog-cover-fallback.svg";
   const category = post.tags?.[0] || (post.trending ? "Trending" : "Insights");
+  const isUnsplash = cover.startsWith("https://images.unsplash.com/");
+  const srcSet = isUnsplash ? [480, 640, 800].map((width) => `${optimizedBlogCover(cover, width)} ${width}w`).join(", ") : undefined;
   return (
     <Link href={`/blog/${post.slug}`} onClick={() => rememberBlogNavigation(post.slug)} className="group block overflow-hidden rounded-2xl border border-black/[0.09] bg-[#fffcf8] no-underline transition duration-200 hover:-translate-y-1 hover:shadow-[0_16px_34px_rgba(22,17,14,0.08)]">
       <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#e8e1d7]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={cover} alt={`${post.title} article cover`} loading="lazy" className="absolute inset-0 h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.025]" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = "/blog-cover-fallback.svg"; }} />
+        <img src={optimizedBlogCover(cover, 640)} srcSet={srcSet} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" alt={`${post.title} article cover`} loading={index < 3 ? "eager" : "lazy"} fetchPriority={index < 2 ? "high" : "auto"} decoding="async" width="640" height="360" className="absolute inset-0 h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.025]" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = "/blog-cover-fallback.svg"; }} />
       </div>
       <div className="p-5">
         <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#a14b30]">
@@ -83,7 +99,7 @@ export function BlogView() {
           <p className="mt-4 text-sm text-muted">No posts published yet.</p>
         ) : (
           <div className="grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {published.map((post) => <PostCard key={post.id} post={post} />)}
+            {published.map((post, index) => <PostCard key={post.id} post={post} index={index} />)}
           </div>
         )}
       </div>

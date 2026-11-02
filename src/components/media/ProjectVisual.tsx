@@ -43,13 +43,28 @@ export function ProjectVisual({
     if (!src || !src.startsWith("https://images.unsplash.com/")) return src;
     try {
       const url = new URL(src);
-      url.searchParams.set("w", "800");
-      url.searchParams.set("q", "72");
+      url.searchParams.set("w", "640");
+      url.searchParams.set("q", "65");
       url.searchParams.set("auto", "format");
       url.searchParams.set("fit", "crop");
       return url.toString();
     } catch {
       return src;
+    }
+  })();
+  const optimizedSrcSet = (() => {
+    if (!src || !src.startsWith("https://images.unsplash.com/")) return undefined;
+    try {
+      return [480, 640, 800].map((width) => {
+        const url = new URL(src);
+        url.searchParams.set("w", String(width));
+        url.searchParams.set("q", "65");
+        url.searchParams.set("auto", "format");
+        url.searchParams.set("fit", "crop");
+        return `${url.toString()} ${width}w`;
+      }).join(", ");
+    } catch {
+      return undefined;
     }
   })();
 
@@ -65,6 +80,10 @@ export function ProjectVisual({
         <img
           key={src}
           src={optimizedSrc}
+          srcSet={optimizedSrcSet}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          width="800"
+          height="500"
           alt={title}
           loading={priority ? "eager" : "lazy"}
           fetchPriority={priority ? "high" : "auto"}
