@@ -49,7 +49,7 @@ function PostCard({ post }: { post: BlogPost }) {
 }
 
 export function BlogView() {
-  const { posts } = useApp();
+  const { posts, catalogReady } = useApp();
   const published = useMemo(() => getBlogPostsWithFallback(posts), [posts]);
 
   return (
@@ -63,9 +63,23 @@ export function BlogView() {
       <div className="mt-9">
         <div className="mb-4 flex items-end justify-between gap-4 border-b border-black/10 pb-3">
           <h2 className="display text-2xl">Latest articles</h2>
-          {published.length ? <span className="text-xs text-[#81776e]">{published.length} articles</span> : null}
+          {catalogReady && published.length ? <span className="text-xs text-[#81776e]">{published.length} articles</span> : null}
         </div>
-        {published.length === 0 ? (
+        {!catalogReady ? (
+          <div className="grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3" aria-label="Loading articles">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div key={index} className="overflow-hidden rounded-2xl border border-black/[0.09] bg-[#fffcf8] animate-pulse">
+                <div className="aspect-[16/9] w-full bg-[#e8e1d7]" />
+                <div className="space-y-3 p-5">
+                  <div className="h-3 w-1/3 rounded bg-black/[0.07]" />
+                  <div className="h-5 w-3/4 rounded bg-black/[0.07]" />
+                  <div className="h-3 w-full rounded bg-black/[0.05]" />
+                  <div className="h-3 w-2/3 rounded bg-black/[0.05]" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : published.length === 0 ? (
           <p className="mt-4 text-sm text-muted">No posts published yet.</p>
         ) : (
           <div className="grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3">
