@@ -85,17 +85,7 @@ export async function GET(request: Request) {
   }
 
   if (!upstream?.ok || !upstream.body) {
-    const detail = upstream ? await upstream.text().catch(() => "") : "";
-    return new Response(
-      `Upstream error: ${upstream?.status ?? "no-response"} ${detail.slice(0, 300)}`,
-      {
-        status: 502,
-        headers: {
-          "x-debug-binding": String(!!env.WORKER_SELF_REFERENCE),
-          "x-debug-src": src.slice(0, 300),
-        },
-      },
-    );
+    return new Response("Upstream error", { status: 502 });
   }
 
   const headers = new Headers(upstream.headers);
