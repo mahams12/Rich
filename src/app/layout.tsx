@@ -12,6 +12,9 @@ const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
+  // Avoids the ~0.2 CLS from a late font swap; the brand font still applies on
+  // normal loads since it's preloaded.
+  display: "optional",
 });
 
 export const metadata: Metadata = {

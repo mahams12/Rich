@@ -74,7 +74,7 @@ function CountUp({ target }: { target: number }) {
   }, [inView, target]);
   return (
     <div ref={ref} className="inline-flex items-baseline">
-      <span className="display text-5xl tracking-tight text-[#c45c3a] tabular-nums sm:text-6xl">
+      <span className="display text-5xl tracking-tight text-[#a14b30] tabular-nums sm:text-6xl">
         {value.toLocaleString("en-US")}+
       </span>
     </div>
@@ -99,15 +99,15 @@ function FounderCard({ founder, onOpen }: { founder: Founder; onOpen: () => void
       <p className="mt-0.5 text-sm text-[#6d655d]">{founder.role}</p>
       <div className="mt-3 flex flex-col items-center gap-1 text-sm text-[#6d655d]">
         <span className="inline-flex items-center gap-1.5 break-all">
-          <Icon name="mail" className="h-3.5 w-3.5 shrink-0 text-[#c45c3a]" />
+          <Icon name="mail" className="h-3.5 w-3.5 shrink-0 text-[#a14b30]" />
           {founder.email}
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <Icon name="phone" className="h-3.5 w-3.5 shrink-0 text-[#c45c3a]" />
+          <Icon name="phone" className="h-3.5 w-3.5 shrink-0 text-[#a14b30]" />
           {founder.phone}
         </span>
       </div>
-      <span className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-[#c45c3a]/40 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#c45c3a] transition group-hover:bg-[#c45c3a] group-hover:text-white">
+      <span className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-[#c45c3a]/40 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#a14b30] transition group-hover:bg-[#c45c3a] group-hover:text-white">
         View profile
         <Icon name="arrow-ne" className="h-3 w-3" />
       </span>
@@ -166,7 +166,7 @@ export function FoundersSection() {
   return (
     <Section>
       <div className="text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#c45c3a]">Founders</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#a14b30]">Founders</p>
         <h2 className="display mt-2 text-3xl tracking-tight">The people behind NovexaHub</h2>
         <p className="mx-auto mt-3 max-w-xl text-sm text-[#6d655d]">
           Meet the founders leading our studio and explore their work and professional profiles.

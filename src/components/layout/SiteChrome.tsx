@@ -167,21 +167,21 @@ export function SiteFooter() {
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6d655d]">Studio</p>
           <div className="mt-3 space-y-2 text-sm">
-            <Link href="/portfolio" className="block hover:text-[#c45c3a]">Portfolio</Link>
-            <Link href="/blog" className="block hover:text-[#c45c3a]">Blog</Link>
-            <Link href="/services" className="block hover:text-[#c45c3a]">Services</Link>
-            <Link href="/features" className="block hover:text-[#c45c3a]">Feature modules</Link>
-            <Link href="/contact" className="block hover:text-[#c45c3a]">WhatsApp & email</Link>
+            <Link href="/portfolio" className="block hover:text-[#a14b30]">Portfolio</Link>
+            <Link href="/blog" className="block hover:text-[#a14b30]">Blog</Link>
+            <Link href="/services" className="block hover:text-[#a14b30]">Services</Link>
+            <Link href="/features" className="block hover:text-[#a14b30]">Feature modules</Link>
+            <Link href="/contact" className="block hover:text-[#a14b30]">WhatsApp & email</Link>
           </div>
         </div>
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">Company</p>
           <div className="mt-3 space-y-2 text-sm">
-            <Link href="/about" className="block hover:text-[#c45c3a]">About</Link>
-            <Link href="/our-team" className="block hover:text-[#c45c3a]">Our Team</Link>
-            <Link href="/reviews" className="block hover:text-[#c45c3a]">Reviews</Link>
-            <Link href="/contact" className="block hover:text-[#c45c3a]">Contact</Link>
-            <Link href="/login" className="block hover:text-[#c45c3a]">Client login</Link>
+            <Link href="/about" className="block hover:text-[#a14b30]">About</Link>
+            <Link href="/our-team" className="block hover:text-[#a14b30]">Our Team</Link>
+            <Link href="/reviews" className="block hover:text-[#a14b30]">Reviews</Link>
+            <Link href="/contact" className="block hover:text-[#a14b30]">Contact</Link>
+            <Link href="/login" className="block hover:text-[#a14b30]">Client login</Link>
           </div>
         </div>
         <div>
@@ -193,7 +193,7 @@ export function SiteFooter() {
                 e.preventDefault();
                 openMailClient();
               }}
-              className="block hover:text-[#c45c3a]"
+              className="block hover:text-[#a14b30]"
             >
               Email
             </a>
@@ -201,30 +201,30 @@ export function SiteFooter() {
               href={`https://wa.me/${site.whatsapp}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="block hover:text-[#c45c3a]"
+              className="block hover:text-[#a14b30]"
             >
               WhatsApp
             </a>
-            <Link href="/contact" className="block hover:text-[#c45c3a]">Contact form</Link>
+            <Link href="/contact" className="block hover:text-[#a14b30]">Contact form</Link>
           </div>
         </div>
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6d655d]">Legal</p>
           <div className="mt-3 space-y-2 text-sm">
-            <Link href="/privacy-policy" className="block hover:text-[#c45c3a]">Privacy Policy</Link>
-            <Link href="/terms" className="block hover:text-[#c45c3a]">Terms &amp; Conditions</Link>
-            <Link href="/refund-policy" className="block hover:text-[#c45c3a]">Refund Policy</Link>
-            <Link href="/delivery-policy" className="block hover:text-[#c45c3a]">Delivery Policy</Link>
+            <Link href="/privacy-policy" className="block hover:text-[#a14b30]">Privacy Policy</Link>
+            <Link href="/terms" className="block hover:text-[#a14b30]">Terms &amp; Conditions</Link>
+            <Link href="/refund-policy" className="block hover:text-[#a14b30]">Refund Policy</Link>
+            <Link href="/delivery-policy" className="block hover:text-[#a14b30]">Delivery Policy</Link>
           </div>
         </div>
       </div>
       <div className="flex flex-col items-center justify-center gap-2 border-t border-black/10 py-4 text-xs text-muted sm:flex-row sm:gap-4">
         <p>© 2026 {site.domain}</p>
         <nav className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1" aria-label="Legal">
-          <Link href="/privacy-policy" className="hover:text-[#c45c3a]">Privacy</Link>
-          <Link href="/terms" className="hover:text-[#c45c3a]">Terms</Link>
-          <Link href="/refund-policy" className="hover:text-[#c45c3a]">Refunds</Link>
-          <Link href="/delivery-policy" className="hover:text-[#c45c3a]">Delivery</Link>
+          <Link href="/privacy-policy" className="hover:text-[#a14b30]">Privacy</Link>
+          <Link href="/terms" className="hover:text-[#a14b30]">Terms</Link>
+          <Link href="/refund-policy" className="hover:text-[#a14b30]">Refunds</Link>
+          <Link href="/delivery-policy" className="hover:text-[#a14b30]">Delivery</Link>
         </nav>
       </div>
     </footer>

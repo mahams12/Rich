@@ -24,11 +24,18 @@ export function getFirebaseApp() {
   if (!app) {
     app = getApps().length ? getApp() : initializeApp(options);
     if (typeof window !== "undefined") {
-      void isSupported()
-        .then((ok) => {
-          if (ok && app) analytics = getAnalytics(app);
-        })
-        .catch(() => undefined);
+      // Analytics (gtag) is ~160KB of third-party JS — defer it off the load path.
+      const schedule =
+        "requestIdleCallback" in window
+          ? window.requestIdleCallback.bind(window)
+          : (cb: () => void) => window.setTimeout(cb, 2000);
+      schedule(() => {
+        void isSupported()
+          .then((ok) => {
+            if (ok && app) analytics = getAnalytics(app);
+          })
+          .catch(() => undefined);
+      });
     }
   }
   return app;

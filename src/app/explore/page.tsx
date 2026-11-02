@@ -16,7 +16,7 @@ export default function ExplorePage() {
   return (
     <>
       <Section>
-        <p className="text-xs uppercase tracking-[0.2em] text-[#c45c3a]">Explore</p>
+        <p className="text-xs uppercase tracking-[0.2em] text-[#a14b30]">Explore</p>
         <h1 className="display mt-2 text-4xl">Every digital product, visually</h1>
         <p className="mt-3 max-w-2xl text-muted">Search websites of any kind, mobile apps, ecommerce, AI automation, UI/UX, posters, banners, product design, ads, video editing, posting, cart/chat/calling/reels/pages, customized builds, final-year kits and assignment writing.</p>
       </Section>

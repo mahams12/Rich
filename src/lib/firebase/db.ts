@@ -12,8 +12,6 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { sortProjectsNewestFirst } from "@/data/projects";
-import { sortPostsNewestFirst } from "@/data/posts";
 import type {
   BlogPost,
   ContactRequest,
@@ -23,40 +21,8 @@ import type {
   Project,
   Review,
 } from "@/types";
+import { splitCatalogDocs } from "@/lib/catalog";
 import { getFirebaseDb } from "./client";
-
-function isBlogRemoteDoc(data: Record<string, unknown>, id: string) {
-  return (
-    data._kind === "blog" ||
-    id.startsWith("blog_") ||
-    // Older blog documents may predate the _kind marker and blog_ ID prefix.
-    // A full article body + excerpt + slug distinguishes them from projects.
-    (typeof data.content === "string" &&
-      typeof data.excerpt === "string" &&
-      typeof data.slug === "string")
-  );
-}
-
-function mergeProjects(remote: Project[]) {
-  return sortProjectsNewestFirst(
-    remote.filter((item) =>
-      !item.deleted &&
-      !isBlogRemoteDoc(item as unknown as Record<string, unknown>, item.id),
-    ),
-  );
-}
-
-function mergePosts(remote: BlogPost[]) {
-  return sortPostsNewestFirst(remote.filter((item) => !item.deleted));
-}
-
-function mapBlogDoc(id: string, data: Record<string, unknown>): BlogPost {
-  const rawId = typeof data.id === "string" ? data.id : id.replace(/^blog_/, "");
-  return {
-    ...(data as unknown as BlogPost),
-    id: rawId,
-  };
-}
 
 function sortByDate<T extends { createdAt?: string }>(items: T[]) {
   return [...items].sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")));
@@ -85,17 +51,12 @@ export function subscribeCatalog(onData: (projects: Project[], posts: BlogPost[]
   if (!db) return () => undefined;
   return onSnapshot(collection(db, "projects"), { includeMetadataChanges: true }, (snap) => {
     if (snap.metadata.fromCache) return;
-    const remoteProjects: Project[] = [];
-    const remotePosts: BlogPost[] = [];
-    for (const item of snap.docs) {
-      const data = item.data() as Record<string, unknown>;
-      if (isBlogRemoteDoc(data, item.id)) {
-        remotePosts.push(mapBlogDoc(item.id, data));
-      } else {
-        remoteProjects.push({ ...(data as unknown as Project), id: item.id });
-      }
-    }
-    onData(mergeProjects(remoteProjects), mergePosts(remotePosts));
+    const docs = snap.docs.map((item) => ({
+      id: item.id,
+      data: item.data() as Record<string, unknown>,
+    }));
+    const { projects, posts } = splitCatalogDocs(docs);
+    onData(projects, posts);
   });
 }
 

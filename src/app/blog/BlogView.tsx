@@ -1,7 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useApp } from "@/components/providers/AppProvider";
 import { Button, Section } from "@/components/ui/Button";
 import { getBlogPostsWithFallback } from "@/data/posts";
@@ -27,34 +28,48 @@ const fallbackCovers: Record<string, string> = {
   "business-website-checklist-2026": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=82",
 };
 
-function optimizedBlogCover(source: string, width: number) {
-  if (!source.startsWith("https://images.unsplash.com/")) return source;
-  try {
-    const url = new URL(source);
-    url.searchParams.set("auto", "format");
-    url.searchParams.set("fit", "crop");
-    url.searchParams.set("w", String(width));
-    url.searchParams.set("q", "65");
-    return url.toString();
-  } catch {
-    return source;
+function CoverImage({ post, index }: { post: BlogPost; index: number }) {
+  const [failed, setFailed] = useState(false);
+  const cover = post.cover || fallbackCovers[post.slug] || "/blog-cover-fallback.svg";
+  const className = "absolute inset-0 h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.025]";
+  // data:/blob: sources can't go through the image optimizer.
+  if (!failed && (cover.startsWith("data:") || cover.startsWith("blob:"))) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={cover} alt={`${post.title} article cover`} loading="lazy" className={className} onError={() => setFailed(true)} />
+    );
   }
+  // Local assets (svg fallback) skip the optimizer; broken remotes degrade to it.
+  if (failed || cover.startsWith("/")) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src="/blog-cover-fallback.svg" alt={`${post.title} article cover`} loading="lazy" className={className} />
+    );
+  }
+  return (
+    <Image
+      src={cover}
+      alt={`${post.title} article cover`}
+      fill
+      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+      loading={index < 3 ? "eager" : "lazy"}
+      fetchPriority={index < 2 ? "high" : "auto"}
+      className={className}
+      onError={() => setFailed(true)}
+    />
+  );
 }
 
 function PostCard({ post, index }: { post: BlogPost; index: number }) {
-  const cover = post.cover || fallbackCovers[post.slug] || "/blog-cover-fallback.svg";
   const category = post.tags?.[0] || (post.trending ? "Trending" : "Insights");
-  const isUnsplash = cover.startsWith("https://images.unsplash.com/");
-  const srcSet = isUnsplash ? [480, 640, 800].map((width) => `${optimizedBlogCover(cover, width)} ${width}w`).join(", ") : undefined;
   return (
     <Link href={`/blog/${post.slug}`} onClick={() => rememberBlogNavigation(post.slug)} className="group block overflow-hidden rounded-2xl border border-black/[0.09] bg-[#fffcf8] no-underline transition duration-200 hover:-translate-y-1 hover:shadow-[0_16px_34px_rgba(22,17,14,0.08)]">
       <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#e8e1d7]">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={optimizedBlogCover(cover, 640)} srcSet={srcSet} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" alt={`${post.title} article cover`} loading={index < 3 ? "eager" : "lazy"} fetchPriority={index < 2 ? "high" : "auto"} decoding="async" width="640" height="360" className="absolute inset-0 h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.025]" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = "/blog-cover-fallback.svg"; }} />
+        <CoverImage post={post} index={index} />
       </div>
       <div className="p-5">
         <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#a14b30]">
-          <span className="max-w-[65%] truncate">{category}</span><span className="text-black/25">/</span><span className="font-medium tracking-normal text-[#81776e]">{formatDate(post.publishedAt || post.createdAt)}</span>
+          <span className="max-w-[65%] truncate">{category}</span><span className="text-black/25">/</span><span className="font-medium tracking-normal text-[#6f655d]">{formatDate(post.publishedAt || post.createdAt)}</span>
         </div>
         <h2 className="mt-3 line-clamp-2 text-[17px] font-bold leading-snug tracking-[-0.02em] text-[#211a16] group-hover:text-[#a14b30]">{post.title}</h2>
         <p className="mt-2 line-clamp-2 text-sm leading-6 text-[#756b63]">{post.excerpt}</p>
@@ -64,9 +79,13 @@ function PostCard({ post, index }: { post: BlogPost; index: number }) {
   );
 }
 
-export function BlogView() {
+export function BlogView({ initialPosts }: { initialPosts?: BlogPost[] }) {
   const { posts, catalogReady } = useApp();
-  const published = useMemo(() => getBlogPostsWithFallback(posts), [posts]);
+  // Server-rendered catalog (if provided) shows immediately; the live snapshot
+  // takes over once the client listener delivers fresher data.
+  const effectivePosts = catalogReady || !initialPosts?.length ? posts : initialPosts;
+  const published = useMemo(() => getBlogPostsWithFallback(effectivePosts), [effectivePosts]);
+  const loading = !catalogReady && !initialPosts?.length;
 
   return (
     <Section className="max-w-6xl">
@@ -79,9 +98,9 @@ export function BlogView() {
       <div className="mt-9">
         <div className="mb-4 flex items-end justify-between gap-4 border-b border-black/10 pb-3">
           <h2 className="display text-2xl">Latest articles</h2>
-          {catalogReady && published.length ? <span className="text-xs text-[#81776e]">{published.length} articles</span> : null}
+          {published.length ? <span className="text-xs text-[#6f655d]">{published.length} articles</span> : null}
         </div>
-        {!catalogReady ? (
+        {loading ? (
           <div className="grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3" aria-label="Loading articles">
             {Array.from({ length: 6 }).map((_, index) => (
               <div key={index} className="overflow-hidden rounded-2xl border border-black/[0.09] bg-[#fffcf8] animate-pulse">

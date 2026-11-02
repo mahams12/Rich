@@ -42,6 +42,7 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com", pathname: "/**" },
+      { protocol: "https", hostname: "cdn.pixabay.com", pathname: "/**" },
       { protocol: "https", hostname: "firebasestorage.googleapis.com", pathname: "/**" },
       { protocol: "https", hostname: "*.firebasestorage.app", pathname: "/**" },
     ],
@@ -66,6 +67,12 @@ const nextConfig: NextConfig = {
         headers: [
           // Allows Google auth windows to communicate with the app.
           { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
+          { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), browsing-topics=()" },
+          { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
         ],
       },
     ];

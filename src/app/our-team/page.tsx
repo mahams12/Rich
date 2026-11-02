@@ -71,12 +71,12 @@ function PersonCard({
         )}
         <div className="min-w-0">
           <h2 className="display text-xl leading-tight">{person.name}</h2>
-          <p className="mt-1 text-sm font-medium text-[#c45c3a]">{person.role}</p>
+          <p className="mt-1 text-sm font-medium text-[#a14b30]">{person.role}</p>
         </div>
       </div>
       <p className="mt-5 flex-1 text-sm leading-7 text-[#6d655d]">{person.description}</p>
       <div className="mt-6 flex flex-wrap gap-2">
-        <a href={`mailto:${person.email}`} className="inline-flex items-center rounded-full border border-black/10 px-4 py-2 text-xs font-semibold transition hover:border-[#c45c3a] hover:text-[#c45c3a]">
+        <a href={`mailto:${person.email}`} className="inline-flex items-center rounded-full border border-black/10 px-4 py-2 text-xs font-semibold transition hover:border-[#c45c3a] hover:text-[#a14b30]">
           Email {person.name.split(" ")[0]}
         </a>
         {profile ? (
@@ -103,7 +103,7 @@ export default function OurTeamPage() {
       </section>
       <Section>
         <div className="mb-7">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#c45c3a]">Leadership</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#a14b30]">Leadership</p>
           <h2 className="display mt-2 text-3xl">Founders</h2>
           <p className="mt-2 max-w-2xl text-sm text-[#6d655d]">The co-founders guiding the studio’s direction, product thinking and technical delivery.</p>
         </div>
@@ -113,7 +113,7 @@ export default function OurTeamPage() {
       </Section>
       <Section className="pt-0">
         <div className="mb-7">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#c45c3a]">Our people</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#a14b30]">Our people</p>
           <h2 className="display mt-2 text-3xl">Meet the team</h2>
           <p className="mt-2 max-w-2xl text-sm text-[#6d655d]">The specialists supporting client growth and building dependable digital products.</p>
         </div>

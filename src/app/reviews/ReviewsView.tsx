@@ -10,7 +10,7 @@ function Stars({ rating }: { rating: number }) {
   return (
     <div className="mb-3 flex">
       {Array.from({ length: 5 }).map((_, i) => (
-        <Icon key={i} name="star" className={`h-4 w-4 ${i < rating ? "text-[#c45c3a]" : "text-black/15"}`} />
+        <Icon key={i} name="star" className={`h-4 w-4 ${i < rating ? "text-[#a14b30]" : "text-black/15"}`} />
       ))}
     </div>
   );

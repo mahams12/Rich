@@ -18,7 +18,7 @@ const sections: LegalSection[] = [
         <p>
           NovexaHub (“NovexaHub”, “we”, “us” or “our”) is a digital studio offering website development, software
           development, UI/UX, branding, digital products and related services through{" "}
-          <a href={site.url} className="text-[#c45c3a] underline underline-offset-2">
+          <a href={site.url} className="text-[#a14b30] underline underline-offset-2">
             {site.url}
           </a>{" "}
           and associated channels.

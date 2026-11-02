@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { posts } from "@/data/posts";
 import { site } from "@/data/site";
+import { fetchCatalogServer } from "@/lib/firebase/rest";
 import { BlogPostView } from "./BlogPostView";
 
 export function generateStaticParams() {
@@ -28,6 +29,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const post = posts.find((item) => item.slug === slug);
@@ -52,10 +55,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       }
     : null;
 
+  const catalog = await fetchCatalogServer();
   return (
     <>
       {jsonLd ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} /> : null}
-      <BlogPostView />
+      <BlogPostView initialPosts={catalog?.posts} />
     </>
   );
 }

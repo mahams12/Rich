@@ -65,7 +65,7 @@ export function NotificationBell() {
             {unreadCount ? (
               <button
                 type="button"
-                className="text-xs text-[#c45c3a]"
+                className="text-xs text-[#a14b30]"
                 onClick={() => {
                   markAllNoticesRead();
                   setOpen(false);
@@ -88,7 +88,7 @@ export function NotificationBell() {
                       router.push(item.href || "/notifications");
                     }}
                   >
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#c45c3a]">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#a14b30]">
                       {kindLabel[item.kind]} · {formatWhen(item.createdAt)}
                     </p>
                     <p className="mt-1 text-sm font-semibold text-[#16110e]">{item.title}</p>

@@ -91,7 +91,7 @@ export function AdminLoginView() {
         <Field label="Password">
           <input name="password" type="password" required className={inputClass} minLength={6} autoComplete="current-password" />
         </Field>
-        {error ? <p className="text-sm text-[#c45c3a]">{error}</p> : null}
+        {error ? <p className="text-sm text-[#a14b30]">{error}</p> : null}
         <Button type="submit" className="w-full" disabled={busy}>
           {busy ? "Please wait…" : "Sign in"}
         </Button>

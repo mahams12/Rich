@@ -90,7 +90,7 @@ export function AdminProjectsView() {
                   <td className="px-4 py-3 capitalize">{project.deleted ? "deleted" : project.status}</td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-2">
-                      <Link href={`/admin/projects/${project.id}`} className="font-semibold text-[#c45c3a]">Edit</Link>
+                      <Link href={`/admin/projects/${project.id}`} className="font-semibold text-[#a14b30]">Edit</Link>
                       <Link href={`/projects/${project.slug}`} className="text-muted">View</Link>
                       <button type="button" className="text-muted" onClick={() => setProjectStatus(project.id, project.status === "published" ? "draft" : "published")}>
                         {project.status === "published" ? "Unpublish" : "Publish"}

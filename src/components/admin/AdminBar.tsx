@@ -26,7 +26,7 @@ export function AdminBar() {
   return (
     <div className="border-b border-[#c45c3a]/20 bg-[#16110e] text-white">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2 px-4 py-2 sm:px-6 lg:px-8">
-        <span className="mr-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#c45c3a]">Studio admin</span>
+        <span className="mr-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#a14b30]">Studio admin</span>
         {links.map(([href, label]) => (
           <Link
             key={href}

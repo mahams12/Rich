@@ -1,13 +1,15 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { recordBlogVisit, rememberBlogNavigation } from "@/lib/blogAnalytics";
 import { useApp } from "@/components/providers/AppProvider";
 import { Badge, Button, Section } from "@/components/ui/Button";
 import { getBlogPostsWithFallback } from "@/data/posts";
 import { isStudioAdmin } from "@/lib/admin";
+import type { BlogPost } from "@/types";
 
 function formatDate(value?: string) {
   if (!value) return "";
@@ -23,7 +25,7 @@ function renderInlineLinks(value: string) {
   return value.split(/(\[[^\]]+\]\(https?:\/\/[^)\s]+\)|\*\*[^*]+\*\*)/g).map((part, index) => {
     const link = part.match(/^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/);
     if (link) {
-      return <a key={index} href={link[2]} target="_blank" rel="noreferrer" className="font-semibold text-[#c45c3a] underline decoration-[#c45c3a]/40 underline-offset-4 hover:decoration-current">{link[1]}</a>;
+      return <a key={index} href={link[2]} target="_blank" rel="noreferrer" className="font-semibold text-[#a14b30] underline decoration-[#c45c3a]/40 underline-offset-4 hover:decoration-current">{link[1]}</a>;
     }
     if (part.startsWith("**") && part.endsWith("**")) {
       return <strong key={index} className="font-semibold text-ink">{part.slice(2, -2)}</strong>;
@@ -32,10 +34,22 @@ function renderInlineLinks(value: string) {
   });
 }
 
-export function BlogPostView() {
+function PostCover({ src, alt, className, sizes }: { src: string; alt: string; className: string; sizes: string }) {
+  const [failed, setFailed] = useState(false);
+  if (failed || src.startsWith("/") || src.startsWith("data:") || src.startsWith("blob:")) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={failed ? "/blog-cover-fallback.svg" : src} alt={alt} loading="lazy" className={className} onError={() => setFailed(true)} />
+    );
+  }
+  return <Image src={src} alt={alt} fill sizes={sizes} className={className} onError={() => setFailed(true)} />;
+}
+
+export function BlogPostView({ initialPosts }: { initialPosts?: BlogPost[] }) {
   const { slug } = useParams<{ slug: string }>();
-  const { posts, user } = useApp();
-  const availablePosts = useMemo(() => getBlogPostsWithFallback(posts), [posts]);
+  const { posts, user, catalogReady } = useApp();
+  const effectivePosts = catalogReady || !initialPosts?.length ? posts : initialPosts;
+  const availablePosts = useMemo(() => getBlogPostsWithFallback(effectivePosts), [effectivePosts]);
   const post = useMemo(
     () => availablePosts.find((item) => item.slug === slug && !item.deleted),
     [availablePosts, slug],
@@ -46,7 +60,7 @@ export function BlogPostView() {
   const related = useMemo(() => {
     if (!post) return [];
     const currentTags = new Set((post.tags || []).map((tag) => tag.toLowerCase()));
-    return getBlogPostsWithFallback(posts)
+    return getBlogPostsWithFallback(effectivePosts)
       .filter((item) => item.id !== post.id && item.status === "published" && !item.deleted)
       .map((item) => ({
         item,
@@ -55,7 +69,7 @@ export function BlogPostView() {
       .sort((a, b) => b.score - a.score)
       .slice(0, 3)
       .map(({ item }) => item);
-  }, [post, posts]);
+  }, [post, effectivePosts]);
 
   if (!post || (post.status !== "published" && !isStudioAdmin(user))) {
     return (
@@ -88,7 +102,7 @@ export function BlogPostView() {
           </Button>
         </div>
       ) : null}
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#c45c3a]">
+      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#a14b30]">
         {post.trending ? "Trending" : "Blog"} · {formatDate(post.publishedAt || post.createdAt)}
       </p>
       <h1 className="display mt-3 text-4xl leading-tight sm:text-5xl">{post.title}</h1>
@@ -97,13 +111,7 @@ export function BlogPostView() {
 
       {post.cover ? (
         <div className="relative mx-auto mt-7 aspect-[16/9] w-full max-w-3xl overflow-hidden rounded-xl border border-black/10 bg-[#e8e1d7]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={post.cover}
-            alt={post.title}
-            className="absolute inset-0 h-full w-full object-cover object-center"
-            onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = "/blog-cover-fallback.svg"; }}
-          />
+          <PostCover src={post.cover} alt={post.title} sizes="(max-width: 896px) 100vw, 896px" className="absolute inset-0 h-full w-full object-cover object-center" />
         </div>
       ) : null}
 
@@ -139,8 +147,7 @@ export function BlogPostView() {
         <div className="mx-auto mt-8 grid max-w-3xl gap-3 sm:grid-cols-3">
           {post.gallery.slice(1).map((src) => (
             <div key={src} className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-black/10 bg-[#e8e1d7]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={src} alt="" className="absolute inset-0 h-full w-full object-cover object-center" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = "/blog-cover-fallback.svg"; }} />
+              <PostCover src={src} alt="" sizes="(max-width: 640px) 100vw, 280px" className="absolute inset-0 h-full w-full object-cover object-center" />
             </div>
           ))}
         </div>
@@ -166,14 +173,13 @@ export function BlogPostView() {
         <section className="mx-auto mt-12 max-w-5xl">
           <div className="mb-5 flex items-end justify-between gap-4 border-b border-black/10 pb-3">
             <h2 className="display text-2xl">Related reading</h2>
-            <Link href="/blog" className="text-sm font-semibold text-[#c45c3a] hover:underline">All articles</Link>
+            <Link href="/blog" className="text-sm font-semibold text-[#a14b30] hover:underline">All articles</Link>
           </div>
           <div className="grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((item) => (
               <Link key={item.id} href={`/blog/${item.slug}`} onClick={() => rememberBlogNavigation(item.slug)} className="group block overflow-hidden rounded-2xl border border-black/[0.09] bg-[#fffcf8] no-underline transition hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(22,17,14,0.08)]">
                 <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#e8e1d7]">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={item.cover || "/blog-cover-fallback.svg"} alt={`${item.title} article cover`} loading="lazy" className="absolute inset-0 h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.025]" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = "/blog-cover-fallback.svg"; }} />
+                  <PostCover src={item.cover || "/blog-cover-fallback.svg"} alt={`${item.title} article cover`} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="absolute inset-0 h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.025]" />
                 </div>
                 <div className="p-4">
                   <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#a14b30]">{item.tags?.[0] || "Insights"}</p>

@@ -29,13 +29,13 @@ export function LegalContact() {
       <p className="font-semibold text-[#16110e]">{site.name}</p>
       <p className="mt-2">
         Website:{" "}
-        <Link href="/" className="text-[#c45c3a] underline underline-offset-2">
+        <Link href="/" className="text-[#a14b30] underline underline-offset-2">
           {site.url}
         </Link>
       </p>
       <p>
         Email:{" "}
-        <a href={`mailto:${site.email}`} className="text-[#c45c3a] underline underline-offset-2">
+        <a href={`mailto:${site.email}`} className="text-[#a14b30] underline underline-offset-2">
           {site.email}
         </a>
       </p>
@@ -45,7 +45,7 @@ export function LegalContact() {
           href={whatsappUrl()}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-[#c45c3a] underline underline-offset-2"
+          className="text-[#a14b30] underline underline-offset-2"
         >
           {site.whatsappDisplay}
         </a>
@@ -85,7 +85,7 @@ export function LegalPage({
               <a
                 key={section.id}
                 href={`#${section.id}`}
-                className="rounded-full border border-black/10 bg-card px-3 py-1.5 text-xs font-semibold hover:border-[#c45c3a]/40 lg:rounded-lg lg:border-0 lg:bg-transparent lg:px-2 lg:py-1 lg:text-sm lg:font-normal lg:text-[#6d655d] lg:hover:text-[#c45c3a]"
+                className="rounded-full border border-black/10 bg-card px-3 py-1.5 text-xs font-semibold hover:border-[#c45c3a]/40 lg:rounded-lg lg:border-0 lg:bg-transparent lg:px-2 lg:py-1 lg:text-sm lg:font-normal lg:text-[#6d655d] lg:hover:text-[#a14b30]"
               >
                 {section.title}
               </a>

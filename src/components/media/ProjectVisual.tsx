@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Image from "next/image";
+import { useState } from "react";
 import { cn } from "@/lib/cn";
 import type { VisualKind, VisualMood } from "@/types";
 
@@ -37,62 +38,52 @@ export function ProjectVisual({
   /** Prioritize images in the initial viewport. */
   priority?: boolean;
 }) {
-  const [src, setSrc] = useState(cover);
-  const [failed, setFailed] = useState(false);
-  const optimizedSrc = (() => {
-    if (!src || !src.startsWith("https://images.unsplash.com/")) return src;
-    try {
-      const url = new URL(src);
-      url.searchParams.set("w", "640");
-      url.searchParams.set("q", "65");
-      url.searchParams.set("auto", "format");
-      url.searchParams.set("fit", "crop");
-      return url.toString();
-    } catch {
-      return src;
-    }
-  })();
-  const optimizedSrcSet = (() => {
-    if (!src || !src.startsWith("https://images.unsplash.com/")) return undefined;
-    try {
-      return [480, 640, 800].map((width) => {
-        const url = new URL(src);
-        url.searchParams.set("w", String(width));
-        url.searchParams.set("q", "65");
-        url.searchParams.set("auto", "format");
-        url.searchParams.set("fit", "crop");
-        return `${url.toString()} ${width}w`;
-      }).join(", ");
-    } catch {
-      return undefined;
-    }
-  })();
+  const [brokenSrcs, setBrokenSrcs] = useState<ReadonlySet<string>>(() => new Set());
+  const markBroken = (url: string) =>
+    setBrokenSrcs((prev) => new Set(prev).add(url));
 
-  useEffect(() => {
-    setSrc(cover);
-    setFailed(false);
-  }, [cover]);
+  // Try the cover first; if it fails, fall back to the stock cover; if that
+  // also fails, render the gradient mock below.
+  const src = cover
+    ? brokenSrcs.has(cover)
+      ? brokenSrcs.has(FALLBACK_COVER)
+        ? null
+        : FALLBACK_COVER
+      : cover
+    : null;
 
-  if (cover && src && !failed) {
+  if (cover && src) {
     const imgFit = fit === "contain" ? "object-contain" : "object-cover object-top";
+    // data:/blob: sources can't go through the image optimizer.
+    if (src.startsWith("data:") || src.startsWith("blob:")) {
+      return (
+        <div className={cn("relative overflow-hidden bg-[#2a2420]", className)}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            key={src}
+            src={src}
+            alt={title}
+            className={cn("h-full w-full", imgFit)}
+            onError={() => markBroken(src)}
+          />
+          {fit === "cover" ? (
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+          ) : null}
+        </div>
+      );
+    }
     return (
       <div className={cn("relative overflow-hidden bg-[#2a2420]", className)}>
-        <img
+        <Image
           key={src}
-          src={optimizedSrc}
-          srcSet={optimizedSrcSet}
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          width="800"
-          height="500"
+          src={src}
           alt={title}
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           loading={priority ? "eager" : "lazy"}
           fetchPriority={priority ? "high" : "auto"}
-          decoding="async"
           className={cn("h-full w-full", imgFit)}
-          onError={() => {
-            if (src !== FALLBACK_COVER) setSrc(FALLBACK_COVER);
-            else setFailed(true);
-          }}
+          onError={() => markBroken(src)}
         />
         {fit === "cover" ? (
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />

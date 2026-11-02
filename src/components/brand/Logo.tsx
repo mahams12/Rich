@@ -24,7 +24,7 @@ export function Logo({ className, light = false, compact = false }: { className?
           light ? "text-white" : "text-ink",
         )}
       >
-        novexa<span className={light ? "text-white/70" : "text-[#c45c3a]"}>hub</span>
+        novexa<span className={light ? "text-white/70" : "text-[#a14b30]"}>hub</span>
       </span>
     </span>
   );

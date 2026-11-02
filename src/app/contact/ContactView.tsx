@@ -83,7 +83,7 @@ export function ContactView() {
           <Button type="submit" disabled={submitting}>
             {submitting ? "Sending…" : "Send request"}
           </Button>
-          {sent ? <p className="text-sm text-[#c45c3a]">Request sent. We will reply on WhatsApp or email.</p> : null}
+          {sent ? <p className="text-sm text-[#a14b30]">Request sent. We will reply on WhatsApp or email.</p> : null}
         </form>
         <aside className="space-y-4 rounded-[2rem] border border-black/10 p-6">
           <p className="font-semibold">Direct lines</p>
@@ -92,7 +92,7 @@ export function ContactView() {
             onClick={() => openMailClient(`Project enquiry — ${site.name}`)}
             className="flex w-full items-center gap-3 rounded-2xl border border-black/10 bg-white px-4 py-3 text-left text-sm font-semibold text-[#16110e] transition hover:border-[#c45c3a]/40"
           >
-            <Icon name="mail" className="h-4 w-4 shrink-0 text-[#c45c3a]" />
+            <Icon name="mail" className="h-4 w-4 shrink-0 text-[#a14b30]" />
             <span>{site.email}</span>
           </button>
           <a
@@ -105,7 +105,7 @@ export function ContactView() {
             <span>WhatsApp {site.whatsappDisplay}</span>
           </a>
           <div className="flex items-start gap-3 rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-[#16110e]">
-            <Icon name="pin" className="mt-0.5 h-4 w-4 shrink-0 text-[#c45c3a]" />
+            <Icon name="pin" className="mt-0.5 h-4 w-4 shrink-0 text-[#a14b30]" />
             <span>{site.address}</span>
           </div>
           <p className="text-xs leading-5 text-muted">Tap email to open Gmail compose to the studio, or WhatsApp to message directly.</p>

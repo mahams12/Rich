@@ -38,7 +38,7 @@ export function AdminVerifyPrompt() {
         We sent a confirmation link to your admin email. Open it and tap Yes, then return here.
       </p>
       <div className="glass mt-8 space-y-3 rounded-[2rem] p-6">
-        {message ? <p className="text-sm text-[#c45c3a]">{message}</p> : null}
+        {message ? <p className="text-sm text-[#a14b30]">{message}</p> : null}
         {firebaseReady ? (
           <>
             <Button type="button" className="w-full" disabled={busy} onClick={checkVerified}>

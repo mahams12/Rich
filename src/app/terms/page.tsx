@@ -18,7 +18,7 @@ const sections: LegalSection[] = [
       <>
         <p>
           These Terms &amp; Conditions (“Terms”) govern your use of{" "}
-          <a href={site.url} className="text-[#c45c3a] underline underline-offset-2">
+          <a href={site.url} className="text-[#a14b30] underline underline-offset-2">
             {site.url}
           </a>{" "}
           and any digital products or services you order from NovexaHub (“NovexaHub”, “we”, “us”, “our”). By browsing
@@ -96,7 +96,7 @@ const sections: LegalSection[] = [
         />
         <p>
           For cancellations and refunds, see our{" "}
-          <Link href="/refund-policy" className="text-[#c45c3a] underline underline-offset-2">
+          <Link href="/refund-policy" className="text-[#a14b30] underline underline-offset-2">
             Refund Policy
           </Link>
           .
@@ -146,7 +146,7 @@ const sections: LegalSection[] = [
         Deliveries are digital: preview links, deployed builds, source files, design exports, documentation or access
         credentials, as listed in your scope. Delivery windows start from the date we receive your first payment{" "}
         <em>and</em> the inputs we need from you. Full details are in our{" "}
-        <Link href="/delivery-policy" className="text-[#c45c3a] underline underline-offset-2">
+        <Link href="/delivery-policy" className="text-[#a14b30] underline underline-offset-2">
           Service Delivery Policy
         </Link>
         .

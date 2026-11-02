@@ -38,7 +38,7 @@ export function ProjectCard({ project, featuredNote }: { project: Project; featu
         <div className="space-y-3 p-4">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.16em] text-[#c45c3a]">{project.subcategory}</p>
+              <p className="text-[11px] uppercase tracking-[0.16em] text-[#a14b30]">{project.subcategory}</p>
               <Link href={`/projects/${project.slug}`} className="display mt-1 block text-lg leading-tight tracking-tight">
                 {project.title}
               </Link>
@@ -50,7 +50,7 @@ export function ProjectCard({ project, featuredNote }: { project: Project; featu
                 const ok = toggleFavourite(project.id);
                 if (!ok && !user) router.push(`/login?next=/projects/${project.slug}`);
               }}
-              className={cn("grid h-10 w-10 place-items-center rounded-full border border-black/10", loved && "text-[#c45c3a]")}
+              className={cn("grid h-10 w-10 place-items-center rounded-full border border-black/10", loved && "text-[#a14b30]")}
             >
               <Icon name={loved ? "heart-fill" : "heart"} />
             </button>
@@ -58,7 +58,7 @@ export function ProjectCard({ project, featuredNote }: { project: Project; featu
           <p className="line-clamp-2 text-sm text-[#6d655d]">{project.tagline}</p>
           <div className="flex items-center justify-between text-xs text-[#6d655d]">
             <span className="inline-flex items-center gap-1"><Icon name="clock" className="h-3.5 w-3.5" /> {project.deliveryDays} days typical</span>
-            <span className="inline-flex items-center gap-1"><Icon name="star" className="h-3.5 w-3.5 text-[#c45c3a]" /> {project.rating}</span>
+            <span className="inline-flex items-center gap-1"><Icon name="star" className="h-3.5 w-3.5 text-[#a14b30]" /> {project.rating}</span>
           </div>
           {featuredNote ? <p className="text-[11px] uppercase tracking-[0.14em] text-[#6d655d]">WhatsApp or email to enquire</p> : null}
         </div>

@@ -31,7 +31,7 @@ export default function AboutPage() {
       <div className="mt-8 grid gap-3 md:grid-cols-5">
         {processSteps.map((step) => (
           <div key={step.n} className="rounded-3xl border border-black/10 p-4">
-            <p className="text-[#c45c3a]">{step.n}</p>
+            <p className="text-[#a14b30]">{step.n}</p>
             <p className="mt-1 font-semibold">{step.title}</p>
           </div>
         ))}

@@ -30,7 +30,7 @@ export function HomeView() {
           <div className="marquee flex min-w-max gap-10 text-sm text-[#4a433c]">
             {[...serviceTicker, ...serviceTicker].map((item, i) => (
               <span key={`${item}-${i}`} className="inline-flex items-center gap-2">
-                <Icon name="check" className="h-4 w-4 text-[#c45c3a]" />
+                <Icon name="check" className="h-4 w-4 text-[#a14b30]" />
                 {item}
               </span>
             ))}
@@ -43,12 +43,12 @@ export function HomeView() {
       <ProjectFan />
 
       <Section>
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#c45c3a]">How it works</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#a14b30]">How it works</p>
         <h2 className="display mt-2 text-3xl tracking-tight">Talk first. Build next.</h2>
         <div className="mt-8 grid gap-3 md:grid-cols-5">
           {processSteps.map((step) => (
             <div key={step.n} className="rounded-3xl border border-black/10 bg-card p-5">
-              <p className="display text-2xl text-[#c45c3a]">{step.n}</p>
+              <p className="display text-2xl text-[#a14b30]">{step.n}</p>
               <p className="mt-2 font-semibold">{step.title}</p>
               <p className="mt-2 text-sm text-[#6d655d]">{step.text}</p>
             </div>
@@ -59,7 +59,7 @@ export function HomeView() {
       <Section>
         <div className="mb-8 flex items-end justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#c45c3a]">Reviews</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#a14b30]">Reviews</p>
             <h2 className="display mt-2 text-3xl tracking-tight">What clients say</h2>
           </div>
           <Button href="/reviews" variant="ghost">All reviews</Button>
@@ -69,7 +69,7 @@ export function HomeView() {
             <blockquote key={item.id} className="rounded-3xl border border-black/10 bg-card p-6">
               <div className="mb-3 flex">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <Icon key={i} name="star" className={`h-4 w-4 ${i < item.rating ? "text-[#c45c3a]" : "text-black/15"}`} />
+                  <Icon key={i} name="star" className={`h-4 w-4 ${i < item.rating ? "text-[#a14b30]" : "text-black/15"}`} />
                 ))}
               </div>
               <p>“{item.quote}”</p>
@@ -105,7 +105,7 @@ export function HomeView() {
             >
               <div className="flex items-center justify-between gap-4">
                 <p className="font-semibold">{item.q}</p>
-                <span className="text-[#c45c3a]">{openFaq === i ? "–" : "+"}</span>
+                <span className="text-[#a14b30]">{openFaq === i ? "–" : "+"}</span>
               </div>
               {openFaq === i ? <p className="mt-2 text-sm text-[#6d655d]">{item.a}</p> : null}
             </button>

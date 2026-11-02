@@ -103,7 +103,7 @@ export function AdminBlogView() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-2">
-                      <Link href={`/admin/blog/${post.id}`} className="font-semibold text-[#c45c3a]">
+                      <Link href={`/admin/blog/${post.id}`} className="font-semibold text-[#a14b30]">
                         Edit
                       </Link>
                       <Link href={`/blog/${post.slug}`} className="text-muted">

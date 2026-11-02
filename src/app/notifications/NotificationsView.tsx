@@ -24,7 +24,7 @@ export function NotificationsView() {
       <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
         <h1 className="display text-4xl">Notifications</h1>
         {unreadCount ? (
-          <button type="button" className="text-sm text-[#c45c3a]" onClick={markAllNoticesRead}>
+          <button type="button" className="text-sm text-[#a14b30]" onClick={markAllNoticesRead}>
             Mark all read
           </button>
         ) : null}
@@ -33,7 +33,7 @@ export function NotificationsView() {
       <div className="mt-8 space-y-3">
         {unreadNotices.length ? unreadNotices.map((item) => (
           <article key={item.id} className="rounded-2xl border border-black/10 bg-card p-5">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#c45c3a]">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#a14b30]">
               {item.kind} · {formatWhen(item.createdAt)}
             </p>
             <h2 className="mt-1 text-lg font-semibold">{item.title}</h2>

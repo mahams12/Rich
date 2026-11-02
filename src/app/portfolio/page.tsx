@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { site } from "@/data/site";
+import { fetchCatalogServer } from "@/lib/firebase/rest";
 import { PortfolioView } from "./PortfolioView";
 
 export const metadata: Metadata = {
@@ -9,6 +10,9 @@ export const metadata: Metadata = {
   alternates: { canonical: `${site.url}/portfolio` },
 };
 
-export default function PortfolioPage() {
-  return <PortfolioView />;
+export const dynamic = "force-dynamic";
+
+export default async function PortfolioPage() {
+  const catalog = await fetchCatalogServer();
+  return <PortfolioView initialProjects={catalog?.projects} />;
 }

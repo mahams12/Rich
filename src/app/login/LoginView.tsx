@@ -140,7 +140,7 @@ export function LoginView({ mode }: { mode: "login" | "register" }) {
           <Field label="Password">
             <input name="password" type="password" required className={inputClass} minLength={6} />
           </Field>
-          {error ? <p className="text-sm text-[#c45c3a]">{error}</p> : null}
+          {error ? <p className="text-sm text-[#a14b30]">{error}</p> : null}
           <Button type="submit" className="w-full" disabled={busy}>
             {busy ? "Please wait…" : mode === "login" ? "Sign in" : "Create account"}
           </Button>
@@ -173,9 +173,9 @@ export function LoginView({ mode }: { mode: "login" | "register" }) {
       </div>
       <p className="mt-4 text-sm text-muted">
         {mode === "login" ? (
-          <>Need an account? <Link href="/register" className="text-[#c45c3a]">Register</Link></>
+          <>Need an account? <Link href="/register" className="text-[#a14b30]">Register</Link></>
         ) : (
-          <>Already registered? <Link href="/login" className="text-[#c45c3a]">Login</Link></>
+          <>Already registered? <Link href="/login" className="text-[#a14b30]">Login</Link></>
         )}
       </p>
     </Section>

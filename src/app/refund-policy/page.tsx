@@ -157,11 +157,11 @@ const sections: LegalSection[] = [
     body: (
       <p>
         This policy works together with our{" "}
-        <Link href="/terms" className="text-[#c45c3a] underline underline-offset-2">
+        <Link href="/terms" className="text-[#a14b30] underline underline-offset-2">
           Terms &amp; Conditions
         </Link>{" "}
         and{" "}
-        <Link href="/delivery-policy" className="text-[#c45c3a] underline underline-offset-2">
+        <Link href="/delivery-policy" className="text-[#a14b30] underline underline-offset-2">
           Service Delivery Policy
         </Link>
         , which explain how digital orders are scoped, delivered and accepted.

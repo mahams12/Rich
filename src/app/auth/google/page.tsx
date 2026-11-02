@@ -19,7 +19,7 @@ function GoogleRedirect() {
     <Section className="max-w-lg">
       <h1 className="display text-3xl">Google sign-in</h1>
       <p className="mt-4 text-sm text-muted">Taking you to login…</p>
-      <Link href="/login" className="mt-6 inline-block text-sm text-[#c45c3a] underline-offset-4 hover:underline">
+      <Link href="/login" className="mt-6 inline-block text-sm text-[#a14b30] underline-offset-4 hover:underline">
         Back to login
       </Link>
     </Section>

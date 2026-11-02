@@ -68,7 +68,7 @@ export function AdminNoticesView() {
         <div className="mt-4 space-y-3">
           {notices.length ? notices.map((item) => (
             <article key={item.id} className="rounded-2xl border border-black/10 bg-white p-4">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#c45c3a]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#a14b30]">
                 {item.kind} · {formatWhen(item.createdAt)}
               </p>
               <p className="mt-1 font-semibold">{item.title}</p>

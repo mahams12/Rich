@@ -125,11 +125,11 @@ const sections: LegalSection[] = [
     body: (
       <p>
         This policy works together with our{" "}
-        <Link href="/terms" className="text-[#c45c3a] underline underline-offset-2">
+        <Link href="/terms" className="text-[#a14b30] underline underline-offset-2">
           Terms &amp; Conditions
         </Link>{" "}
         and{" "}
-        <Link href="/refund-policy" className="text-[#c45c3a] underline underline-offset-2">
+        <Link href="/refund-policy" className="text-[#a14b30] underline underline-offset-2">
           Refund &amp; Cancellation Policy
         </Link>
         .

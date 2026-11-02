@@ -15,19 +15,21 @@ import { reviews as catalogReviews } from "@/data/content";
 import { relatedProjects } from "@/data/projects";
 import { countWords } from "@/lib/format";
 import { projectGalleryImages } from "@/lib/cover";
+import type { Project } from "@/types";
 
-export function ProjectDetailView() {
+export function ProjectDetailView({ initialProjects }: { initialProjects?: Project[] }) {
   const { slug } = useParams<{ slug: string }>();
   const router = useRouter();
-  const { projects, toggleFavourite, isFavourite, user, reviews: liveReviews, addReview, deleteProject } = useApp();
-  const project = projects.find((item) => item.slug === slug);
+  const { projects, catalogReady, toggleFavourite, isFavourite, user, reviews: liveReviews, addReview, deleteProject } = useApp();
+  const effectiveProjects = catalogReady || !initialProjects?.length ? projects : initialProjects;
+  const project = effectiveProjects.find((item) => item.slug === slug);
   const [tab, setTab] = useState<"overview" | "features" | "customize">("overview");
   const [words, setWords] = useState("");
   const [gallery, setGallery] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [reviewRating, setReviewRating] = useState(5);
 
-  const related = useMemo(() => (project ? relatedProjects(project.slug, projects) : []), [project, projects]);
+  const related = useMemo(() => (project ? relatedProjects(project.slug, effectiveProjects) : []), [project, effectiveProjects]);
   const projectReviews = useMemo(() => {
     const live = liveReviews.filter((item) => item.projectSlug === project?.slug);
     const catalog = catalogReviews.filter((item) => item.projectSlug === project?.slug);
@@ -57,7 +59,7 @@ export function ProjectDetailView() {
     <Section>
       {isStudioAdmin(user) ? (
         <div className="mb-6 flex flex-wrap items-center gap-3 rounded-2xl border border-[#c45c3a]/30 bg-[#c45c3a]/5 px-4 py-3">
-          <p className="text-sm font-semibold text-[#c45c3a]">Admin controls</p>
+          <p className="text-sm font-semibold text-[#a14b30]">Admin controls</p>
           <Button href={`/admin/projects/${project.id}`} variant="ghost" className="px-3 py-1.5 text-xs">
             Edit listing
           </Button>
@@ -148,7 +150,7 @@ export function ProjectDetailView() {
             {tab === "features" ? (
               <ul className="grid gap-2 sm:grid-cols-2">
                 {project.features.map((feature) => (
-                  <li key={feature} className="flex gap-2 text-[#4a433c]"><Icon name="check" className="mt-0.5 h-4 w-4 text-[#c45c3a]" />{feature}</li>
+                  <li key={feature} className="flex gap-2 text-[#4a433c]"><Icon name="check" className="mt-0.5 h-4 w-4 text-[#a14b30]" />{feature}</li>
                 ))}
               </ul>
             ) : null}
@@ -174,7 +176,7 @@ export function ProjectDetailView() {
           </div>
           <ContactActions title={project.title} extra={extra} stacked />
           <button type="button" className="flex w-full items-center justify-center gap-2 text-sm text-[#6d655d]" onClick={() => { const ok = toggleFavourite(project.id); if (!ok) router.push(`/login?next=/projects/${project.slug}`); }}>
-            <Icon name={loved ? "heart-fill" : "heart"} className={loved ? "text-[#c45c3a]" : ""} /> Save to favourites
+            <Icon name={loved ? "heart-fill" : "heart"} className={loved ? "text-[#a14b30]" : ""} /> Save to favourites
           </button>
         </aside>
       </div>
@@ -186,7 +188,7 @@ export function ProjectDetailView() {
             <blockquote key={item.id} className="rounded-3xl border border-black/10 bg-card p-5">
               <div className="mb-2 flex">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <Icon key={i} name="star" className={`h-3.5 w-3.5 ${i < item.rating ? "text-[#c45c3a]" : "text-black/15"}`} />
+                  <Icon key={i} name="star" className={`h-3.5 w-3.5 ${i < item.rating ? "text-[#a14b30]" : "text-black/15"}`} />
                 ))}
               </div>
               <p className="text-ink/80">“{item.quote}”</p>
@@ -214,7 +216,7 @@ export function ProjectDetailView() {
             >
               <div className="flex gap-1">
                 {[1, 2, 3, 4, 5].map((value) => (
-                  <button key={value} type="button" onClick={() => setReviewRating(value)} className={value <= reviewRating ? "text-[#c45c3a]" : "text-black/20"} aria-label={`${value} stars`}>
+                  <button key={value} type="button" onClick={() => setReviewRating(value)} className={value <= reviewRating ? "text-[#a14b30]" : "text-black/20"} aria-label={`${value} stars`}>
                     <Icon name="star" className="h-5 w-5" />
                   </button>
                 ))}

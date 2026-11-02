@@ -46,14 +46,14 @@ export function DashboardView() {
       </div>
       {notices[0] ? (
         <article className="mt-8 rounded-3xl border border-black/10 bg-card p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#c45c3a]">Latest from the studio</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#a14b30]">Latest from the studio</p>
           <p className="mt-2 font-semibold">{notices[0].title}</p>
           <p className="mt-1 text-sm text-[#6d655d]">{notices[0].body}</p>
           <Link href="/notifications" className="mt-3 inline-block text-sm font-semibold">All notifications</Link>
         </article>
       ) : null}
       {!mine.length ? (
-        <p className="mt-8 rounded-3xl border border-black/10 bg-card p-8">No messages yet. <Link href="/portfolio" className="text-[#c45c3a]">Browse the portfolio</Link>.</p>
+        <p className="mt-8 rounded-3xl border border-black/10 bg-card p-8">No messages yet. <Link href="/portfolio" className="text-[#a14b30]">Browse the portfolio</Link>.</p>
       ) : (
         <div className="mt-8 space-y-4">
           {mine.map((item) => (

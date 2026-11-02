@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { site } from "@/data/site";
+import { fetchCatalogServer } from "@/lib/firebase/rest";
 import { BlogView } from "./BlogView";
 
 export const metadata: Metadata = {
@@ -21,6 +22,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BlogPage() {
-  return <BlogView />;
+export const dynamic = "force-dynamic";
+
+export default async function BlogPage() {
+  const catalog = await fetchCatalogServer();
+  return <BlogView initialPosts={catalog?.posts} />;
 }

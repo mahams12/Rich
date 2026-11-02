@@ -30,7 +30,7 @@ export function FavouritesView() {
           ))}
         </div>
       ) : (
-        <p className="glass mt-8 rounded-3xl p-8">Nothing saved yet. Heart a card in the <Link href="/portfolio" className="text-[#c45c3a]">portfolio</Link>.</p>
+        <p className="glass mt-8 rounded-3xl p-8">Nothing saved yet. Heart a card in the <Link href="/portfolio" className="text-[#a14b30]">portfolio</Link>.</p>
       )}
     </Section>
   );
