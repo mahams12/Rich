@@ -63,6 +63,14 @@ function passthrough(body: ReadableStream | null, contentType: string) {
   });
 }
 
+// In the server context the patched fetch normalizes %2F -> / in request
+// paths. Firebase Storage needs the object name sent with %2F intact, so
+// pre-encode once more; after the runtime's single decode the wire path is
+// correct. Only used as a retry, so plain-Node fetches are unaffected.
+function doubleEncodeSlashes(src: string): string {
+  return src.replace(/%2[fF]/g, "%252F");
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const src = searchParams.get("url");
@@ -72,7 +80,10 @@ export async function GET(request: Request) {
     return new Response("Bad request", { status: 400 });
   }
 
-  const upstream = await fetchUpstream(new URL(src).href, MAX_REDIRECTS);
+  let upstream = await fetchUpstream(new URL(src).href, MAX_REDIRECTS);
+  if (!upstream?.ok) {
+    upstream = await fetchUpstream(doubleEncodeSlashes(new URL(src).href), MAX_REDIRECTS);
+  }
   if (!upstream?.ok || !upstream.body) {
     return new Response(`Upstream error: ${upstream?.status ?? "no-response"}`, { status: 502 });
   }
