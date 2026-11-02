@@ -45,7 +45,10 @@ export async function GET(request: Request) {
     return new Response("Bad request", { status: 400 });
   }
 
-  const proxyPath = `/_next/image?url=${encodeURIComponent(src)}&w=${width}&q=${quality}`;
+  // Double-encode the inner url: the subrequest transport decodes the
+  // query string once, and /_next/image decodes it again — the firebase
+  // fetch must still see %2F-encoded object paths after both layers.
+  const proxyPath = `/_next/image?url=${encodeURIComponent(encodeURIComponent(src))}&w=${width}&q=${quality}`;
   const accept = request.headers.get("accept") ?? "image/avif,image/webp,*/*";
 
   let env: Env = {};
