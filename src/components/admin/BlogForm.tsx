@@ -58,13 +58,15 @@ function GalleryUpload({
 }
 
 export function BlogForm({ existing }: { existing?: BlogPost }) {
-  const { upsertPost, deletePost, toast } = useApp();
+  const { upsertPost, deletePost, toast, posts } = useApp();
   const router = useRouter();
   const [gallery, setGallery] = useState<GallerySlots>(emptyGallery(existing));
   const [uploadingSlot, setUploadingSlot] = useState<0 | 1 | 2 | 3 | null>(null);
   const [saving, setSaving] = useState(false);
   const postId = existing?.id ?? uid("b");
   const uploading = uploadingSlot !== null;
+  const featuredElsewhere = posts.filter((post) => post.featured && post.id !== postId).length;
+  const featuredLocked = featuredElsewhere >= 3;
 
   async function onFile(slot: 0 | 1 | 2 | 3, file?: File) {
     if (!file) return;
@@ -207,7 +209,10 @@ export function BlogForm({ existing }: { existing?: BlogPost }) {
             <textarea name="seoDescription" defaultValue={existing?.seoDescription} className={`${inputClass} min-h-20`} />
           </Field>
           <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" name="featured" defaultChecked={existing?.featured} /> Featured
+            <input type="checkbox" name="featured" defaultChecked={existing?.featured} disabled={featuredLocked} /> Featured
+            {featuredLocked ? (
+              <span className="text-xs text-muted">— limit reached (3). Unfeature or replace one from the blog list.</span>
+            ) : null}
           </label>
           <div className="flex flex-wrap gap-3">
             <Button type="submit" disabled={uploading || saving}>

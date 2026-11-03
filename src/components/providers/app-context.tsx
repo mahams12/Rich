@@ -6,6 +6,7 @@ import { posts as seedPosts } from "@/data/posts";
 import { isFirebaseConfigured } from "@/lib/firebase/config";
 import type {
   BlogPost,
+  BlogSubmission,
   ContactRequest,
   CustomizationRequest,
   Notice,
@@ -58,6 +59,10 @@ export interface AppContextValue {
   addCustomization: (input: Omit<CustomizationRequest, "id" | "createdAt">) => void;
   deleteContact: (id: string) => void;
   deleteCustomization: (id: string) => void;
+  submissions: BlogSubmission[];
+  submitBlogPost: (input: Omit<BlogSubmission, "id" | "createdAt" | "status">) => boolean;
+  approveBlogSubmission: (item: BlogSubmission) => void;
+  deleteBlogSubmission: (id: string) => void;
   addReview: (input: { projectSlug: string; projectType: string; quote: string; rating: number }) => boolean;
   pushNotice: (input: { kind: NoticeKind; title: string; body: string; href?: string }) => void;
   markNoticeRead: (id: string) => void;
@@ -109,6 +114,10 @@ export const stubAppValue: AppContextValue = {
   addCustomization: () => undefined,
   deleteContact: () => undefined,
   deleteCustomization: () => undefined,
+  submissions: [],
+  submitBlogPost: () => false,
+  approveBlogSubmission: () => undefined,
+  deleteBlogSubmission: () => undefined,
   addReview: () => false,
   pushNotice: () => undefined,
   markNoticeRead: () => undefined,

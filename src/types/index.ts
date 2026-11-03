@@ -164,6 +164,20 @@ export interface ContactRequest {
   createdAt: string;
 }
 
+export type BlogSubmissionStatus = "pending" | "approved" | "rejected";
+
+export interface BlogSubmission {
+  id: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  tags: string[];
+  author: string;
+  email: string;
+  status: BlogSubmissionStatus;
+  createdAt: string;
+}
+
 export interface CustomizationRequest {
   id: string;
   projectId: string;

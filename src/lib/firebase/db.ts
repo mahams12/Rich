@@ -14,6 +14,7 @@ import {
 } from "firebase/firestore";
 import type {
   BlogPost,
+  BlogSubmission,
   ContactRequest,
   CustomizationRequest,
   Notice,
@@ -105,6 +106,13 @@ export function subscribeContacts(email: string | null, admin: boolean, onData: 
 export function subscribeCustomizations(email: string | null, admin: boolean, onData: (items: CustomizationRequest[]) => void) {
   return subscribeOwned<CustomizationRequest>("customizations", email, admin, onData, (id, data) => ({
     ...(data as unknown as CustomizationRequest),
+    id,
+  }));
+}
+
+export function subscribeBlogSubmissions(email: string | null, admin: boolean, onData: (items: BlogSubmission[]) => void) {
+  return subscribeOwned<BlogSubmission>("blogSubmissions", email, admin, onData, (id, data) => ({
+    ...(data as unknown as BlogSubmission),
     id,
   }));
 }
@@ -220,6 +228,10 @@ export function saveContact(item: ContactRequest) {
 
 export function saveCustomization(item: CustomizationRequest) {
   return write("customizations", item.id, { ...item });
+}
+
+export function saveBlogSubmission(item: BlogSubmission) {
+  return write("blogSubmissions", item.id, { ...item });
 }
 
 export function saveOrder(item: Order) {

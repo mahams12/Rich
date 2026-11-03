@@ -8,11 +8,26 @@ import { useApp } from "@/components/providers/AppProvider";
 import { Button, Section } from "@/components/ui/Button";
 import { sortPostsNewestFirst } from "@/data/posts";
 import { isStudioAdmin } from "@/lib/admin";
+import type { BlogPost } from "@/types";
 
 export function AdminBlogView() {
-  const { posts, setPostStatus, deletePost, importSeedPosts, firebaseReady, user, ready } = useApp();
+  const { posts, setPostStatus, deletePost, importSeedPosts, firebaseReady, user, ready, upsertPost } = useApp();
   const [syncing, setSyncing] = useState(false);
+  const [pendingFeature, setPendingFeature] = useState<BlogPost | null>(null);
   const sorted = useMemo(() => sortPostsNewestFirst(posts), [posts]);
+  const featuredPosts = useMemo(() => sorted.filter((post) => post.featured), [sorted]);
+
+  function featurePost(post: BlogPost) {
+    if (post.featured) {
+      upsertPost({ ...post, featured: false });
+      return;
+    }
+    if (featuredPosts.length >= 3) {
+      setPendingFeature(post);
+      return;
+    }
+    upsertPost({ ...post, featured: true });
+  }
   const [visits, setVisits] = useState<BlogVisit[]>([]);
   const [analyticsReady, setAnalyticsReady] = useState(false);
   const [analyticsError, setAnalyticsError] = useState("");
@@ -86,6 +101,32 @@ export function AdminBlogView() {
             ))}
           </div>
         </section>
+        {pendingFeature ? (
+          <div className="mb-4 rounded-2xl border border-[#c45c3a]/30 bg-[#c45c3a]/5 p-4">
+            <p className="text-sm font-semibold text-[#a14b30]">
+              “{pendingFeature.title}” — 3 posts are already featured. Choose which one to replace:
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {featuredPosts.map((post) => (
+                <button
+                  key={post.id}
+                  type="button"
+                  className="rounded-full border border-black/15 bg-white px-4 py-2 text-xs font-semibold transition hover:border-[#c45c3a]/50"
+                  onClick={() => {
+                    upsertPost({ ...post, featured: false });
+                    upsertPost({ ...pendingFeature, featured: true });
+                    setPendingFeature(null);
+                  }}
+                >
+                  Replace: {post.title}
+                </button>
+              ))}
+              <button type="button" className="px-3 py-2 text-xs font-semibold text-muted hover:underline" onClick={() => setPendingFeature(null)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : null}
         <div className="overflow-x-auto rounded-[1.5rem] border border-black/10">
           <table className="min-w-full text-left text-sm">
             <thead className="bg-black/[0.03] text-xs uppercase tracking-[0.14em] text-muted">
@@ -130,6 +171,9 @@ export function AdminBlogView() {
                       </button>
                       <button type="button" className="text-muted" onClick={() => setPostStatus(post.id, "archived")}>
                         Archive
+                      </button>
+                      <button type="button" className={post.featured ? "font-semibold text-[#a14b30]" : "text-muted"} onClick={() => featurePost(post)}>
+                        {post.featured ? "Unfeature" : "Feature"}
                       </button>
                       <button
                         type="button"

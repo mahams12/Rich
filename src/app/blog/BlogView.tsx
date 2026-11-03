@@ -164,9 +164,18 @@ export function BlogView({ initialPosts }: { initialPosts?: BlogPost[] }) {
         )}
       </div>
 
-      <div className="mt-10 flex flex-wrap gap-3 border-t border-black/10 pt-7">
-        <Button href="/portfolio">Browse portfolio</Button>
-        <Button href="/contact" variant="ghost">Talk to studio</Button>
+      <div className="mt-10 border-t border-black/10 pt-7">
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-black/10 bg-[#fffcf8] p-5">
+          <div>
+            <p className="font-semibold text-[#211a16]">Write for NovexaHub — earn 50 PKR</p>
+            <p className="mt-1 text-sm text-[#756b63]">Share a practical article. Approved submissions are published under your name.</p>
+          </div>
+          <Button href="/blog/submit">Submit a blog</Button>
+        </div>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Button href="/portfolio">Browse portfolio</Button>
+          <Button href="/contact" variant="ghost">Talk to studio</Button>
+        </div>
       </div>
     </Section>
   );

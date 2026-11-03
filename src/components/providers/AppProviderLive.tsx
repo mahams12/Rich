@@ -39,6 +39,7 @@ import {
   patchOrderStatus,
   patchProjectStatus,
   patchPostStatus,
+  saveBlogSubmission,
   saveContact,
   saveCustomization,
   saveNotice,
@@ -47,6 +48,7 @@ import {
   saveProject,
   saveReview,
   removeDoc,
+  subscribeBlogSubmissions,
   subscribeContacts,
   subscribeCustomizations,
   subscribeNotices,
@@ -60,6 +62,7 @@ import { ADMIN_INVALID_CREDENTIALS, INVALID_CREDENTIALS } from "@/lib/auth/messa
 import { reportAdminLoginFailed } from "@/lib/security/reportAdminLoginFailed";
 import type {
   BlogPost,
+  BlogSubmission,
   ContactRequest,
   CustomizationRequest,
   Notice,
@@ -113,6 +116,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [contacts, setContacts] = useState<ContactRequest[]>([]);
   const [customizations, setCustomizations] = useState<CustomizationRequest[]>([]);
+  const [submissions, setSubmissions] = useState<BlogSubmission[]>([]);
   const [projects, setProjects] = useState<Project[]>(remote ? [] : seedProjects);
   const [posts, setPosts] = useState<BlogPost[]>(remote ? [] : seedPosts);
   const [catalogReady, setCatalogReady] = useState(!remote);
@@ -226,6 +230,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
         setNotices([]);
         setContacts([]);
         setCustomizations([]);
+        setSubmissions([]);
         setOrders([]);
       }
       return;
@@ -234,11 +239,13 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
     const stopNotices = subscribeNotices(setNotices);
     const stopContacts = subscribeContacts(user.email, admin, setContacts);
     const stopCustomizations = subscribeCustomizations(user.email, admin, setCustomizations);
+    const stopSubmissions = subscribeBlogSubmissions(user.email, admin, setSubmissions);
     const stopOrders = subscribeOrders(user.email, admin, setOrders);
     return () => {
       stopNotices();
       stopContacts();
       stopCustomizations();
+      stopSubmissions();
       stopOrders();
     };
   }, [user]);
@@ -581,6 +588,74 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
     [toast],
   );
 
+  const submitBlogPost = useCallback(
+    (input: Omit<BlogSubmission, "id" | "createdAt" | "status">) => {
+      if (!user) {
+        toast("Sign in required", "Login to submit an article.");
+        return false;
+      }
+      const item: BlogSubmission = {
+        ...input,
+        id: uid("sub"),
+        status: "pending",
+        createdAt: new Date().toISOString(),
+      };
+      if (remote) void saveBlogSubmission(item).catch((error) => toast("Could not submit", firebaseErrorMessage(error)));
+      else setSubmissions((current) => [item, ...current]);
+      toast("Article submitted", "The studio will review it. Approved articles publish under your name.");
+      return true;
+    },
+    [toast, user],
+  );
+
+  const approveBlogSubmission = useCallback(
+    (item: BlogSubmission) => {
+      const base =
+        item.title
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/(^-|-$)/g, "") || "post";
+      const taken = new Set(posts.map((post) => post.slug));
+      taken.add("submit"); // reserved route — /blog/submit is the submission form
+      let slug = base === "submit" ? "submit-article" : base;
+      for (let i = 2; taken.has(slug); i++) slug = `${base}-${i}`;
+      const now = new Date().toISOString();
+      const post: BlogPost = {
+        id: uid("b"),
+        slug,
+        title: item.title,
+        excerpt: item.excerpt,
+        content: item.content,
+        tags: item.tags,
+        keywords: item.tags,
+        featured: false,
+        trending: false,
+        status: "published",
+        author: item.author,
+        createdAt: now,
+        publishedAt: now,
+        updatedAt: now,
+      };
+      if (remote) {
+        void savePost(post).catch((error) => toast("Could not publish", firebaseErrorMessage(error)));
+        void removeDoc("blogSubmissions", item.id).catch(() => undefined);
+      }
+      setPosts((current) => sortPostsNewestFirst([post, ...current.filter((p) => p.id !== post.id)]));
+      setSubmissions((current) => current.filter((entry) => entry.id !== item.id));
+      toast("Article published", `${item.title} is live under ${item.author}.`);
+    },
+    [posts, toast],
+  );
+
+  const deleteBlogSubmission = useCallback(
+    (id: string) => {
+      if (remote) void removeDoc("blogSubmissions", id).catch((error) => toast("Could not delete", firebaseErrorMessage(error)));
+      setSubmissions((current) => current.filter((item) => item.id !== id));
+      toast("Submission deleted");
+    },
+    [toast],
+  );
+
   const pushNotice = useCallback((input: { kind: NoticeKind; title: string; body: string; href?: string }) => {
     const notice: Notice = {
       id: uid("note"),
@@ -820,6 +895,10 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       addCustomization,
       deleteContact,
       deleteCustomization,
+      submissions,
+      submitBlogPost,
+      approveBlogSubmission,
+      deleteBlogSubmission,
       addReview,
       pushNotice,
       markNoticeRead,
@@ -839,6 +918,10 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       addCustomization,
       deleteContact,
       deleteCustomization,
+      submissions,
+      submitBlogPost,
+      approveBlogSubmission,
+      deleteBlogSubmission,
       addReview,
       checkout,
       catalogReady,

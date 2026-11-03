@@ -6,13 +6,13 @@ import { Section } from "@/components/ui/Button";
 import { formatDate } from "@/lib/format";
 
 export function AdminRequestsView() {
-  const { contacts, customizations, deleteContact, deleteCustomization } = useApp();
+  const { contacts, customizations, submissions, deleteContact, deleteCustomization, approveBlogSubmission, deleteBlogSubmission } = useApp();
   return (
     <Section>
       <AdminGate>
         <AdminNav />
         <h1 className="display text-3xl">Inbox</h1>
-        <div className="mt-8 grid gap-8 lg:grid-cols-2">
+        <div className="mt-8 grid gap-8 lg:grid-cols-2 xl:grid-cols-3">
           <div>
             <h2 className="text-sm uppercase tracking-[0.16em] text-muted">Contact</h2>
             <div className="mt-3 space-y-3">
@@ -63,6 +63,50 @@ export function AdminRequestsView() {
                 </article>
               ))}
               {!customizations.length ? <p className="text-muted">No customization requests.</p> : null}
+            </div>
+          </div>
+          <div>
+            <h2 className="text-sm uppercase tracking-[0.16em] text-muted">Blog submissions</h2>
+            <div className="mt-3 space-y-3">
+              {submissions.map((item) => (
+                <article key={item.id} className="glass rounded-3xl p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-semibold">{item.title}</p>
+                      <p className="text-xs text-muted">{item.author} · {item.email} · {formatDate(item.createdAt)}</p>
+                    </div>
+                    <span className="shrink-0 rounded-full bg-black/[0.05] px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-[#6d655d]">
+                      {item.status}
+                    </span>
+                  </div>
+                  <p className="mt-2 line-clamp-3 text-sm text-muted">{item.excerpt}</p>
+                  <details className="mt-2">
+                    <summary className="cursor-pointer text-xs font-semibold text-[#a14b30]">Read full article</summary>
+                    <p className="mt-2 whitespace-pre-line text-sm text-muted">{item.content}</p>
+                  </details>
+                  <div className="mt-3 flex gap-3">
+                    <button
+                      type="button"
+                      className="text-xs font-semibold text-[#a14b30] hover:underline"
+                      onClick={() => {
+                        if (window.confirm(`Publish “${item.title}” under ${item.author}?`)) approveBlogSubmission(item);
+                      }}
+                    >
+                      Approve & publish
+                    </button>
+                    <button
+                      type="button"
+                      className="text-xs font-semibold text-rose-700 hover:underline"
+                      onClick={() => {
+                        if (window.confirm("Delete this submission?")) deleteBlogSubmission(item.id);
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </article>
+              ))}
+              {!submissions.length ? <p className="text-muted">No blog submissions.</p> : null}
             </div>
           </div>
         </div>

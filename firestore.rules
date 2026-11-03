@@ -84,6 +84,17 @@ service cloud.firestore {
         || (signedIn() && resource.data.email == request.auth.token.email);
     }
 
+    match /blogSubmissions/{id} {
+      allow read: if isAdmin()
+        || (signedIn() && resource.data.email == request.auth.token.email);
+      allow create: if signedIn()
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.status == "pending";
+      allow update: if isAdmin();
+      allow delete: if isAdmin()
+        || (signedIn() && resource.data.email == request.auth.token.email);
+    }
+
     match /orders/{id} {
       allow create: if signedIn();
       allow read, update: if isAdmin()
