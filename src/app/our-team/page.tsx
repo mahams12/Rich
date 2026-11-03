@@ -34,6 +34,25 @@ const founders = [
 
 const team = [
   {
+    name: "Ahmad Mazhar",
+    role: "Senior Software Engineer",
+    description:
+      "Works across native Android and iOS application development, mobile architecture, platform-specific integrations and performance-focused engineering. Helps turn product requirements into reliable mobile experiences across devices.",
+    email: "ahmadmazhar2555@gmail.com",
+    photo: "/founders/ahmad-mazhar-avatar.svg",
+    initials: "AM",
+  },
+  {
+    name: "Jazim Saeed",
+    role: "Professional Video Editor & Content Creator",
+    description:
+      "Creates engaging video content for brands and digital platforms, including promotional edits, social media reels, product videos, storytelling and polished visual content designed to capture attention.",
+    email: "saeedjazim@gmail.com",
+    photo: "/founders/jazim-saeed-avatar.svg",
+    youtube: "https://www.youtube.com/@slenzeditz",
+    initials: "JS",
+  },
+  {
     name: "Zukhruf Fatima",
     role: "Sales & Marketing Manager",
     description:
@@ -50,15 +69,6 @@ const team = [
     email: "sabaarif2003@gmail.com",
     photo: "/founders/saba-arif-avatar.svg",
     initials: "SA",
-  },
-  {
-    name: "Ahmad Mazhar",
-    role: "Senior Software Engineer",
-    description:
-      "Works across native Android and iOS application development, mobile architecture, platform-specific integrations and performance-focused engineering. Helps turn product requirements into reliable mobile experiences across devices.",
-    email: "ahmadmazhar2555@gmail.com",
-    photo: "/founders/ahmad-mazhar-avatar.svg",
-    initials: "AM",
   },
 ];
 
@@ -91,6 +101,11 @@ function PersonCard({
         {profile ? (
           <a href={profile} target="_blank" rel="noopener noreferrer" className="inline-flex items-center rounded-full bg-[#1a1410] px-4 py-2 text-xs font-semibold !text-white transition hover:bg-[#c45c3a] hover:!text-white">
             View portfolio
+          </a>
+        ) : null}
+        {"youtube" in person && person.youtube ? (
+          <a href={person.youtube} target="_blank" rel="noopener noreferrer" aria-label={`View ${person.name} on YouTube`} className="inline-flex items-center rounded-full border border-[#d9b3a4] px-4 py-2 text-xs font-semibold text-[#a14b30] transition hover:border-[#c45c3a] hover:bg-[#fff4ef]">
+            View YouTube
           </a>
         ) : null}
       </div>

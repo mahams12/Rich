@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+<title id="title">Jazim Saeed illustrated avatar</title><desc id="desc">Illustrated male video editor wearing studio headphones and a dark hoodie on a warm peach background.</desc>
+<defs><clipPath id="clip"><circle cx="256" cy="256" r="248"/></clipPath><linearGradient id="bg" x2="1" y2="1"><stop stop-color="#ffe3d5"/><stop offset="1" stop-color="#f4b99f"/></linearGradient><linearGradient id="hood" x2="1" y2="1"><stop stop-color="#39302f"/><stop offset="1" stop-color="#151719"/></linearGradient></defs>
+<g clip-path="url(#clip)"><rect width="512" height="512" fill="url(#bg)"/><circle cx="256" cy="220" r="184" fill="#fff2e9" opacity=".34"/>
+<path d="M30 520c12-128 82-190 226-190s214 62 226 190" fill="url(#hood)"/><path d="M185 319h142l37 62-108 78-108-78z" fill="#e6a17e"/>
+<path d="M151 194c-9-91 42-147 119-147 91 0 142 63 112 174l-17 105c-12 48-58 78-111 78-59 0-101-37-113-91z" fill="#211b1a"/>
+<path d="M167 177c-8-68 31-112 91-112 72 0 111 47 120 114-29-25-56-43-93-43-45 0-79 17-118 40z" fill="#241b1a"/>
+<path d="M177 174c-8 38-8 95 5 137 12 39 42 72 85 79 44 8 87-18 107-60 19-42 18-112 4-151-19-47-55-72-104-72-50 0-83 23-97 67z" fill="#d99570"/>
+<path d="M166 185c-4-57 22-116 80-132 52-15 111 10 131 62 8 20 9 46 3 70-19-30-42-51-76-60-47-12-93 8-138 60z" fill="#241b1a"/>
+<path d="M207 220q23-16 45 0M274 220q23-16 45 0" fill="none" stroke="#3c2822" stroke-width="8" stroke-linecap="round"/>
+<ellipse cx="230" cy="239" rx="7" ry="10" fill="#211b1a"/><ellipse cx="298" cy="239" rx="7" ry="10" fill="#211b1a"/><path d="M260 245l-8 31 16 3" fill="none" stroke="#b87558" stroke-width="5" stroke-linecap="round"/><path d="M235 300q25 20 51 0" fill="none" stroke="#8e493d" stroke-width="7" stroke-linecap="round"/>
+<path d="M149 190a108 108 0 0 1 214 0" fill="none" stroke="#262326" stroke-width="23" stroke-linecap="round"/><rect x="130" y="183" width="40" height="91" rx="19" fill="#242326" stroke="#d17b4e" stroke-width="7"/><rect x="342" y="183" width="40" height="91" rx="19" fill="#242326" stroke="#d17b4e" stroke-width="7"/>
+<path d="M143 365q-34 17-55 63l-18 92h201l-30-120-40-35zM369 365q34 17 55 63l18 92H241l30-120 40-35z" fill="#262326"/><path d="M214 386l42 38 42-38" fill="none" stroke="#d17b4e" stroke-width="8" stroke-linecap="round"/><circle cx="256" cy="442" r="28" fill="#d17b4e"/><path d="M246 428v28l24-14z" fill="#fff2e9"/></g><circle cx="256" cy="256" r="248" fill="none" stroke="#fff" stroke-width="12"/></svg>
