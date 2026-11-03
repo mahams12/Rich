@@ -7,18 +7,25 @@ import { AdminGate, AdminNav } from "../AdminBits";
 import { useApp } from "@/components/providers/AppProvider";
 import { Button, Section } from "@/components/ui/Button";
 import { sortPostsNewestFirst } from "@/data/posts";
+import { isStudioAdmin } from "@/lib/admin";
 
 export function AdminBlogView() {
-  const { posts, setPostStatus, deletePost, importSeedPosts, firebaseReady } = useApp();
+  const { posts, setPostStatus, deletePost, importSeedPosts, firebaseReady, user, ready } = useApp();
   const [syncing, setSyncing] = useState(false);
   const sorted = useMemo(() => sortPostsNewestFirst(posts), [posts]);
   const [visits, setVisits] = useState<BlogVisit[]>([]);
   const [analyticsReady, setAnalyticsReady] = useState(false);
   const [analyticsError, setAnalyticsError] = useState("");
+  // blogVisits reads require admin claims — subscribe only after Firebase Auth
+  // has confirmed the session (ready), or the listener is denied and dies.
+  const analyticsAllowed = firebaseReady && ready && isStudioAdmin(user);
   useEffect(() => {
-    if (!firebaseReady) return;
-    return subscribeBlogVisits((next) => { setVisits(next); setAnalyticsReady(true); setAnalyticsError(""); }, setAnalyticsError);
-  }, [firebaseReady]);
+    if (!analyticsAllowed) return;
+    return subscribeBlogVisits(
+      (next) => { setVisits(next); setAnalyticsReady(true); setAnalyticsError(""); },
+      setAnalyticsError,
+    );
+  }, [analyticsAllowed]);
   const counts = useMemo(() => {
     const result: Record<string, { total: number; blog_listing: number; internal: number; external: number; direct: number }> = {};
     for (const visit of visits) {

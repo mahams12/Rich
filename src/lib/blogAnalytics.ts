@@ -4,9 +4,18 @@ import { getFirebaseDb } from "@/lib/firebase/client";
 export type BlogSource = "blog_listing" | "internal" | "external" | "direct";
 export interface BlogVisit { slug: string; source: BlogSource; at?: unknown }
 const KEY = "novexahub-blog-navigation";
+const LAST_PATH_KEY = "novexahub-blog-last-path";
 export function rememberBlogNavigation(slug: string) {
   if (typeof window === "undefined") return;
   sessionStorage.setItem(KEY, JSON.stringify({ slug, path: window.location.pathname, time: Date.now() }));
+}
+/** Rolling last internal path — lets sourceFor classify long-session SPA visits
+ *  after the 30s click marker has expired (document.referrer stays stale). */
+export function noteInternalPageview(path: string) {
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.setItem(LAST_PATH_KEY, path);
+  } catch { /* private mode */ }
 }
 function sourceFor(slug: string): BlogSource {
   try {
@@ -16,6 +25,8 @@ function sourceFor(slug: string): BlogSource {
       const nav = JSON.parse(raw) as { slug: string; path: string; time: number };
       if (nav.slug === slug && Date.now() - nav.time < 30000) return nav.path === "/blog" ? "blog_listing" : "internal";
     }
+    const lastPath = sessionStorage.getItem(LAST_PATH_KEY);
+    if (lastPath) return lastPath === "/blog" ? "blog_listing" : "internal";
     if (!document.referrer) return "direct";
     const ref = new URL(document.referrer);
     if (ref.origin !== location.origin) return "external";

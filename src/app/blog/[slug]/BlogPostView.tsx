@@ -47,7 +47,7 @@ function PostCover({ src, alt, className, sizes }: { src: string; alt: string; c
 
 export function BlogPostView({ initialPosts }: { initialPosts?: BlogPost[] }) {
   const { slug } = useParams<{ slug: string }>();
-  const { posts, user, catalogReady } = useApp();
+  const { posts, user, catalogReady, ready } = useApp();
   const effectivePosts = catalogReady || !initialPosts?.length ? posts : initialPosts;
   const availablePosts = useMemo(() => getBlogPostsWithFallback(effectivePosts), [effectivePosts]);
   const post = useMemo(
@@ -55,8 +55,11 @@ export function BlogPostView({ initialPosts }: { initialPosts?: BlogPost[] }) {
     [availablePosts, slug],
   );
   useEffect(() => {
-    if (post?.status === "published" && !isStudioAdmin(user)) void recordBlogVisit(post.slug).catch(() => undefined);
-  }, [post?.slug, post?.status, user]);
+    // Wait for auth to resolve so a signed-in admin's own views stay excluded.
+    if (ready && post?.status === "published" && !isStudioAdmin(user)) {
+      void recordBlogVisit(post.slug).catch(() => undefined);
+    }
+  }, [post?.slug, post?.status, user, ready]);
   const related = useMemo(() => {
     if (!post) return [];
     const currentTags = new Set((post.tags || []).map((tag) => tag.toLowerCase()));

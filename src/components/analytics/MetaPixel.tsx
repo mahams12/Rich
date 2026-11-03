@@ -4,6 +4,7 @@ import Script from "next/script";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { META_PIXEL_ID, trackMetaPageView } from "@/lib/meta-pixel";
+import { noteInternalPageview } from "@/lib/blogAnalytics";
 
 export function MetaPixel() {
   const pathname = usePathname();
@@ -11,6 +12,7 @@ export function MetaPixel() {
   const skipNextPageView = useRef(true);
 
   useEffect(() => {
+    noteInternalPageview(pathname);
     if (skipNextPageView.current) {
       skipNextPageView.current = false;
       return;
