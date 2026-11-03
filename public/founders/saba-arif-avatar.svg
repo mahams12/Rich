@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" role="img" aria-label="Saba Arif illustrated avatar">
+  <defs><clipPath id="circle"><circle cx="160" cy="160" r="154"/></clipPath></defs>
+  <g clip-path="url(#circle)">
+    <rect width="320" height="320" fill="#f8d9ca"/>
+    <path d="M0 230 Q75 165 145 225 T320 205 V320 H0Z" fill="#f4bda7" opacity=".65"/>
+    <path d="M42 330 Q48 222 117 208 L202 208 Q276 224 281 330Z" fill="#d96c32"/>
+    <path d="M105 222 Q110 202 132 194 L188 194 Q212 203 218 222 L201 320 H119Z" fill="#211b1b"/>
+    <path d="M83 120 Q78 39 161 34 Q244 36 241 133 L228 208 Q209 245 160 248 Q108 239 91 197Z" fill="#30201d"/>
+    <path d="M103 113 Q98 67 145 57 Q196 44 222 89 Q235 118 222 171 Q216 210 183 223 Q142 234 112 201 Q91 178 103 113Z" fill="#e9a77e"/>
+    <path d="M97 123 Q78 72 121 43 Q163 13 210 43 Q250 69 235 127 Q223 101 204 87 Q177 67 139 82 Q118 91 97 123Z" fill="#2b1c1a"/>
+    <path d="M102 118 Q83 167 109 208 Q84 192 78 156 Q73 120 102 94Z" fill="#2b1c1a"/>
+    <path d="M222 110 Q253 155 225 208 Q250 191 250 151 Q249 119 222 90Z" fill="#2b1c1a"/>
+    <path d="M121 134 Q137 124 151 134" fill="none" stroke="#38231e" stroke-width="5" stroke-linecap="round"/>
+    <path d="M174 134 Q190 124 204 134" fill="none" stroke="#38231e" stroke-width="5" stroke-linecap="round"/>
+    <ellipse cx="138" cy="148" rx="7" ry="9" fill="#38231e"/><ellipse cx="188" cy="148" rx="7" ry="9" fill="#38231e"/>
+    <path d="M154 169 Q160 174 166 169" fill="none" stroke="#b87558" stroke-width="3" stroke-linecap="round"/>
+    <path d="M143 190 Q160 202 178 189" fill="none" stroke="#9f5145" stroke-width="4" stroke-linecap="round"/>
+    <path d="M119 211 Q98 238 91 286" fill="none" stroke="#2b1c1a" stroke-width="16" stroke-linecap="round"/>
+    <path d="M211 211 Q231 239 237 285" fill="none" stroke="#2b1c1a" stroke-width="16" stroke-linecap="round"/>
+    <path d="M120 224 L151 252 L137 320 H93 Q95 262 120 224Z" fill="#e27b3c"/>
+    <path d="M200 224 L169 252 L184 320 H228 Q225 262 200 224Z" fill="#e27b3c"/>
+  </g>
+  <circle cx="160" cy="160" r="154" fill="none" stroke="#fff" stroke-width="8"/>
+</svg>

@@ -43,6 +43,15 @@ const team = [
     initials: "ZF",
   },
   {
+    name: "Saba Arif",
+    role: "UI/UX Designer & Front-end Developer",
+    description:
+      "Designs intuitive user experiences and builds polished, responsive interfaces, bringing visual design and front-end implementation together.",
+    email: "sabaarif2003@gmail.com",
+    photo: "/founders/saba-arif-avatar.svg",
+    initials: "SA",
+  },
+  {
     name: "Ahmad Mazhar",
     role: "Senior Software Engineer",
     description:
