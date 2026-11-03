@@ -53,7 +53,7 @@ function CoverImage({ post, index }: { post: BlogPost; index: number }) {
       fill
       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
       {...(index === 0
-        ? { preload: true }
+        ? { preload: true, fetchPriority: "high" as const }
         : { loading: index < 3 ? ("eager" as const) : ("lazy" as const), fetchPriority: index < 2 ? ("high" as const) : ("auto" as const) })}
       className={className}
       onError={() => setFailed(true)}

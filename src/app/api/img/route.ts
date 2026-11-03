@@ -37,6 +37,36 @@ function isAllowed(src: string): boolean {
 }
 
 export async function GET(request: Request) {
+  // Edge-cache the transformed image: a cold request pays the full
+  // remote-fetch + transform (~seconds for multi-MB sources); a hit is
+  // served from the colo in milliseconds for every visitor.
+  const cache =
+    typeof caches !== "undefined"
+      ? (caches as unknown as { default: Cache }).default
+      : undefined;
+  const accept = request.headers.get("accept") ?? "";
+  const cacheKey =
+    request.url +
+    "&af=" +
+    (accept.includes("avif") ? "a" : accept.includes("webp") ? "w" : "o");
+  if (cache) {
+    const hit = await cache.match(cacheKey).catch(() => undefined);
+    if (hit) return hit;
+  }
+
+  const res = await respond(request);
+  if (cache && res.ok) {
+    const put = cache.put(cacheKey, res.clone());
+    try {
+      getCloudflareContext().ctx.waitUntil(put);
+    } catch {
+      await put.catch(() => undefined);
+    }
+  }
+  return res;
+}
+
+async function respond(request: Request): Promise<Response> {
   const { searchParams } = new URL(request.url);
   let src = searchParams.get("url");
   // The pipeline decodes the query once before this route runs, so a

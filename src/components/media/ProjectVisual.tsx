@@ -84,7 +84,7 @@ export function ProjectVisual({
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           {...(preload
-            ? { preload: true }
+            ? { preload: true, fetchPriority: "high" as const }
             : { loading: priority ? ("eager" as const) : ("lazy" as const), fetchPriority: priority ? ("high" as const) : ("auto" as const) })}
           className={cn("h-full w-full", imgFit)}
           onError={() => markBroken(src)}
