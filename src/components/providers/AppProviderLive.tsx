@@ -142,14 +142,20 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       let stopReviews: (() => void) | undefined;
       let cancelled = false;
 
-      // Public catalogue data is independent of auth. Subscribe immediately so the
-      // homepage does not wait for Google redirect resolution before receiving projects.
-      stopProjects = subscribeCatalog((nextProjects, nextPosts) => {
-        setProjects(nextProjects);
-        setPosts(nextPosts);
-        setCatalogReady(true);
-      });
-      stopReviews = subscribeReviews(setReviews);
+      // Public catalogue data is independent of auth. Attach after the load
+      // event — the Firestore Listen channel is a hanging stream that keeps
+      // the page's network from going idle and costs main-thread time while
+      // first-paint resources are still settling.
+      const attachCatalog = () => {
+        stopProjects = subscribeCatalog((nextProjects, nextPosts) => {
+          setProjects(nextProjects);
+          setPosts(nextPosts);
+          setCatalogReady(true);
+        });
+        stopReviews = subscribeReviews(setReviews);
+      };
+      if (document.readyState === "complete") attachCatalog();
+      else window.addEventListener("load", attachCatalog, { once: true });
 
       void (async () => {
         // Must finish redirect BEFORE attaching auth listener (Firebase requirement).
@@ -189,6 +195,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
 
       return () => {
         cancelled = true;
+        window.removeEventListener("load", attachCatalog);
         stopAuth?.();
         stopProjects?.();
         stopReviews?.();

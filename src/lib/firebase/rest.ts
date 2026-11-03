@@ -45,7 +45,41 @@ function decodeFields(fields: Record<string, RestValue>) {
   return out;
 }
 
-export async function fetchCatalogServer() {
+// Cache the catalog at the edge for 60s — the per-request Firestore REST
+// roundtrip costs ~800ms of TTFB. The client-side listener reconciles
+// anything fresher after page load anyway.
+const CACHE_KEY = "https://cache.internal/catalog-v1";
+const CACHE_TTL_MS = 60_000;
+
+type Catalog = ReturnType<typeof splitCatalogDocs>;
+
+export async function fetchCatalogServer(): Promise<Catalog | null> {
+  const cache =
+    typeof caches !== "undefined"
+      ? (caches as unknown as { default: Cache }).default
+      : undefined;
+  if (cache) {
+    try {
+      const hit = await cache.match(CACHE_KEY);
+      if (hit) {
+        const { t, data } = (await hit.json()) as { t: number; data: Catalog };
+        if (Date.now() - t < CACHE_TTL_MS) return data;
+      }
+    } catch {
+      // Cache miss/corrupt — fall through to Firestore.
+    }
+  }
+  const catalog = await fetchCatalogFromRest();
+  if (cache && catalog) {
+    const body = JSON.stringify({ t: Date.now(), data: catalog });
+    await cache
+      .put(CACHE_KEY, new Response(body, { headers: { "content-type": "application/json" } }))
+      .catch(() => undefined);
+  }
+  return catalog;
+}
+
+async function fetchCatalogFromRest(): Promise<Catalog | null> {
   try {
     const docs: { id: string; data: Record<string, unknown> }[] = [];
     let pageToken: string | undefined;
