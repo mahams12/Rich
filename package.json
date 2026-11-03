@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:admin": "next dev --hostname admin.localhost --port 3001",
-    "build": "next build --webpack",
+    "build": "opennextjs-cloudflare build",
     "start": "next start",
     "lint": "eslint",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
