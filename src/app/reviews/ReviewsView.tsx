@@ -18,7 +18,10 @@ function Stars({ rating }: { rating: number }) {
 
 export function ReviewsView() {
   const { reviews } = useApp();
-  const live = useMemo(() => [...reviews, ...studioReviews], [reviews]);
+  const live = useMemo(
+    () => [...reviews, ...studioReviews].filter((item) => !item.sample),
+    [reviews],
+  );
   const [open, setOpen] = useState(false);
   const preview = 6;
   const visible = open ? live : live.slice(0, preview);
@@ -30,6 +33,11 @@ export function ReviewsView() {
       <p className="mt-3 max-w-2xl text-[#6d655d]">
         What clients say about the work. Signed-in users can also publish a review on any project — new ones appear here live.
       </p>
+      {visible.length ? null : (
+        <p className="mt-8 rounded-3xl border border-black/10 bg-card p-6 text-[#6d655d]">
+          No public reviews yet. Reviews published by signed-in users appear here.
+        </p>
+      )}
       <div className="mt-8 grid gap-4 md:grid-cols-2">
         {visible.map((item) => (
           <blockquote key={item.id} className="rounded-3xl border border-black/10 bg-card p-6">

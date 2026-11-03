@@ -144,7 +144,7 @@ export const reviews: Review[] = [
     quote: "We had a store live in days, not months. The checkout felt premium and my team did not need a briefing deck.",
     rating: 5,
     projectType: "Ecommerce website",
-    sample: false,
+    sample: true,
     projectSlug: "novacart-ecommerce-os",
   },
   {
@@ -154,7 +154,7 @@ export const reviews: Review[] = [
     quote: "The dashboard looked expensive on day one. We only swapped copy and metrics and shipped.",
     rating: 4,
     projectType: "SaaS dashboard",
-    sample: false,
+    sample: true,
     projectSlug: "ledgerly-finance-dashboard",
   },
   {
@@ -164,7 +164,7 @@ export const reviews: Review[] = [
     quote: "I picked a look I loved, asked for two changes, and we were aligned before any build started.",
     rating: 3,
     projectType: "Brand identity",
-    sample: false,
+    sample: true,
     projectSlug: "aurora-brand-identity",
   },
   {
@@ -174,7 +174,7 @@ export const reviews: Review[] = [
     quote: "WhatsApp replies were fast and the booking site finally matches how the hotel actually feels.",
     rating: 5,
     projectType: "Hotel website",
-    sample: false,
+    sample: true,
     projectSlug: "luxestay-hotel-booking",
   },
   {
@@ -184,7 +184,7 @@ export const reviews: Review[] = [
     quote: "The AI concierge reads like a real teammate. Support volume dropped in the first week.",
     rating: 4,
     projectType: "AI assistant",
-    sample: false,
+    sample: true,
     projectSlug: "whisper-ai-support-agent",
   },
   {
@@ -194,7 +194,7 @@ export const reviews: Review[] = [
     quote: "The kit helped me structure a demo I could actually explain. I still wrote my own report.",
     rating: 3,
     projectType: "Final-year kit",
-    sample: false,
+    sample: true,
     projectSlug: "campuscraf-final-year-kit",
   },
   {
@@ -204,7 +204,7 @@ export const reviews: Review[] = [
     quote: "Posters, banners and the site finally matched. People thought we hired a big studio.",
     rating: 5,
     projectType: "Poster & banner pack",
-    sample: false,
+    sample: true,
     projectSlug: "framelab-poster-banner-studio",
   },
   {
@@ -214,7 +214,7 @@ export const reviews: Review[] = [
     quote: "The video cut and ad pack looked native to the feed. We did not have to explain the brand twice.",
     rating: 4,
     projectType: "Video + ads",
-    sample: false,
+    sample: true,
     projectSlug: "cuthouse-video-edit-pack",
   },
 ];

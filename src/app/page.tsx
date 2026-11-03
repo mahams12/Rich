@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { faqs } from "@/data/content";
+import { projects as seedProjects } from "@/data/projects";
 import { site } from "@/data/site";
+import { fetchCatalogServer } from "@/lib/firebase/rest";
 import { HomeView } from "./HomeView";
 
 export const metadata: Metadata = {
@@ -20,11 +22,14 @@ const faqJsonLd = {
   })),
 };
 
-export default function Page() {
+export const dynamic = "force-dynamic";
+
+export default async function Page() {
+  const catalog = await fetchCatalogServer();
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
-      <HomeView />
+      <HomeView initialProjects={catalog?.projects ?? seedProjects} />
     </>
   );
 }

@@ -11,3 +11,9 @@ export function trackMetaLead(): void {
   if (typeof window === "undefined" || typeof window.fbq !== "function") return;
   window.fbq("track", "Lead");
 }
+
+/** Standard Meta Contact event — fires when a visitor taps a WhatsApp or email channel. */
+export function trackMetaContact(): void {
+  if (typeof window === "undefined" || typeof window.fbq !== "function") return;
+  window.fbq("track", "Contact");
+}

@@ -11,13 +11,22 @@ import { Button, Section } from "@/components/ui/Button";
 import { ContactActions } from "@/components/ui/ContactActions";
 import { Icon } from "@/components/ui/Icon";
 import { faqs, processSteps, reviews as catalogReviews, serviceTicker } from "@/data/content";
+import { getPublishedProjects } from "@/data/projects";
+import type { Project } from "@/types";
 
-export function HomeView() {
-  const { projects, reviews: liveReviews } = useApp();
+export function HomeView({ initialProjects }: { initialProjects?: Project[] }) {
+  const { projects, catalogReady, reviews: liveReviews } = useApp();
   const [openFaq, setOpenFaq] = useState(0);
   const [showAllReviews, setShowAllReviews] = useState(false);
-  const published = useMemo(() => projects.filter((item) => item.status === "published").length, [projects]);
-  const allReviews = useMemo(() => [...liveReviews, ...catalogReviews], [liveReviews]);
+  // Same merge as PortfolioView: server-rendered catalog shows immediately,
+  // the live snapshot takes over once it delivers fresher data.
+  const effectiveProjects = catalogReady || !initialProjects?.length ? projects : initialProjects;
+  const publishedList = useMemo(() => getPublishedProjects(effectiveProjects), [effectiveProjects]);
+  const published = publishedList.length;
+  const allReviews = useMemo(
+    () => [...liveReviews, ...catalogReviews].filter((item) => !item.sample),
+    [liveReviews],
+  );
   const previewCount = 3;
   const visibleReviews = showAllReviews ? allReviews : allReviews.slice(0, previewCount);
 
@@ -40,7 +49,7 @@ export function HomeView() {
 
       <ServicesCarousel />
       <TechStack />
-      <ProjectFan />
+      <ProjectFan items={publishedList} />
 
       <Section>
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#a14b30]">How it works</p>
@@ -56,6 +65,7 @@ export function HomeView() {
         </div>
       </Section>
 
+      {allReviews.length ? (
       <Section>
         <div className="mb-8 flex items-end justify-between">
           <div>
@@ -89,6 +99,7 @@ export function HomeView() {
           </div>
         ) : null}
       </Section>
+      ) : null}
 
       <FoundersSection />
 
@@ -117,7 +128,7 @@ export function HomeView() {
         <div className="rounded-[1.6rem] bg-[#1a1410] px-6 py-14 text-center text-white">
           <h2 className="display text-4xl tracking-tight">Ready to start building?</h2>
           <p className="mx-auto mt-3 max-w-xl text-white/70">
-            {published} published projects on the site. Message us on WhatsApp or email to purchase, customize, or start from scratch.
+            {published ? `${published} published projects on the site. ` : ""}Message us on WhatsApp or email to purchase, customize, or start from scratch.
           </p>
           <div className="mt-7 flex justify-center">
             <ContactActions />

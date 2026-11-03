@@ -15,7 +15,16 @@ import { reviews as catalogReviews } from "@/data/content";
 import { relatedProjects } from "@/data/projects";
 import { countWords } from "@/lib/format";
 import { projectGalleryImages } from "@/lib/cover";
-import type { Project } from "@/types";
+import type { CategoryId, Project } from "@/types";
+
+const categoryService: Partial<Record<CategoryId, { href: string; label: string }>> = {
+  websites: { href: "/web-development", label: "Web development" },
+  mobile: { href: "/mobile-app-development", label: "Mobile app development" },
+  features: { href: "/custom-software-development", label: "Custom software" },
+  ai: { href: "/ai-automation", label: "AI automation" },
+  ecommerce: { href: "/ecommerce-development", label: "Ecommerce development" },
+  uiux: { href: "/ui-ux-design", label: "UI/UX design" },
+};
 
 export function ProjectDetailView({ initialProjects }: { initialProjects?: Project[] }) {
   const { slug } = useParams<{ slug: string }>();
@@ -32,14 +41,9 @@ export function ProjectDetailView({ initialProjects }: { initialProjects?: Proje
 
   const related = useMemo(() => (project ? relatedProjects(project.slug, effectiveProjects) : []), [project, effectiveProjects]);
   const projectReviews = useMemo(() => {
-    const live = liveReviews.filter((item) => item.projectSlug === project?.slug);
-    const catalog = catalogReviews.filter((item) => item.projectSlug === project?.slug);
-    const showcase = catalogReviews.slice(0, 2);
-    const shown = [...live, ...catalog];
-    for (const seed of showcase) {
-      if (!shown.some((item) => item.id === seed.id)) shown.push(seed);
-    }
-    return shown;
+    return [...liveReviews, ...catalogReviews].filter(
+      (item) => !item.sample && item.projectSlug === project?.slug,
+    );
   }, [liveReviews, project?.slug]);
 
   if (!project) {
@@ -210,6 +214,18 @@ export function ProjectDetailView({ initialProjects }: { initialProjects?: Proje
             ))}
           </div>
           <ContactActions title={project.title} extra={extra} stacked />
+          <p className="text-xs text-[#6d655d]">
+            {project.readyMade ? "Ready-made studio product" : "Custom studio build"} by NovexaHub.
+            {categoryService[project.category] ? (
+              <>
+                {" "}See the{" "}
+                <Link href={categoryService[project.category]!.href} className="font-semibold text-[#a14b30] hover:underline">
+                  {categoryService[project.category]!.label}
+                </Link>{" "}
+                service page for related work.
+              </>
+            ) : null}
+          </p>
           <button type="button" className="flex w-full items-center justify-center gap-2 text-sm text-[#6d655d]" onClick={() => { const ok = toggleFavourite(project.id); if (!ok) router.push(`/login?next=/projects/${project.slug}`); }}>
             <Icon name={loved ? "heart-fill" : "heart"} className={loved ? "text-[#a14b30]" : ""} /> Save to favourites
           </button>
@@ -218,6 +234,9 @@ export function ProjectDetailView({ initialProjects }: { initialProjects?: Proje
 
       <div className="mt-12">
         <h2 className="display text-2xl">Reviews</h2>
+        {projectReviews.length ? null : (
+          <p className="mt-4 text-sm text-[#6d655d]">No reviews on this project yet.</p>
+        )}
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           {projectReviews.map((item) => (
             <blockquote key={item.id} className="rounded-3xl border border-black/10 bg-card p-5">

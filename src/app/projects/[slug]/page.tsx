@@ -34,11 +34,23 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const jsonLd = project
     ? {
         "@context": "https://schema.org",
-        "@type": "CreativeWork",
-        name: project.title,
-        description: project.description,
-        brand: { "@type": "Brand", name: site.name },
-        url: `${site.url}/projects/${project.slug}`,
+        "@graph": [
+          {
+            "@type": "CreativeWork",
+            name: project.title,
+            description: project.description,
+            brand: { "@type": "Brand", name: site.name },
+            url: `${site.url}/projects/${project.slug}`,
+          },
+          {
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+              { "@type": "ListItem", position: 2, name: "Portfolio", item: `${site.url}/portfolio` },
+              { "@type": "ListItem", position: 3, name: project.title, item: `${site.url}/projects/${project.slug}` },
+            ],
+          },
+        ],
       }
     : null;
 

@@ -46,7 +46,7 @@ export const projects: Project[] = [
     title: "NovaCart Ecommerce OS",
     tagline: "Store, catalog, cart, checkout and orders in one system.",
     description:
-      "NovaCart is a complete ecommerce website with product catalogs, cart, checkout, order tracking and payment-ready architecture. Built for brands that want to sell online quickly with room to customize later.",
+      "NovaCart is a ready-made ecommerce system for brands that want to sell online quickly with room to customize later. It ships with a product catalog and collections, cart and checkout, order history, a payment-ready checkout path, an inventory-friendly product model and a promo code slot — built on Next.js, Node and PostgreSQL with Stripe-ready payments. The storefront, admin product fields, checkout UI and handover notes are included; the payment merchant account and product photography stay with you.",
     category: "ecommerce",
     subcategory: "Online store",
     tags: ["ecommerce website", "shopping cart", "checkout", "online store"],
@@ -85,7 +85,7 @@ export const projects: Project[] = [
     title: "PulseFit Fitness App",
     tagline: "Workouts, progress and memberships for mobile studios.",
     description:
-      "PulseFit is a Flutter-ready fitness app concept with workout plans, progress tracking, trainer profiles and membership screens. Perfect as a ready-made mobile product or a starting point for a custom health brand.",
+      "PulseFit is a Flutter-ready fitness app for studios and health brands, built on Flutter, Firebase and Dart. It includes a workout plan library, progress charts, trainer profiles, membership screens, push-ready notification UI and a dark training mode. App screens, design tokens and handover documentation are included — App Store publishing fees and wearable hardware integrations are not. Perfect as a ready-made mobile product or a starting point for a custom health brand.",
     category: "mobile",
     subcategory: "Fitness app",
     tags: ["fitness app", "Flutter", "mobile app development", "memberships"],
@@ -163,7 +163,7 @@ export const projects: Project[] = [
     title: "Whisper AI Support Agent",
     tagline: "An AI assistant that answers, routes and captures leads.",
     description:
-      "Whisper is an AI automation package for customer support and lead capture. It includes a branded chat concierge, suggested replies, handoff to humans and a workflow map your team can actually use.",
+      "Whisper is a ready-made AI automation package for customer support and lead capture, built on the OpenAI API, Next.js and webhooks. It includes a branded chat widget, knowledge-ready prompts, a human handoff flow, a lead capture form, a conversation transcript view and admin prompt notes — the pieces a team actually needs to run an AI concierge. Model API keys and ongoing prompt operations stay with you; a setup call is included.",
     category: "ai",
     subcategory: "AI assistant",
     tags: ["AI automation", "AI assistant", "chatbot", "lead capture"],
@@ -514,7 +514,7 @@ export const projects: Project[] = [
     title: "EstateVue Property Portal",
     tagline: "Listings, maps, filters and agent pages for real estate.",
     description:
-      "EstateVue is a property listing website with map-ready cards, advanced filters, agent profiles and enquiry. A strong ready-made product for agencies that need more than a Facebook catalog.",
+      "EstateVue is a ready-made property listing website for real-estate agencies that need more than a Facebook catalog. Built on Next.js, it ships with listing cards, a map slot, price and bedroom filters, agent profiles, a saved-homes view and an enquiry modal. The portal UI arrives with sample listings so the full buyer journey is visible on day one; MLS data feeds are not included, but the structure is built for a straightforward content import.",
     category: "websites",
     subcategory: "Real estate portal",
     tags: ["real estate website", "property listings", "maps", "filters"],
