@@ -1,4 +1,4 @@
-import { Plus_Jakarta_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { preconnect } from "react-dom";
@@ -9,12 +9,12 @@ import { SiteFooter, SiteHeader, WhatsAppFab } from "@/components/layout/SiteChr
 import { site } from "@/data/site";
 import "./globals.css";
 
-const jakarta = Plus_Jakarta_Sans({
+// Self-hosted variable font — next/font/google fetches at build time and fails
+// on restricted build networks (Cloudflare), so the woff2 ships with the repo.
+const jakarta = localFont({
+  src: "./fonts/plus-jakarta-sans-latin.woff2",
   variable: "--font-jakarta",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  // Avoids the ~0.2 CLS from a late font swap; the brand font still applies on
-  // normal loads since it's preloaded.
+  weight: "200 800",
   display: "optional",
 });
 
