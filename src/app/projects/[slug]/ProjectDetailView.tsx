@@ -33,7 +33,12 @@ export function ProjectDetailView({ initialProjects }: { initialProjects?: Proje
   const projectReviews = useMemo(() => {
     const live = liveReviews.filter((item) => item.projectSlug === project?.slug);
     const catalog = catalogReviews.filter((item) => item.projectSlug === project?.slug);
-    return [...live, ...catalog];
+    const showcase = catalogReviews.slice(0, 2);
+    const shown = [...live, ...catalog];
+    for (const seed of showcase) {
+      if (!shown.some((item) => item.id === seed.id)) shown.push(seed);
+    }
+    return shown;
   }, [liveReviews, project?.slug]);
 
   if (!project) {
@@ -184,7 +189,7 @@ export function ProjectDetailView({ initialProjects }: { initialProjects?: Proje
       <div className="mt-12">
         <h2 className="display text-2xl">Reviews</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
-          {(projectReviews.length ? projectReviews : catalogReviews.slice(0, 2)).map((item) => (
+          {projectReviews.map((item) => (
             <blockquote key={item.id} className="rounded-3xl border border-black/10 bg-card p-5">
               <div className="mb-2 flex">
                 {Array.from({ length: 5 }).map((_, i) => (

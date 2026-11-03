@@ -620,7 +620,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
         createdAt: new Date().toISOString(),
       };
       if (remote) void saveReview(review).catch((error) => toast("Could not publish", firebaseErrorMessage(error)));
-      else setReviews((current) => [review, ...current]);
+      setReviews((current) => [review, ...current.filter((item) => item.id !== review.id)]);
       toast("Review published", "It is live for everyone on the site.");
       return true;
     },
