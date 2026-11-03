@@ -20,7 +20,7 @@ import type { Project } from "@/types";
 export function ProjectDetailView({ initialProjects }: { initialProjects?: Project[] }) {
   const { slug } = useParams<{ slug: string }>();
   const router = useRouter();
-  const { projects, catalogReady, toggleFavourite, isFavourite, user, reviews: liveReviews, addReview, deleteProject } = useApp();
+  const { projects, catalogReady, toggleFavourite, isFavourite, user, reviews: liveReviews, addReview, deleteProject, addCustomization } = useApp();
   const effectiveProjects = catalogReady || !initialProjects?.length ? projects : initialProjects;
   const project = effectiveProjects.find((item) => item.slug === slug);
   const [tab, setTab] = useState<"overview" | "features" | "customize">("overview");
@@ -28,6 +28,7 @@ export function ProjectDetailView({ initialProjects }: { initialProjects?: Proje
   const [gallery, setGallery] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [reviewRating, setReviewRating] = useState(5);
+  const [customizationSent, setCustomizationSent] = useState(false);
 
   const related = useMemo(() => (project ? relatedProjects(project.slug, effectiveProjects) : []), [project, effectiveProjects]);
   const projectReviews = useMemo(() => {
@@ -164,6 +165,35 @@ export function ProjectDetailView({ initialProjects }: { initialProjects?: Proje
                 <p className="text-sm text-[#6d655d]">{project.customizationNotes}</p>
                 <textarea value={words} onChange={(e) => setWords(e.target.value)} className={`${inputClass} mt-4 min-h-36`} placeholder="Describe the changes you need. We will send this with your WhatsApp or email." />
                 <p className={`mt-2 text-xs ${remaining < 0 ? "text-rose-600" : "text-[#6d655d]"}`}>{countWords(words)} / {project.maxCustomizationWords} words</p>
+                {user ? (
+                  <div className="mt-4 flex flex-wrap items-center gap-3">
+                    <Button
+                      type="button"
+                      disabled={!words.trim() || remaining < 0}
+                      onClick={() => {
+                        const text = words.trim();
+                        if (!text || remaining < 0) return;
+                        addCustomization({
+                          projectId: project.id,
+                          projectTitle: project.title,
+                          name: user.name,
+                          email: user.email,
+                          words: text,
+                          wordCount: countWords(text),
+                        });
+                        setWords("");
+                        setCustomizationSent(true);
+                      }}
+                    >
+                      Send request
+                    </Button>
+                    {customizationSent ? <p className="text-sm text-[#a14b30]">Sent — the studio can see this in their inbox.</p> : null}
+                  </div>
+                ) : (
+                  <p className="mt-4 text-sm text-[#6d655d]">
+                    <Link href={`/login?next=/projects/${project.slug}`} className="font-semibold text-[#16110e]">Login</Link> to send this customization request to the studio.
+                  </p>
+                )}
               </div>
             ) : null}
           </div>

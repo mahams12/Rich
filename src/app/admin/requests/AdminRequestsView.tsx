@@ -47,7 +47,7 @@ export function AdminRequestsView() {
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="font-semibold">{item.projectTitle}</p>
-                      <p className="text-xs text-muted">{item.name} · {item.wordCount} words · {formatDate(item.createdAt)}</p>
+                      <p className="text-xs text-muted">{item.name} · {item.email} · {item.wordCount} words · {formatDate(item.createdAt)}</p>
                     </div>
                     <button
                       type="button"
