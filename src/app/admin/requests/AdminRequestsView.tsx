@@ -70,6 +70,10 @@ export function AdminRequestsView() {
             <div className="mt-3 space-y-3">
               {submissions.map((item) => (
                 <article key={item.id} className="glass rounded-3xl p-4">
+                  {item.cover ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={item.cover} alt="" className="mb-3 h-28 w-full rounded-2xl border border-black/10 object-cover" />
+                  ) : null}
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="font-semibold">{item.title}</p>

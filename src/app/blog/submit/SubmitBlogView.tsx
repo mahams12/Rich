@@ -1,18 +1,38 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import { useApp } from "@/components/providers/AppProvider";
 import { Badge, Button, Field, Section, inputClass } from "@/components/ui/Button";
+import { uid } from "@/lib/format";
 
 export function SubmitBlogView() {
-  const { user, ready, submitBlogPost, submissions } = useApp();
+  const { user, ready, submitBlogPost, submissions, toast } = useApp();
   const [sent, setSent] = useState(false);
+  const [cover, setCover] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const submissionKey = useMemo(() => uid("sub"), []);
   const mine = user ? submissions.filter((item) => item.email === user.email) : [];
+
+  async function onFile(file?: File) {
+    if (!file) return;
+    setUploading(true);
+    try {
+      const { uploadSubmissionCover } = await import("@/lib/firebase/storage");
+      const url = await uploadSubmissionCover(file, submissionKey);
+      setCover(url);
+      toast(url.startsWith("data:") ? "Photo added" : "Photo uploaded");
+    } catch (error) {
+      const { firebaseErrorMessage } = await import("@/lib/firebase/errors");
+      toast("Upload failed", firebaseErrorMessage(error));
+    } finally {
+      setUploading(false);
+    }
+  }
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!user) return;
+    if (!user || uploading) return;
     const data = new FormData(event.currentTarget);
     const ok = submitBlogPost({
       title: String(data.get("title") || "").trim(),
@@ -24,9 +44,11 @@ export function SubmitBlogView() {
         .filter(Boolean),
       author: user.name,
       email: user.email,
+      cover: cover || undefined,
     });
     if (ok) {
       setSent(true);
+      setCover("");
       event.currentTarget.reset();
     }
   }
@@ -66,7 +88,30 @@ export function SubmitBlogView() {
             <Field label="Tags (comma separated)">
               <input name="tags" className={inputClass} placeholder="ecommerce, web development, pakistan" />
             </Field>
-            <Button type="submit">Submit for review</Button>
+            <Field label="Cover photo (optional — shown on the blog list)">
+              <input
+                type="file"
+                accept="image/*"
+                className="block w-full text-sm"
+                disabled={uploading}
+                onChange={(e) => onFile(e.target.files?.[0])}
+              />
+              <p className="mt-2 text-xs text-muted">
+                {uploading ? "Uploading…" : "Choose a photo from your device (max 5 MB)."}
+              </p>
+              {cover ? (
+                <div className="mt-3 space-y-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={cover} alt="Cover preview" className="h-32 w-full rounded-2xl border border-black/10 object-cover" />
+                  <button type="button" className="text-xs text-rose-700" onClick={() => setCover("")}>
+                    Remove photo
+                  </button>
+                </div>
+              ) : null}
+            </Field>
+            <Button type="submit" disabled={uploading}>
+              {uploading ? "Uploading…" : "Submit for review"}
+            </Button>
             {sent ? <p className="text-sm text-[#a14b30]">Submitted — the studio will review it before publishing.</p> : null}
           </form>
 

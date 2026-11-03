@@ -89,3 +89,8 @@ export async function uploadProjectCover(file: File, projectId: string) {
 export async function uploadBlogCover(file: File, postId: string) {
   return uploadImage(file, "project-covers", postId);
 }
+
+/** Community blog submissions — any signed-in user (submission-covers rules). */
+export async function uploadSubmissionCover(file: File, submissionId: string) {
+  return uploadImage(file, "submission-covers", submissionId);
+}

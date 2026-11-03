@@ -174,6 +174,7 @@ export interface BlogSubmission {
   tags: string[];
   author: string;
   email: string;
+  cover?: string;
   status: BlogSubmissionStatus;
   createdAt: string;
 }

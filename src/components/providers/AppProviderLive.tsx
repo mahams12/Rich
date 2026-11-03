@@ -632,6 +632,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
         trending: false,
         status: "published",
         author: item.author,
+        cover: item.cover || undefined,
         createdAt: now,
         publishedAt: now,
         updatedAt: now,
