@@ -2,12 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useApp } from "@/components/providers/AppProvider";
 import { Button, Section } from "@/components/ui/Button";
 import { getBlogPostsWithFallback } from "@/data/posts";
 import type { BlogPost } from "@/types";
-import { rememberBlogNavigation } from "@/lib/blogAnalytics";
+import { rememberBlogNavigation, subscribeBlogStats } from "@/lib/blogAnalytics";
 
 function formatDate(value?: string) {
   if (!value) return "";
@@ -61,8 +61,8 @@ function CoverImage({ post, index }: { post: BlogPost; index: number }) {
   );
 }
 
-function PostCard({ post, index }: { post: BlogPost; index: number }) {
-  const category = post.tags?.[0] || (post.trending ? "Trending" : "Insights");
+function PostCard({ post, index, views }: { post: BlogPost; index: number; views?: number }) {
+  const category = post.tags?.[0] || "Insights";
   return (
     <Link href={`/blog/${post.slug}`} onClick={() => rememberBlogNavigation(post.slug)} className="group block overflow-hidden rounded-2xl border border-black/[0.09] bg-[#fffcf8] no-underline transition duration-200 hover:-translate-y-1 hover:shadow-[0_16px_34px_rgba(22,17,14,0.08)]">
       <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#e8e1d7]">
@@ -74,19 +74,37 @@ function PostCard({ post, index }: { post: BlogPost; index: number }) {
         </div>
         <h2 className="mt-3 line-clamp-2 text-[17px] font-bold leading-snug tracking-[-0.02em] text-[#211a16] group-hover:text-[#a14b30]">{post.title}</h2>
         <p className="mt-2 line-clamp-2 text-sm leading-6 text-[#756b63]">{post.excerpt}</p>
-        <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[#211a16]">Read article <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">→</span></span>
+        <div className="mt-4 flex items-center justify-between">
+          <span className="inline-flex items-center gap-2 text-sm font-semibold text-[#211a16]">Read article <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">→</span></span>
+          {typeof views === "number" ? <span className="text-xs font-medium text-[#6f655d]">{views.toLocaleString()} opens</span> : null}
+        </div>
       </div>
     </Link>
   );
 }
 
 export function BlogView({ initialPosts }: { initialPosts?: BlogPost[] }) {
-  const { posts, catalogReady } = useApp();
+  const { posts, catalogReady, firebaseReady } = useApp();
+  const [viewsBySlug, setViewsBySlug] = useState<Record<string, number>>({});
+  useEffect(() => {
+    if (!firebaseReady) return;
+    return subscribeBlogStats(setViewsBySlug);
+  }, [firebaseReady]);
   // Server-rendered catalog (if provided) shows immediately; the live snapshot
   // takes over once the client listener delivers fresher data.
   const effectivePosts = catalogReady || !initialPosts?.length ? posts : initialPosts;
   const published = useMemo(() => getBlogPostsWithFallback(effectivePosts), [effectivePosts]);
   const loading = !catalogReady && !initialPosts?.length;
+  const featured = useMemo(() => published.filter((post) => post.featured).slice(0, 3), [published]);
+  const featuredIds = useMemo(() => new Set(featured.map((post) => post.id)), [featured]);
+  const trending = useMemo(
+    () =>
+      published
+        .filter((post) => !featuredIds.has(post.id) && (viewsBySlug[post.slug] || 0) > 0)
+        .sort((a, b) => (viewsBySlug[b.slug] || 0) - (viewsBySlug[a.slug] || 0))
+        .slice(0, 3),
+    [published, featuredIds, viewsBySlug],
+  );
 
   return (
     <Section className="max-w-6xl">
@@ -97,6 +115,28 @@ export function BlogView({ initialPosts }: { initialPosts?: BlogPost[] }) {
       </header>
 
       <div className="mt-9">
+        {featured.length ? (
+          <div className="mb-10">
+            <div className="mb-4 flex items-end justify-between gap-4 border-b border-black/10 pb-3">
+              <h2 className="display text-2xl">Featured</h2>
+              <span className="text-xs text-[#6f655d]">Picked by the studio</span>
+            </div>
+            <div className="grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {featured.map((post, index) => <PostCard key={post.id} post={post} index={index} />)}
+            </div>
+          </div>
+        ) : null}
+        {trending.length ? (
+          <div className="mb-10">
+            <div className="mb-4 flex items-end justify-between gap-4 border-b border-black/10 pb-3">
+              <h2 className="display text-2xl">Trending</h2>
+              <span className="text-xs text-[#6f655d]">Most opened articles</span>
+            </div>
+            <div className="grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {trending.map((post, index) => <PostCard key={post.id} post={post} index={index} views={viewsBySlug[post.slug]} />)}
+            </div>
+          </div>
+        ) : null}
         <div className="mb-4 flex items-end justify-between gap-4 border-b border-black/10 pb-3">
           <h2 className="display text-2xl">Latest articles</h2>
           {published.length ? <span className="text-xs text-[#6f655d]">{published.length} articles</span> : null}

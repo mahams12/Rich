@@ -70,10 +70,7 @@ export function BlogForm({ existing }: { existing?: BlogPost }) {
     if (!file) return;
     setUploadingSlot(slot);
     try {
-      const [{ uploadBlogCover }, { firebaseErrorMessage }] = await Promise.all([
-        import("@/lib/firebase/storage"),
-        import("@/lib/firebase/errors"),
-      ]);
+      const { uploadBlogCover } = await import("@/lib/firebase/storage");
       const url = await uploadBlogCover(file, postId);
       setGallery((current) => current.map((item, index) => (index === slot ? url : item)) as GallerySlots);
       toast(url.startsWith("data:") ? "Photo added" : "Photo uploaded");
@@ -124,7 +121,7 @@ export function BlogForm({ existing }: { existing?: BlogPost }) {
       seoTitle: String(data.get("seoTitle") || "").trim() || undefined,
       seoDescription: String(data.get("seoDescription") || "").trim() || undefined,
       featured: Boolean(data.get("featured")),
-      trending: Boolean(data.get("trending")),
+      trending: false,
       status,
       author: String(data.get("author") || "NovexaHub Studio"),
       createdAt: existing?.createdAt ?? now,
@@ -211,9 +208,6 @@ export function BlogForm({ existing }: { existing?: BlogPost }) {
           </Field>
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" name="featured" defaultChecked={existing?.featured} /> Featured
-          </label>
-          <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" name="trending" defaultChecked={existing?.trending} /> Trending
           </label>
           <div className="flex flex-wrap gap-3">
             <Button type="submit" disabled={uploading || saving}>

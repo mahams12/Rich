@@ -37,6 +37,11 @@ export function AdminBlogView() {
   }, [visits]);
   const total = visits.length;
   const sourceTotal = (source: BlogVisit["source"]) => visits.filter((visit) => visit.source === source).length;
+  // Trending is automatic — top 3 posts by recorded opens.
+  const trendingSlugs = useMemo(
+    () => new Set(Object.entries(counts).sort((a, b) => b[1].total - a[1].total).slice(0, 3).map(([slug]) => slug)),
+    [counts],
+  );
 
   return (
     <Section>
@@ -100,7 +105,7 @@ export function AdminBlogView() {
                     <p className="text-xs text-muted">/{post.slug}</p>
                   </td>
                   <td className="px-4 py-3 text-xs text-muted">
-                    {[post.featured ? "Featured" : null, post.trending ? "Trending" : null].filter(Boolean).join(" · ") || "—"}
+                    {[post.featured ? "Featured" : null, trendingSlugs.has(post.slug) ? "Trending" : null].filter(Boolean).join(" · ") || "—"}
                   </td>
                   <td className="px-4 py-3 capitalize">{post.status}</td>
                   <td className="whitespace-nowrap px-4 py-3 text-xs">

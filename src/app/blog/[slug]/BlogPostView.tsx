@@ -100,7 +100,7 @@ export function BlogPostView({ initialPosts }: { initialPosts?: BlogPost[] }) {
         </div>
       ) : null}
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#a14b30]">
-        {post.trending ? "Trending" : "Blog"} · {formatDate(post.publishedAt || post.createdAt)}
+        {post.featured ? "Featured" : "Blog"} · {formatDate(post.publishedAt || post.createdAt)}
       </p>
       <h1 className="display mt-3 text-4xl leading-tight sm:text-5xl">{post.title}</h1>
       <p className="mt-4 max-w-3xl text-lg text-[#6d655d]">{post.excerpt}</p>
