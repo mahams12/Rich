@@ -1,5 +1,5 @@
 "use client";
-import { addDoc, collection, doc, getDoc, onSnapshot, serverTimestamp, setDoc } from "firebase/firestore";
+import { addDoc, collection, onSnapshot, serverTimestamp } from "firebase/firestore";
 import { getFirebaseDb } from "@/lib/firebase/client";
 export type BlogSource = "blog_listing" | "internal" | "external" | "direct";
 export interface BlogVisit { slug: string; source: BlogSource; at?: unknown }
@@ -39,32 +39,7 @@ export async function recordBlogVisit(slug: string) {
   const key = "novexahub-blog-view:" + slug;
   if (Date.now() - Number(sessionStorage.getItem(key) || 0) < 2500) return;
   sessionStorage.setItem(key, String(Date.now()));
-  await Promise.allSettled([
-    addDoc(collection(db, "blogVisits"), { slug, source: sourceFor(slug), at: serverTimestamp() }),
-    // Public aggregate counter — drives the Trending section (blogVisits is
-    // admin-only). Literal read-then-write: rules only allow an exact +1 step
-    // (increment() transforms don't resolve inside request.resource on update).
-    (async () => {
-      const ref = doc(db, "blogStats", slug);
-      const snap = await getDoc(ref);
-      const next = ((snap.data()?.views as number | undefined) ?? 0) + 1;
-      await setDoc(ref, { views: next }, { merge: true });
-    })(),
-  ]);
-}
-
-/** Live { slug: views } map — public read, incremented per recorded visit. */
-export function subscribeBlogStats(onData: (views: Record<string, number>) => void) {
-  const db = getFirebaseDb();
-  if (!db) return () => undefined;
-  return onSnapshot(collection(db, "blogStats"), (snap) => {
-    const views: Record<string, number> = {};
-    for (const item of snap.docs) {
-      const value = (item.data() as { views?: number }).views;
-      if (typeof value === "number") views[item.id] = value;
-    }
-    onData(views);
-  });
+  await addDoc(collection(db, "blogVisits"), { slug, source: sourceFor(slug), at: serverTimestamp() });
 }
 export function subscribeBlogVisits(onData: (visits: BlogVisit[]) => void, onError: (message: string) => void) {
   const db = getFirebaseDb();
