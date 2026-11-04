@@ -14,7 +14,7 @@ export function AdminBlogView() {
   const { posts, setPostStatus, deletePost, importSeedPosts, firebaseReady, user, ready, upsertPost } = useApp();
   const [syncing, setSyncing] = useState(false);
   const [pendingFeature, setPendingFeature] = useState<BlogPost | null>(null);
-  const sorted = useMemo(() => sortPostsNewestFirst(posts), [posts]);
+  const sorted = useMemo(() => sortPostsNewestFirst(posts.filter((item) => !item.deleted)), [posts]);
   const featuredPosts = useMemo(() => sorted.filter((post) => post.featured), [sorted]);
 
   function featurePost(post: BlogPost) {

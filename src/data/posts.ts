@@ -602,7 +602,13 @@ export function getBlogPostsWithFallback(liveItems: BlogPost[] = []): BlogPost[]
   const missingBundled = getPublishedPosts(posts).filter(
     (item) => !liveSlugs.has(item.slug) && !liveIds.has(item.id),
   );
-  return sortPostsNewestFirst([...liveWithCovers, ...missingBundled]);
+  // Tombstoned live docs already suppressed their bundled twins via the slug/id
+  // sets above — drop them (and non-published entries) from the display list.
+  return sortPostsNewestFirst(
+    [...liveWithCovers, ...missingBundled].filter(
+      (item) => item.status === "published" && !item.deleted,
+    ),
+  );
 }
 
 export function getPostBySlug(slug: string, items: BlogPost[] = posts): BlogPost | undefined {

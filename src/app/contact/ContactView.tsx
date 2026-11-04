@@ -5,7 +5,7 @@ import { useApp } from "@/components/providers/AppProvider";
 import { Badge, Button, Field, Section, inputClass } from "@/components/ui/Button";
 import { ContactActions } from "@/components/ui/ContactActions";
 import { openMailClient, whatsappUrl } from "@/lib/contact";
-import { trackMetaLead } from "@/lib/meta-pixel";
+import { trackMetaContact, trackMetaLead } from "@/lib/meta-pixel";
 import { Icon } from "@/components/ui/Icon";
 import { site } from "@/data/site";
 
@@ -89,7 +89,7 @@ export function ContactView() {
           <p className="font-semibold">Direct lines</p>
           <button
             type="button"
-            onClick={() => openMailClient(`Project enquiry — ${site.name}`)}
+            onClick={() => { trackMetaContact(); openMailClient(`Project enquiry — ${site.name}`); }}
             className="flex w-full items-center gap-3 rounded-2xl border border-black/10 bg-white px-4 py-3 text-left text-sm font-semibold text-[#16110e] transition hover:border-[#c45c3a]/40"
           >
             <Icon name="mail" className="h-4 w-4 shrink-0 text-[#a14b30]" />
@@ -97,6 +97,7 @@ export function ContactView() {
           </button>
           <a
             href={whatsappUrl()}
+            onClick={trackMetaContact}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-3 rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-[#16110e] no-underline transition hover:border-[#25D366]/50"

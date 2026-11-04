@@ -24,7 +24,10 @@ export function mergeProjects(remote: Project[]) {
 }
 
 export function mergePosts(remote: BlogPost[]) {
-  return sortPostsNewestFirst(remote.filter((item) => !item.deleted));
+  // Keep deleted tombstones: getBlogPostsWithFallback uses their id/slug to
+  // suppress bundled posts that would otherwise reappear after deletion.
+  // Display consumers filter them via published/deleted checks.
+  return sortPostsNewestFirst(remote);
 }
 
 export function mapBlogDoc(id: string, data: Record<string, unknown>): BlogPost {

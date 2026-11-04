@@ -19,7 +19,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const post = (await catalogPosts()).find((item) => item.slug === slug && !item.deleted);
+  const post = (await catalogPosts()).find((item) => item.slug === slug && !item.deleted && item.status === "published");
   if (!post) return { title: "Blog post", robots: { index: false } };
   const title = post.seoTitle || `${post.title} | NovexaHub Blog`;
   const description = post.seoDescription || post.excerpt;
