@@ -1,30 +1,19 @@
 import type { Metadata } from "next";
-import { faqs } from "@/data/content";
+import { projects as seedProjects } from "@/data/projects";
 import { site } from "@/data/site";
+import { fetchCatalogServer } from "@/lib/firebase/rest";
 import { HomeView } from "./HomeView";
 
 export const metadata: Metadata = {
-  title: { absolute: "NovexaHub | Buy Ready-Made Digital Products & Custom Software" },
+  title: { absolute: "NovexaHub | Software Development Company & Digital Studio" },
   description:
-    "Explore ready-made websites, mobile apps, ecommerce solutions and AI automation, or hire NovexaHub for custom software and UI/UX design.",
+    "NovexaHub is a worldwide software development company and digital studio: custom websites, mobile apps, ecommerce, SaaS and AI automation — plus ready-made digital products you can buy and customize.",
   alternates: { canonical: site.url },
 };
 
-const faqJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqs.map((item) => ({
-    "@type": "Question",
-    name: item.q,
-    acceptedAnswer: { "@type": "Answer", text: item.a },
-  })),
-};
+export const dynamic = "force-dynamic";
 
-export default function Page() {
-  return (
-    <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
-      <HomeView />
-    </>
-  );
+export default async function Page() {
+  const catalog = await fetchCatalogServer();
+  return <HomeView initialProjects={catalog?.projects ?? seedProjects} />;
 }

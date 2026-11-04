@@ -1,4 +1,4 @@
-import { sortProjectsNewestFirst } from "@/data/projects";
+import { projects as seedProjects, sortProjectsNewestFirst } from "@/data/projects";
 import { sortPostsNewestFirst } from "@/data/posts";
 import type { BlogPost, Project } from "@/types";
 
@@ -24,7 +24,10 @@ export function mergeProjects(remote: Project[]) {
 }
 
 export function mergePosts(remote: BlogPost[]) {
-  return sortPostsNewestFirst(remote.filter((item) => !item.deleted));
+  // Keep deleted tombstones: getBlogPostsWithFallback uses their id/slug to
+  // suppress bundled posts that would otherwise reappear after deletion.
+  // Display consumers filter them via published/deleted checks.
+  return sortPostsNewestFirst(remote);
 }
 
 export function mapBlogDoc(id: string, data: Record<string, unknown>): BlogPost {
@@ -39,6 +42,12 @@ export function mapBlogDoc(id: string, data: Record<string, unknown>): BlogPost 
  * Projects and blog posts share the public `projects` collection. Splits a list
  * of raw documents into the two catalogues — used by the live snapshot listener
  * and the server-side REST fetch so both paths produce identical results.
+ *
+ * Project catalogue = remote documents + bundled seeds for any id the remote
+ * does not cover. Remote wins: an admin-deleted project (deleted: true doc)
+ * stays hidden even though a seed with the same id exists, because it occupies
+ * the id slot. This keeps sitemap, metadata and detail pages consistent —
+ * every emitted /projects/{slug} resolves to real content.
  */
 export function splitCatalogDocs(docs: { id: string; data: Record<string, unknown> }[]) {
   const remoteProjects: Project[] = [];
@@ -50,5 +59,7 @@ export function splitCatalogDocs(docs: { id: string; data: Record<string, unknow
       remoteProjects.push({ ...(item.data as unknown as Project), id: item.id });
     }
   }
-  return { projects: mergeProjects(remoteProjects), posts: mergePosts(remotePosts) };
+  const remoteById = new Map(remoteProjects.map((item) => [item.id, item]));
+  const seedExtras = seedProjects.filter((item) => !item.deleted && !remoteById.has(item.id));
+  return { projects: mergeProjects([...remoteProjects, ...seedExtras]), posts: mergePosts(remotePosts) };
 }

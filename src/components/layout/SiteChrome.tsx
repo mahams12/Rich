@@ -11,6 +11,7 @@ import { NotificationBell } from "@/components/layout/NotificationBell";
 import { site } from "@/data/site";
 import { isStudioAdmin } from "@/lib/admin";
 import { openMailClient } from "@/lib/contact";
+import { trackMetaContact } from "@/lib/meta-pixel";
 import { cn } from "@/lib/cn";
 
 const nav = [
@@ -159,7 +160,7 @@ export function SiteHeader() {
 export function SiteFooter() {
   return (
     <footer className="mt-8 border-t border-black/10 bg-[#ebe6de]">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 sm:grid-cols-2 lg:grid-cols-5 lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 sm:grid-cols-2 lg:grid-cols-6 lg:px-8">
         <div className="space-y-3">
           <Logo />
           <p className="text-sm text-[#6d655d]">{site.tagline} A digital studio. Enquire on WhatsApp or email — nothing is purchased on the site.</p>
@@ -172,6 +173,21 @@ export function SiteFooter() {
             <Link href="/services" className="block hover:text-[#a14b30]">Services</Link>
             <Link href="/features" className="block hover:text-[#a14b30]">Feature modules</Link>
             <Link href="/contact" className="block hover:text-[#a14b30]">WhatsApp & email</Link>
+          </div>
+        </div>
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6d655d]">Core services</p>
+          <div className="mt-3 space-y-2 text-sm">
+            <Link href="/web-development" className="block hover:text-[#a14b30]">Web development</Link>
+            <Link href="/mobile-app-development" className="block hover:text-[#a14b30]">Mobile app development</Link>
+            <Link href="/custom-software-development" className="block hover:text-[#a14b30]">Custom software</Link>
+            <Link href="/ai-automation" className="block hover:text-[#a14b30]">AI automation</Link>
+            <Link href="/saas-development" className="block hover:text-[#a14b30]">SaaS development</Link>
+            <Link href="/ecommerce-development" className="block hover:text-[#a14b30]">Ecommerce development</Link>
+            <Link href="/ui-ux-design" className="block hover:text-[#a14b30]">UI/UX design</Link>
+            <Link href="/ai-chatbot-development" className="block hover:text-[#a14b30]">AI chatbots</Link>
+            <Link href="/graphic-design" className="block hover:text-[#a14b30]">Graphic design</Link>
+            <Link href="/video-editing" className="block hover:text-[#a14b30]">Video editing</Link>
           </div>
         </div>
         <div>
@@ -199,6 +215,7 @@ export function SiteFooter() {
             </a>
             <a
               href={`https://wa.me/${site.whatsapp}`}
+              onClick={trackMetaContact}
               target="_blank"
               rel="noopener noreferrer"
               className="block hover:text-[#a14b30]"
@@ -236,6 +253,7 @@ export function WhatsAppFab() {
   return (
     <a
       href={href}
+      onClick={trackMetaContact}
       target="_blank"
       rel="noopener noreferrer"
       className="fixed bottom-4 right-4 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full sm:bottom-5 sm:right-5 sm:h-auto sm:w-auto sm:gap-2 sm:px-4 sm:py-3 sm:text-sm sm:font-semibold"

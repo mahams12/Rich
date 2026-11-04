@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Badge, Button, Section } from "@/components/ui/Button";
 import { ContactActions } from "@/components/ui/ContactActions";
 import { serviceCatalog } from "@/data/content";
@@ -20,6 +21,16 @@ const packs = [
   { title: "Academic kit", text: "Final-year prototype or assignment writing structure." },
 ];
 
+const categoryPage: Record<string, string> = {
+  websites: "/web-development",
+  mobile: "/mobile-app-development",
+  ecommerce: "/ecommerce-development",
+  ai: "/ai-automation",
+  uiux: "/ui-ux-design",
+  creative: "/graphic-design",
+  features: "/custom-software-development",
+};
+
 const catalogLd = {
   "@context": "https://schema.org",
   "@type": "ItemList",
@@ -31,7 +42,7 @@ const catalogLd = {
       position: gi * 20 + ii + 1,
       name: item.name,
       description: item.detail,
-      url: `${site.url}/contact`,
+      url: `${site.url}${categoryPage[group.id] ?? `/services#${group.id}`}`,
     })),
   ),
 };
@@ -45,6 +56,24 @@ export default function ServicesPage() {
       <p className="mt-4 max-w-2xl text-[#6d655d]">
         Any category of website or app. Ecommerce. AI automations. UI/UX, posters, banners and product design. Message WhatsApp or email to purchase or customize — nothing is charged on this site.
       </p>
+      <div className="mt-6 flex flex-wrap gap-2">
+        {[
+          { href: "/web-development", label: "Web development" },
+          { href: "/mobile-app-development", label: "Mobile app development" },
+          { href: "/custom-software-development", label: "Custom software" },
+          { href: "/ai-automation", label: "AI automation" },
+          { href: "/saas-development", label: "SaaS development" },
+          { href: "/ecommerce-development", label: "Ecommerce development" },
+          { href: "/ui-ux-design", label: "UI/UX design" },
+          { href: "/ai-chatbot-development", label: "AI chatbots" },
+          { href: "/graphic-design", label: "Graphic design" },
+          { href: "/video-editing", label: "Video editing" },
+        ].map((item) => (
+          <Link key={item.href} href={item.href} className="rounded-full border border-[#c45c3a]/30 bg-card px-3 py-1.5 text-xs font-semibold hover:border-[#c45c3a]/60">
+            {item.label}
+          </Link>
+        ))}
+      </div>
 
       <div className="mt-8 flex flex-wrap gap-2">
         {serviceCatalog.map((group) => (

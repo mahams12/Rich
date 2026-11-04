@@ -1,15 +1,28 @@
 import type { MetadataRoute } from "next";
-import { posts } from "@/data/posts";
-import { projects } from "@/data/projects";
+import { getBlogPostsWithFallback, posts as seedPosts } from "@/data/posts";
+import { projects as seedProjects } from "@/data/projects";
 import { site } from "@/data/site";
+import { fetchCatalogServer } from "@/lib/firebase/rest";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const dynamic = "force-dynamic";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [
     "",
     "/portfolio",
     "/blog",
     "/explore",
     "/services",
+    "/web-development",
+    "/mobile-app-development",
+    "/custom-software-development",
+    "/ai-automation",
+    "/ai-chatbot-development",
+    "/saas-development",
+    "/ecommerce-development",
+    "/ui-ux-design",
+    "/graphic-design",
+    "/video-editing",
     "/features",
     "/builder",
     "/about",
@@ -26,11 +39,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: path === "" ? 1 : path === "/blog" ? 0.9 : 0.8,
   }));
 
+  // fetchCatalogServer returns the merged catalogue (remote + bundled seeds),
+  // the same source project pages resolve from — no emitted URL can hit the
+  // in-app "not found" state. Seeds are the fallback when the fetch fails.
+  const catalog = await fetchCatalogServer();
+  const projects = catalog?.projects ?? seedProjects;
+  // Same merged post list the blog views render — no orphaned URLs either way.
+  const posts = getBlogPostsWithFallback(catalog?.posts ?? seedPosts);
+
   const projectRoutes = projects
     .filter((project) => project.status === "published" && !project.deleted)
     .map((project) => ({
       url: `${site.url}/projects/${project.slug}`,
-      lastModified: new Date(project.publishedAt || project.createdAt || Date.now()),
+      lastModified: project.publishedAt || project.createdAt ? new Date((project.publishedAt || project.createdAt) as string) : undefined,
       changeFrequency: "weekly" as const,
       priority: 0.7,
     }));
@@ -45,7 +66,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ).values(),
   ).map((post) => ({
       url: `${site.url}/blog/${post.slug}`,
-      lastModified: new Date(post.updatedAt || post.publishedAt || post.createdAt || Date.now()),
+      lastModified: post.updatedAt || post.publishedAt || post.createdAt ? new Date((post.updatedAt || post.publishedAt || post.createdAt) as string) : undefined,
       changeFrequency: "weekly" as const,
       priority: 0.85,
     }));

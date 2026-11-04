@@ -1,17 +1,26 @@
 import type { Metadata } from "next";
-import { posts } from "@/data/posts";
+import { notFound } from "next/navigation";
+import { getBlogPostsWithFallback, posts as seedPosts } from "@/data/posts";
 import { site } from "@/data/site";
 import { fetchCatalogServer } from "@/lib/firebase/rest";
 import { BlogPostView } from "./BlogPostView";
+import type { BlogPost } from "@/types";
 
-export function generateStaticParams() {
-  return posts.filter((item) => item.status === "published").map((post) => ({ slug: post.slug }));
+async function catalogPosts(): Promise<BlogPost[]> {
+  // Merged remote + bundled posts — the same set the view renders.
+  const catalog = await fetchCatalogServer();
+  return getBlogPostsWithFallback(catalog?.posts ?? seedPosts);
+}
+
+export async function generateStaticParams() {
+  const posts = await catalogPosts();
+  return posts.filter((item) => item.status === "published" && !item.deleted).map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const post = posts.find((item) => item.slug === slug);
-  if (!post) return { title: "Blog post" };
+  const post = (await catalogPosts()).find((item) => item.slug === slug && !item.deleted && item.status === "published");
+  if (!post) return { title: "Blog post", robots: { index: false } };
   const title = post.seoTitle || `${post.title} | NovexaHub Blog`;
   const description = post.seoDescription || post.excerpt;
   return {
@@ -33,33 +42,33 @@ export const dynamic = "force-dynamic";
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = posts.find((item) => item.slug === slug);
-  const jsonLd = post
-    ? {
-        "@context": "https://schema.org",
-        "@type": "BlogPosting",
-        headline: post.title,
-        description: post.seoDescription || post.excerpt,
-        datePublished: post.publishedAt || post.createdAt,
-        dateModified: post.updatedAt || post.publishedAt || post.createdAt,
-        author: { "@type": "Organization", name: post.author || site.name },
-        publisher: {
-          "@type": "Organization",
-          name: site.name,
-          url: site.url,
-          logo: { "@type": "ImageObject", url: `${site.url}/brand/icon.svg` },
-        },
-        mainEntityOfPage: `${site.url}/blog/${post.slug}`,
-        keywords: post.keywords.join(", "),
-        image: post.cover || undefined,
-      }
-    : null;
+  const posts = await catalogPosts();
+  const post = posts.find((item) => item.slug === slug && !item.deleted && item.status === "published");
+  if (!post) notFound();
 
-  const catalog = await fetchCatalogServer();
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.seoDescription || post.excerpt,
+    datePublished: post.publishedAt || post.createdAt,
+    dateModified: post.updatedAt || post.publishedAt || post.createdAt,
+    author: { "@type": "Organization", name: post.author || site.name },
+    publisher: {
+      "@type": "Organization",
+      name: site.name,
+      url: site.url,
+      logo: { "@type": "ImageObject", url: `${site.url}/brand/icon.svg` },
+    },
+    mainEntityOfPage: `${site.url}/blog/${post.slug}`,
+    keywords: post.keywords.join(", "),
+    image: post.cover || undefined,
+  };
+
   return (
     <>
-      {jsonLd ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} /> : null}
-      <BlogPostView initialPosts={catalog?.posts} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <BlogPostView initialPosts={posts} />
     </>
   );
 }

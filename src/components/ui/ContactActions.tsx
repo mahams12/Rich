@@ -3,6 +3,7 @@
 import { enquireMessage, openMailClient, whatsappUrl } from "@/lib/contact";
 import { cn } from "@/lib/cn";
 import { Icon } from "@/components/ui/Icon";
+import { trackMetaContact } from "@/lib/meta-pixel";
 import { site } from "@/data/site";
 
 export function ContactActions({
@@ -23,6 +24,7 @@ export function ContactActions({
     <div className={cn("flex flex-wrap gap-3", stacked && "flex-col", className)}>
       <a
         href={whatsappUrl(message)}
+        onClick={trackMetaContact}
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold no-underline"
@@ -34,7 +36,7 @@ export function ContactActions({
       <button
         type="button"
         title={`Email ${site.email}`}
-        onClick={() => openMailClient(subject, message)}
+        onClick={() => { trackMetaContact(); openMailClient(subject, message); }}
         className="inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold"
         style={{ background: "#16110e", color: "#ffffff" }}
       >

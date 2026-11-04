@@ -22,9 +22,12 @@ function formatDate(value?: string) {
 
 
 function renderInlineLinks(value: string) {
-  return value.split(/(\[[^\]]+\]\(https?:\/\/[^)\s]+\)|\*\*[^*]+\*\*)/g).map((part, index) => {
-    const link = part.match(/^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/);
+  return value.split(/(\[[^\]]+\]\((?:https?:\/\/|\/)[^)\s]+\)|\*\*[^*]+\*\*)/g).map((part, index) => {
+    const link = part.match(/^\[([^\]]+)\]\(((?:https?:\/\/|\/)[^)\s]+)\)$/);
     if (link) {
+      if (link[2].startsWith("/")) {
+        return <Link key={index} href={link[2]} className="font-semibold text-[#a14b30] underline decoration-[#c45c3a]/40 underline-offset-4 hover:decoration-current">{link[1]}</Link>;
+      }
       return <a key={index} href={link[2]} target="_blank" rel="noreferrer" className="font-semibold text-[#a14b30] underline decoration-[#c45c3a]/40 underline-offset-4 hover:decoration-current">{link[1]}</a>;
     }
     if (part.startsWith("**") && part.endsWith("**")) {

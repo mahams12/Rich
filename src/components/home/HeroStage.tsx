@@ -12,13 +12,13 @@ function HeroCopy({ stacked }: { stacked?: boolean }) {
     <>
       <p className="font-display text-lg tracking-tight text-white/80 sm:text-xl">novexa</p>
       <Heading className="mt-2 max-w-xl text-[1.75rem] font-extrabold leading-[1.1] tracking-tight text-white sm:mt-3 sm:text-4xl md:text-6xl">
-        Find it. Customize it. Build it.
+        Software development for websites, apps and digital products.
       </Heading>
       <p className="mt-3 max-w-lg text-sm leading-relaxed text-white/75 sm:mt-5 sm:text-base md:text-lg">
-        Ready-made websites, apps, ecommerce, automation and studio work. Message WhatsApp or email to purchase or customize.
+        A worldwide software development company and digital studio — custom software, mobile apps, ecommerce and AI automation, plus ready-made products you can buy and customize.
       </p>
       <p className="mt-3 hidden text-[10px] font-semibold uppercase tracking-[0.22em] text-white/55 sm:mt-4 sm:block">
-        Digital products · Custom studio · {site.domain}
+        Software development · Digital products · {site.domain}
       </p>
       <div
         className={

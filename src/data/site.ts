@@ -8,7 +8,7 @@ export const site = {
   adminUrl: domains.adminUrl,
   tagline: "Find it. Customize it. Build it.",
   description:
-    "NovexaHub is a premium digital studio for ready-made websites, mobile apps, ecommerce systems, AI automation, UI/UX design, custom software features and creative work. Enquire on WhatsApp or email to purchase or customize.",
+    "NovexaHub is a worldwide software development company and digital studio: custom websites, mobile apps, ecommerce, SaaS, AI automation, UI/UX design and creative work — plus ready-made digital products to purchase and customize. Enquire on WhatsApp or email.",
   email: "novexahub.net@gmail.com",
   whatsapp: "923124724327",
   whatsappDisplay: "+92 312 4724327",

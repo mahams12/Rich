@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { useApp } from "@/components/providers/AppProvider";
 import { ProjectVisual } from "@/components/media/ProjectVisual";
 import { Icon } from "@/components/ui/Icon";
-import { getPublishedProjects } from "@/data/projects";
 import { projectCover } from "@/lib/cover";
+import type { Project } from "@/types";
 
 function useMobileFan() {
   const [mobile, setMobile] = useState(false);
@@ -22,9 +21,8 @@ function useMobileFan() {
   return mobile;
 }
 
-export function ProjectFan() {
-  const { projects, catalogReady } = useApp();
-  const items = useMemo(() => getPublishedProjects(projects).slice(0, 9), [projects]);
+export function ProjectFan({ items: list }: { items: Project[] }) {
+  const items = useMemo(() => list.slice(0, 9), [list]);
   const mobile = useMobileFan();
 
   const [active, setActive] = useState(Math.floor(Math.min(items.length, 9) / 2));
@@ -42,7 +40,7 @@ export function ProjectFan() {
     return () => window.clearInterval(id);
   }, [items.length, paused]);
 
-  if (!catalogReady || !items.length) return null;
+  if (!items.length) return null;
 
   const xStep = mobile ? 46 : 118;
   const rotateStep = mobile ? 7 : 9;
