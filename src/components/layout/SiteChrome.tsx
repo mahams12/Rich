@@ -160,7 +160,7 @@ export function SiteHeader() {
 export function SiteFooter() {
   return (
     <footer className="mt-8 border-t border-black/10 bg-[#ebe6de]">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 sm:grid-cols-2 lg:grid-cols-6 lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-x-8 gap-y-10 px-4 py-12 sm:grid-cols-3 sm:px-6 lg:grid-cols-6 lg:px-8">
         <div className="space-y-3">
           <Logo />
           <p className="text-sm text-[#6d655d]">{site.tagline} A digital studio. Enquire on WhatsApp or email — nothing is purchased on the site.</p>
@@ -178,16 +178,15 @@ export function SiteFooter() {
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6d655d]">Core services</p>
           <div className="mt-3 space-y-2 text-sm">
-            <Link href="/web-development" className="block hover:text-[#a14b30]">Web development</Link>
-            <Link href="/mobile-app-development" className="block hover:text-[#a14b30]">Mobile app development</Link>
-            <Link href="/custom-software-development" className="block hover:text-[#a14b30]">Custom software</Link>
-            <Link href="/ai-automation" className="block hover:text-[#a14b30]">AI automation</Link>
-            <Link href="/saas-development" className="block hover:text-[#a14b30]">SaaS development</Link>
-            <Link href="/ecommerce-development" className="block hover:text-[#a14b30]">Ecommerce development</Link>
-            <Link href="/ui-ux-design" className="block hover:text-[#a14b30]">UI/UX design</Link>
-            <Link href="/ai-chatbot-development" className="block hover:text-[#a14b30]">AI chatbots</Link>
-            <Link href="/graphic-design" className="block hover:text-[#a14b30]">Graphic design</Link>
-            <Link href="/video-editing" className="block hover:text-[#a14b30]">Video editing</Link>
+            <Link href="/web-development" className="block hover:text-[#a14b30]">Web Development</Link>
+            <Link href="/mobile-app-development" className="block hover:text-[#a14b30]">Mobile App Development</Link>
+            <Link href="/custom-software-development" className="block hover:text-[#a14b30]">Custom Software</Link>
+            <Link href="/ai-automation" className="block hover:text-[#a14b30]">AI Automation</Link>
+            <Link href="/ecommerce-development" className="block hover:text-[#a14b30]">Ecommerce Development</Link>
+            <Link href="/services" className="mt-1 inline-flex items-center gap-1 font-semibold text-[#a14b30] underline-offset-4 hover:underline">
+              View All Services
+              <Icon name="arrow-ne" className="h-3.5 w-3.5" />
+            </Link>
           </div>
         </div>
         <div>
