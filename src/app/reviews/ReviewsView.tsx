@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Badge, Section } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { useApp } from "@/components/providers/AppProvider";
@@ -22,9 +22,8 @@ export function ReviewsView() {
     () => [...reviews, ...studioReviews].filter((item) => !item.sample),
     [reviews],
   );
-  const [open, setOpen] = useState(false);
-  const preview = 6;
-  const visible = open ? live : live.slice(0, preview);
+  const preview = 12;
+  const visible = live.slice(0, preview);
 
   return (
     <Section>
@@ -48,15 +47,9 @@ export function ReviewsView() {
         ))}
       </div>
       {live.length > preview ? (
-        <div className="mt-8 text-center">
-          <button
-            type="button"
-            onClick={() => setOpen((value) => !value)}
-            className="text-sm font-semibold text-[#16110e] underline-offset-4 hover:underline"
-          >
-            {open ? "See less" : "See more"}
-          </button>
-        </div>
+        <p className="mt-8 text-center text-xs text-[#6d655d]">
+          Showing the {preview} most recent reviews.
+        </p>
       ) : null}
     </Section>
   );

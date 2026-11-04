@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { FoundersSection } from "@/components/home/FoundersSection";
 import { HeroStage } from "@/components/home/HeroStage";
@@ -17,7 +18,6 @@ import type { Project } from "@/types";
 export function HomeView({ initialProjects }: { initialProjects?: Project[] }) {
   const { projects, catalogReady, reviews: liveReviews } = useApp();
   const [openFaq, setOpenFaq] = useState(0);
-  const [showAllReviews, setShowAllReviews] = useState(false);
   // Same merge as PortfolioView: server-rendered catalog shows immediately,
   // the live snapshot takes over once it delivers fresher data.
   const effectiveProjects = catalogReady || !initialProjects?.length ? projects : initialProjects;
@@ -28,7 +28,7 @@ export function HomeView({ initialProjects }: { initialProjects?: Project[] }) {
     [liveReviews],
   );
   const previewCount = 3;
-  const visibleReviews = showAllReviews ? allReviews : allReviews.slice(0, previewCount);
+  const visibleReviews = allReviews.slice(0, previewCount);
 
   return (
     <>
@@ -89,13 +89,12 @@ export function HomeView({ initialProjects }: { initialProjects?: Project[] }) {
         </div>
         {allReviews.length > previewCount ? (
           <div className="mt-6 text-center">
-            <button
-              type="button"
-              onClick={() => setShowAllReviews((value) => !value)}
+            <Link
+              href="/reviews"
               className="text-sm font-semibold text-[#16110e] underline-offset-4 hover:underline"
             >
-              {showAllReviews ? "See less" : "See more"}
-            </button>
+              See all {allReviews.length} reviews
+            </Link>
           </div>
         ) : null}
       </Section>
