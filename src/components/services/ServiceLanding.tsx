@@ -25,14 +25,6 @@ function serviceJsonLd(data: ServicePageData) {
           { "@type": "ListItem", position: 3, name: data.badge, item: `${site.url}/${data.slug}` },
         ],
       },
-      {
-        "@type": "FAQPage",
-        mainEntity: data.faqs.map((item) => ({
-          "@type": "Question",
-          name: item.q,
-          acceptedAnswer: { "@type": "Answer", text: item.a },
-        })),
-      },
     ],
   };
 }

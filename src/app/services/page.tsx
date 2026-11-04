@@ -56,6 +56,8 @@ export default function ServicesPage() {
           { href: "/ecommerce-development", label: "Ecommerce development" },
           { href: "/ui-ux-design", label: "UI/UX design" },
           { href: "/ai-chatbot-development", label: "AI chatbots" },
+          { href: "/graphic-design", label: "Graphic design" },
+          { href: "/video-editing", label: "Video editing" },
         ].map((item) => (
           <Link key={item.href} href={item.href} className="rounded-full border border-[#c45c3a]/30 bg-card px-3 py-1.5 text-xs font-semibold hover:border-[#c45c3a]/60">
             {item.label}

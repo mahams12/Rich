@@ -29,7 +29,7 @@ export const servicePages: ServicePageData[] = [
     slug: "web-development",
     badge: "Web development",
     title: "Web Development Company — Custom Websites & Web Apps",
-    h1: "Web development that ships, not just ships screenshots.",
+    h1: "Web development for businesses that need more than a template.",
     description:
       "NovexaHub is a web development company building custom websites, portals and web applications with Next.js, React and TypeScript. Enquire on WhatsApp or email.",
     keywords: [
@@ -66,9 +66,9 @@ export const servicePages: ServicePageData[] = [
     ],
     capabilities: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Node.js", "PostgreSQL", "Supabase", "CMS-friendly content models"],
     projects: [
-      { slug: "estatevue-property-portal", title: "EstateVue Property Portal", note: "Listings, filters and agent pages for real estate." },
+      { slug: "real-estate-property-listing-management-platform", title: "Real Estate Listing Platform", note: "Property listings and management for real-estate teams." },
       { slug: "luxestay-hotel-booking", title: "LuxeStay Hotel Booking", note: "Room galleries and a booking enquiry flow for hospitality." },
-      { slug: "clinicorn-clinic-website", title: "Clinicorn Clinic Website", note: "A trust-first services and appointments site." },
+      { slug: "tableandthyme-restaurant", title: "Table & Thyme Restaurant Site", note: "Menus, reservations and a warm brand presence." },
     ],
     posts: [
       { slug: "business-website-checklist-2026", title: "Business Website Checklist for 2026" },
@@ -103,7 +103,7 @@ export const servicePages: ServicePageData[] = [
     slug: "mobile-app-development",
     badge: "Mobile apps",
     title: "Mobile App Development Company — Flutter, iOS & Android",
-    h1: "Mobile app development for iOS and Android from one codebase.",
+    h1: "Mobile app development for iOS and Android — one codebase, one team.",
     description:
       "NovexaHub builds mobile apps with Flutter and Firebase: fitness, delivery, telehealth, logistics and custom concepts. Enquire on WhatsApp or email.",
     keywords: [
@@ -141,7 +141,7 @@ export const servicePages: ServicePageData[] = [
     projects: [
       { slug: "pulsefit-fitness-app", title: "PulseFit Fitness App", note: "Workout plans, progress charts and memberships." },
       { slug: "biteroute-food-delivery", title: "BiteRoute Food Delivery", note: "Menus, cart, tracking and rider-ready screens." },
-      { slug: "pocketclinic-telehealth", title: "PocketClinic Telehealth", note: "Appointments, patient profiles and calling-ready consults." },
+      { slug: "social-messaging-feeds-app", title: "Social Messaging & Feeds App", note: "Profiles, feeds and messaging-ready mobile screens." },
     ],
     posts: [
       { slug: "mobile-app-and-flutter-software-projects-for-startups", title: "Mobile App & Flutter Software Projects for Startups" },
@@ -211,7 +211,7 @@ export const servicePages: ServicePageData[] = [
     ],
     capabilities: ["Next.js", "React", "TypeScript", "Node.js", "PostgreSQL", "Supabase", "Webhooks & integrations", "Role-based admin views"],
     projects: [
-      { slug: "customcraft-bespoke-build", title: "CustomCraft Bespoke Build", note: "A custom web and app engagement model, scoped per client." },
+      { slug: "ai-intelligent-scheduling-assistant", title: "AI Scheduling Assistant", note: "An intelligent scheduling tool built for real workflows." },
       { slug: "ledgerly-finance-dashboard", title: "Ledgerly Finance Dashboard", note: "Invoices, cashflow and client reporting for money teams." },
       { slug: "authkit-identity-module", title: "AuthKit Identity Module", note: "Login, register and protected routes as a drop-in feature." },
     ],
@@ -247,7 +247,7 @@ export const servicePages: ServicePageData[] = [
     slug: "ai-automation",
     badge: "AI automation",
     title: "AI Automation Agency — Workflows & Business Process Automation",
-    h1: "AI automation that removes work instead of creating a new tool to manage.",
+    h1: "AI automation that removes repetitive work from your business.",
     description:
       "NovexaHub builds AI automation: support assistants, workflow routing, lead capture and social posting systems. Scoped on WhatsApp or email.",
     keywords: [
@@ -285,7 +285,7 @@ export const servicePages: ServicePageData[] = [
     projects: [
       { slug: "whisper-ai-support-agent", title: "Whisper AI Support Agent", note: "Branded chat that answers, routes and captures leads." },
       { slug: "streamline-workflow-automation", title: "Streamline Workflow Automation", note: "Form in, status board, notifications out." },
-      { slug: "postpilot-social-system", title: "PostPilot Social Posting", note: "Calendar, captions, approvals and publish-ready slots." },
+      { slug: "ai-workforce-intelligence-skill-gap-platform", title: "AI Workforce Intelligence Platform", note: "Skill-gap analysis and workforce intelligence tooling." },
     ],
     posts: [
       { slug: "ai-automation-software-projects-for-growing-businesses", title: "AI Automation Software Projects for Growing Businesses" },
@@ -318,7 +318,7 @@ export const servicePages: ServicePageData[] = [
     slug: "saas-development",
     badge: "SaaS development",
     title: "SaaS Development Company — MVP to Product",
-    h1: "SaaS development from a scoped MVP to a product that holds up.",
+    h1: "SaaS development from a scoped MVP to a working product.",
     description:
       "NovexaHub builds SaaS products and MVPs: marketing site, app shell, auth, billing-ready checkout and dashboards. Scoped on WhatsApp or email.",
     keywords: [
@@ -354,7 +354,7 @@ export const servicePages: ServicePageData[] = [
     ],
     capabilities: ["Next.js", "React", "TypeScript", "PostgreSQL", "Supabase", "Stripe-ready checkout", "Auth & role modules", "Analytics-ready views"],
     projects: [
-      { slug: "insightops-analytics-saas", title: "InsightOps Analytics SaaS", note: "Marketing site plus app shell for analytics products." },
+      { slug: "crypto-tracker-cryptocurrency-news-market-analytics-website", title: "Crypto Tracker Analytics", note: "A market-analytics and news product for crypto." },
       { slug: "ledgerly-finance-dashboard", title: "Ledgerly Finance Dashboard", note: "KPI, invoice and cashflow views for money teams." },
       { slug: "checkout-plus-payments", title: "Checkout+ Payments", note: "Payment states and order summary without raw card storage." },
     ],
@@ -425,7 +425,7 @@ export const servicePages: ServicePageData[] = [
     ],
     capabilities: ["Next.js", "React", "Stripe-ready checkout", "PostgreSQL", "Subscription & kit logic", "Multi-vendor structure"],
     projects: [
-      { slug: "novacart-ecommerce-os", title: "NovaCart Ecommerce OS", note: "Catalog, cart, checkout and orders in one system." },
+      { slug: "ai-powered-multi-vendor-e-commerce-platform", title: "AI Multi-Vendor E-Commerce Platform", note: "A multi-vendor marketplace with AI-assisted tooling." },
       { slug: "glowbar-beauty-shop", title: "GlowBar Beauty Shop", note: "Lookbooks, kits and subscription-ready product cards." },
       { slug: "cartdrawer-shopping-cart", title: "CartDrawer Cart Module", note: "A cart drawer you can drop onto an existing site." },
     ],
@@ -461,7 +461,7 @@ export const servicePages: ServicePageData[] = [
     slug: "ui-ux-design",
     badge: "UI/UX design",
     title: "UI/UX Design — Product, Brand & Print-Ready Design",
-    h1: "UI/UX design that makes products feel inevitable, not decorated.",
+    h1: "UI/UX design for websites, apps and brands that explain themselves.",
     description:
       "NovexaHub designs UI/UX for web and mobile, brand identity systems, posters, banners and product design. Scoped on WhatsApp or email.",
     keywords: [
@@ -497,9 +497,9 @@ export const servicePages: ServicePageData[] = [
     ],
     capabilities: ["Figma", "Adobe", "Design tokens & systems", "Print-ready exports", "Web & mobile UI", "Brand identity systems"],
     projects: [
-      { slug: "aurora-brand-identity", title: "Aurora Brand Identity", note: "Logo, color, type and social kits in one system." },
-      { slug: "productform-design-system", title: "ProductForm Product Design", note: "Packaging direction and digital product UI." },
-      { slug: "framelab-poster-banner-studio", title: "FrameLab Posters & Banners", note: "Print and digital campaign sizes in one language." },
+      { slug: "storygrid-content-platform", title: "StoryGrid Content Platform", note: "Editorial-first design for media and content brands." },
+      { slug: "glowbar-beauty-shop", title: "GlowBar Beauty Shop", note: "Lookbook-led product design for a beauty brand." },
+      { slug: "pageforge-frontend-pages", title: "PageForge Frontend Pages", note: "Interface and page design built to be built." },
     ],
     posts: [
       { slug: "ecommerce-product-page-design-practical-buying-guide", title: "Ecommerce Product Pages: A Practical Blueprint" },
@@ -532,7 +532,7 @@ export const servicePages: ServicePageData[] = [
     slug: "ai-chatbot-development",
     badge: "AI chatbots",
     title: "AI Chatbot Development — Branded Support & Lead Capture",
-    h1: "AI chatbot development for support that answers and hands off properly.",
+    h1: "AI chatbot development for support and lead capture that hands off cleanly.",
     description:
       "NovexaHub builds AI chatbots: branded support assistants, knowledge-grounded answers, lead capture and human handoff. Scoped on WhatsApp or email.",
     keywords: [
@@ -595,6 +595,144 @@ export const servicePages: ServicePageData[] = [
       {
         q: "Can it live on an existing website?",
         a: "Yes. The widget embeds on an existing site, and the prompt layer is independent of your CMS. Share the site and we will confirm fit before quoting.",
+      },
+    ],
+  },
+  {
+    slug: "graphic-design",
+    badge: "Graphic design",
+    title: "Graphic Design Services — Posters, Banners & Branding",
+    h1: "Graphic design for posters, banners, branding and product visuals.",
+    description:
+      "NovexaHub designs posters, banners, brand identity kits, product visuals and campaign creatives — print-ready and digital. Scoped on WhatsApp or email.",
+    keywords: [
+      "graphic design services",
+      "poster design",
+      "banner design",
+      "brand identity design",
+      "print design",
+      "NovexaHub",
+    ],
+    hero: [
+      "Print and digital design that comes from one visual language — posters, banners, roll-ups, social creatives, brand kits and product visuals that look like they came from the same company, because they did.",
+      "Every piece ships with organized source files and export-ready formats, so what you approve is exactly what goes to the printer or the feed.",
+    ],
+    problems: [
+      { title: "Every asset looking like a different brand", text: "Poster, banner, packaging and social work produced inside one design system — same type, same palette, same rules." },
+      { title: "Printer rejects the files", text: "Print-ready exports with correct bleed, sizes and PDF packaging — designed for production, not just for screens." },
+      { title: "A logo with no system around it", text: "Brand identity work includes usage rules, color, type and social kits — not just a mark in a folder." },
+      { title: "Campaign assets assembled last-minute", text: "Campaign kits bundle ads, posters, banners and short video-ready creatives in one drop, on one schedule." },
+    ],
+    deliverables: [
+      "Posters, banners and roll-ups in print and digital crops",
+      "Brand identity: logo usage, palette, type and social kits",
+      "Product visuals: packaging direction, labels and product-page art",
+      "Editable source files plus PNG/PDF exports",
+      "One revision round per scoped item",
+    ],
+    process: [
+      { title: "Brief", text: "Sizes, copy, logos and the feeling — quiet luxury, loud launch, cafe or tech." },
+      { title: "Direction", text: "One visual direction agreed before production starts." },
+      { title: "Design", text: "Assets produced in reviewable stages across every size you need." },
+      { title: "Export", text: "Print-ready and digital files delivered with source and usage notes." },
+    ],
+    capabilities: ["Figma", "Adobe", "Print-ready exports & bleed", "Brand systems", "Campaign kits", "Packaging direction"],
+    projects: [
+      { slug: "storygrid-content-platform", title: "StoryGrid Content Platform", note: "Editorial-first visual design for media brands." },
+      { slug: "glowbar-beauty-shop", title: "GlowBar Beauty Shop", note: "Lookbook and product-story visuals for a beauty brand." },
+      { slug: "adlume-campaign-ads", title: "AdLume Beautiful Ads", note: "Static and motion ad creatives for feeds and display." },
+    ],
+    posts: [],
+    siblings: [
+      { href: "/ui-ux-design", label: "UI/UX design" },
+      { href: "/video-editing", label: "Video editing" },
+      { href: "/web-development", label: "Web development" },
+    ],
+    faqs: [
+      {
+        q: "How much does graphic design cost?",
+        a: "Published starting points: banners from $150, posters from $180, product design from $420, brand identity from $540 and a full campaign kit from $540. Multi-piece projects are quoted after a short brief.",
+      },
+      {
+        q: "Do you deliver print-ready files?",
+        a: "Yes — PDF with bleed and correct dimensions for print, plus optimized PNG/web crops for digital use. Printing itself stays with your print shop.",
+      },
+      {
+        q: "Can you match our existing brand?",
+        a: "Yes. Share the logo files, palette and any examples of what you like. If the brand system does not exist yet, identity design is a service on its own.",
+      },
+      {
+        q: "How many revisions are included?",
+        a: "One revision round is included per scoped item, defined before work starts. Larger changes are quoted openly rather than quietly absorbed.",
+      },
+    ],
+  },
+  {
+    slug: "video-editing",
+    badge: "Video editing",
+    title: "Video Editing Services — Reels, Ads & Explainers",
+    h1: "Video editing for reels, ads, explainers and showreels.",
+    description:
+      "NovexaHub edits videos for brands and creators: hook-led reels, short ads, explainers, YouTube cuts and showreels with captions and clean color.",
+    keywords: [
+      "video editing services",
+      "reels editing",
+      "ad video editing",
+      "explainer video",
+      "showreel editing",
+      "NovexaHub",
+    ],
+    hero: [
+      "Editing that is built for the feed it lives in: hook-first pacing, captions that survive muted autoplay, platform crops that do not chop your product in half.",
+      "Send raw clips and a reference — get back masters plus 9:16, 1:1 and 16:9 exports with thumbnail stills, ready to post.",
+    ],
+    problems: [
+      { title: "Footage that never gets posted", text: "Raw clips become finished reels and ads on a defined turnaround, with captions and thumbnails included." },
+      { title: "One crop fits nothing", text: "Every edit exports in 9:16, 1:1 and 16:9, so the same story works on Reels, TikTok, YouTube and ads." },
+      { title: "Muted autoplay kills the message", text: "Caption styles and visual pacing designed for sound-off viewing first." },
+      { title: "Edits that look templated", text: "Brand-matched color, type and pacing — the cut looks like your brand, not a CapCut default." },
+    ],
+    deliverables: [
+      "Hook-first edited masters for the agreed length and format",
+      "Captions, sound-bed slots and thumbnail stills",
+      "9:16, 1:1 and 16:9 platform crops",
+      "Ads, explainers and showreels as scoped",
+      "One revision round per scoped edit",
+    ],
+    process: [
+      { title: "Brief", text: "Raw clips, brand references, length, platform and the CTA the video needs." },
+      { title: "Cut", text: "First cut for review — pacing, hook and structure agreed before polish." },
+      { title: "Polish", text: "Color, captions, sound bed and brand finish applied." },
+      { title: "Export", text: "Platform-ready masters and stills delivered per the scope." },
+    ],
+    capabilities: ["Premiere / CapCut-ready", "After Effects-ready", "Caption styles", "9:16, 1:1 & 16:9 exports", "Thumbnail stills", "Brand-matched color"],
+    projects: [
+      { slug: "cuthouse-video-edit-pack", title: "CutHouse Video Edit Pack", note: "Reels, ads, explainers and showreels cut to feel expensive." },
+      { slug: "adlume-campaign-ads", title: "AdLume Beautiful Ads", note: "Static and motion ad creatives for Meta, TikTok and display." },
+      { slug: "reels-engine", title: "Reels Engine Social Feature", note: "Vertical video feed, stories and profile grid module." },
+    ],
+    posts: [],
+    siblings: [
+      { href: "/graphic-design", label: "Graphic design" },
+      { href: "/ui-ux-design", label: "UI/UX design" },
+      { href: "/ecommerce-development", label: "Ecommerce development" },
+    ],
+    faqs: [
+      {
+        q: "How much does video editing cost?",
+        a: "Published starting points: social posting packs from $240, ad creatives from $260 and edited video packs from $320 — campaign bundles that include video start from $540. Series and retainers are quoted per volume.",
+      },
+      {
+        q: "What do you need from us to start?",
+        a: "Raw clips (or a clear shot list), brand references, the target length, the platform and the call-to-action. The more specific the reference, the faster the first cut lands right.",
+      },
+      {
+        q: "Do you shoot video as well?",
+        a: "Editing is the service — we work from your raw footage or approved stock. Original film production and paid ad accounts stay on your side.",
+      },
+      {
+        q: "Which formats do we get?",
+        a: "Edited masters plus 9:16, 1:1 and 16:9 platform crops, captions and thumbnail stills — per the scoped pack.",
       },
     ],
   },

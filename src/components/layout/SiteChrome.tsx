@@ -186,6 +186,8 @@ export function SiteFooter() {
             <Link href="/ecommerce-development" className="block hover:text-[#a14b30]">Ecommerce development</Link>
             <Link href="/ui-ux-design" className="block hover:text-[#a14b30]">UI/UX design</Link>
             <Link href="/ai-chatbot-development" className="block hover:text-[#a14b30]">AI chatbots</Link>
+            <Link href="/graphic-design" className="block hover:text-[#a14b30]">Graphic design</Link>
+            <Link href="/video-editing" className="block hover:text-[#a14b30]">Video editing</Link>
           </div>
         </div>
         <div>

@@ -21,7 +21,7 @@ const jakarta = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: "NovexaHub | Websites, Apps, Studio Work",
+    default: "NovexaHub | Software Development Company & Digital Studio",
     template: "%s | NovexaHub",
   },
   description: site.description,
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     type: "website",
     url: site.url,
     siteName: site.name,
-    title: "NovexaHub — Digital studio for websites, apps and custom work",
+    title: "NovexaHub — Software development company for websites, apps and custom work",
     description: site.description,
     images: [{ url: "/brand/hero-studio.jpg", width: 1536, height: 1024, alt: "NovexaHub" }],
   },

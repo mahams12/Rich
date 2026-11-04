@@ -63,16 +63,16 @@ Date: 2026-11-03 · Branch: `seo/worldwide-strategy` · Scope: worldwide English
 - Stack: Next.js, React, TypeScript, Tailwind, Node.js, PostgreSQL, Flutter, Firebase, Supabase, Docker, GSAP, Figma/Adobe, OpenAI, Claude, Make/Zapier-ready, WebRTC-ready, Stripe-ready — all already published in `techStack`/`aiStudio`/project `technologies`.
 - Prices: only the `from` values already published in `serviceCatalog` (e.g. business site from $490, full store from $1,490, AI agent from $990). No new prices invented.
 - Projects linked on service pages are existing published slugs in `src/data/projects.ts`.
-- **Named case-study candidates from the brief do not exist** in this codebase or git history: TripsAdora, SafeApp, Nozama AI, FinBotics. No pages or claims were created for them. The “real estate platform” = `estatevue-property-portal`; descriptions for EstateVue, NovaCart, Whisper and PulseFit were expanded using only fields already present in their entries.
+- **Case-study candidates:** FinBotics and the real-estate platform DO exist — as live Firestore projects (`finbotics-ai-personal-finance-tax-assistant`, `real-estate-property-listing-management-platform`), not in the repo. TripsAdora, SafeApp and Nozama AI remain unverified (not in repo, git history or the live catalog) — nothing was written about them. Seed descriptions for NovaCart, Whisper, PulseFit and EstateVue were expanded using only fields already present in each entry. NOTE: novacart and estatevue are remote-deleted in the live catalog and no longer resolve publicly.
 
 ## 4. Known limitations / owner actions
 
-- **Firestore catalog vs seed slugs**: sitemap and `generateStaticParams` emit all 36 published seed projects, but `/projects/[slug]` resolves against the live catalog. If Firestore contains fewer items, some emitted URLs render the in-app “Project not found” state. Owner should confirm the `projects` collection is synced (admin import) or prune seeds.
+- **Firestore vs seeds — RESOLVED in this round**: `splitCatalogDocs` now merges remote docs + bundled seeds (remote wins by id; `deleted:true` docs suppress their seed twin). Live listener and server fetch produce one identical catalog, consumed by sitemap, `generateStaticParams`, `generateMetadata`, JSON-LD and all views. Unknown, remote-deleted and non-`published` slugs return a real 404 via `notFound()`; metadata for missing slugs emits `noindex`. Verified live: 11 remote-published + ~21 surviving seed projects; service pages link only live-published slugs.
 - **Reviews**: seed testimonials hidden until replaced by attributable ones; consider collecting real reviews via the existing signed-in review flow.
 - **www/legacy**: `www`, `novexahub.net`, `www.novexahub.net` 301 → apex in middleware (already correct pre-branch).
 - **Search Console / Bing**: verification meta wired via `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` / `NEXT_PUBLIC_BING_SITE_VERIFICATION` env — owner must supply values + submit `sitemap.xml`, review Coverage/Page-Indexing, and validate the keyword hypotheses in `keyword-map.md` against real query data.
-- **`/blog/submit`** remains indexable (thin UGC form) — optional `noindex` if the owner prefers.
-- **FAQ rich results**: FAQPage schema is valid but Google limits FAQ rich results to well-known authoritative sites; kept for consistency, expect no stars/snippets lift.
+- **`/blog/submit`** now emits `noindex,follow` metadata — crawlable but kept out of the index.
+- **FAQ rich results**: FAQPage schema REMOVED (homepage + service pages) following Google's May 2026 discontinuation of FAQ rich results. The visible FAQ content stays. Remaining JSON-LD: Organization, WebSite+SearchAction, ProfessionalService, Service, BreadcrumbList, BlogPosting, CreativeWork, ItemList — all match visible page content.
 - **`dynamic = "force-dynamic"` + `generateStaticParams`** coexist on blog/project routes — pre-existing pattern, works with the Firestore-refresh model; left unchanged.
 
 ## 5. Validation
@@ -84,3 +84,9 @@ npm run lint
 npx tsc --noEmit
 npm run build        # next build --webpack (OpenNext/Cloudflare target)
 ```
+
+### Second-round additions
+- Homepage repositioned: title/H1/copy now lead with “software development company / worldwide digital studio” while keeping the ready-made marketplace.
+- `/graphic-design` and `/video-editing` service pages added (framelab/aurora product links replaced with live-published work: adlume, storygrid, glowbar, cuthouse, reels).
+- Service-page project links audited against the live merged catalog — all now resolve.
+- Meta events: `Lead` fires once per confirmed form submit; `Contact` fires once per WhatsApp/email click (handlers verified — no StrictMode/duplicate paths).

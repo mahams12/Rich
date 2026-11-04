@@ -31,7 +31,7 @@ export function ProjectDetailView({ initialProjects }: { initialProjects?: Proje
   const router = useRouter();
   const { projects, catalogReady, toggleFavourite, isFavourite, user, reviews: liveReviews, addReview, deleteProject, addCustomization } = useApp();
   const effectiveProjects = catalogReady || !initialProjects?.length ? projects : initialProjects;
-  const project = effectiveProjects.find((item) => item.slug === slug);
+  const project = effectiveProjects.find((item) => item.slug === slug && item.status === "published");
   const [tab, setTab] = useState<"overview" | "features" | "customize">("overview");
   const [words, setWords] = useState("");
   const [gallery, setGallery] = useState(0);

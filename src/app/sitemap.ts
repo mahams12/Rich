@@ -1,9 +1,12 @@
 import type { MetadataRoute } from "next";
-import { posts } from "@/data/posts";
-import { projects } from "@/data/projects";
+import { posts as seedPosts } from "@/data/posts";
+import { projects as seedProjects } from "@/data/projects";
 import { site } from "@/data/site";
+import { fetchCatalogServer } from "@/lib/firebase/rest";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const dynamic = "force-dynamic";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [
     "",
     "/portfolio",
@@ -18,6 +21,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/saas-development",
     "/ecommerce-development",
     "/ui-ux-design",
+    "/graphic-design",
+    "/video-editing",
     "/features",
     "/builder",
     "/about",
@@ -33,6 +38,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: "weekly" as const,
     priority: path === "" ? 1 : path === "/blog" ? 0.9 : 0.8,
   }));
+
+  // fetchCatalogServer returns the merged catalogue (remote + bundled seeds),
+  // the same source project pages resolve from — no emitted URL can hit the
+  // in-app "not found" state. Seeds are the fallback when the fetch fails.
+  const catalog = await fetchCatalogServer();
+  const projects = catalog?.projects ?? seedProjects;
+  const posts = catalog?.posts ?? seedPosts;
 
   const projectRoutes = projects
     .filter((project) => project.status === "published" && !project.deleted)
