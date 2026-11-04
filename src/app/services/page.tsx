@@ -21,6 +21,16 @@ const packs = [
   { title: "Academic kit", text: "Final-year prototype or assignment writing structure." },
 ];
 
+const categoryPage: Record<string, string> = {
+  websites: "/web-development",
+  mobile: "/mobile-app-development",
+  ecommerce: "/ecommerce-development",
+  ai: "/ai-automation",
+  uiux: "/ui-ux-design",
+  creative: "/graphic-design",
+  features: "/custom-software-development",
+};
+
 const catalogLd = {
   "@context": "https://schema.org",
   "@type": "ItemList",
@@ -32,7 +42,7 @@ const catalogLd = {
       position: gi * 20 + ii + 1,
       name: item.name,
       description: item.detail,
-      url: `${site.url}/contact`,
+      url: `${site.url}${categoryPage[group.id] ?? `/services#${group.id}`}`,
     })),
   ),
 };

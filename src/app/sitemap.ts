@@ -51,7 +51,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter((project) => project.status === "published" && !project.deleted)
     .map((project) => ({
       url: `${site.url}/projects/${project.slug}`,
-      lastModified: new Date(project.publishedAt || project.createdAt || Date.now()),
+      lastModified: project.publishedAt || project.createdAt ? new Date((project.publishedAt || project.createdAt) as string) : undefined,
       changeFrequency: "weekly" as const,
       priority: 0.7,
     }));
@@ -66,7 +66,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ).values(),
   ).map((post) => ({
       url: `${site.url}/blog/${post.slug}`,
-      lastModified: new Date(post.updatedAt || post.publishedAt || post.createdAt || Date.now()),
+      lastModified: post.updatedAt || post.publishedAt || post.createdAt ? new Date((post.updatedAt || post.publishedAt || post.createdAt) as string) : undefined,
       changeFrequency: "weekly" as const,
       priority: 0.85,
     }));

@@ -90,3 +90,11 @@ npm run build        # next build --webpack (OpenNext/Cloudflare target)
 - `/graphic-design` and `/video-editing` service pages added (framelab/aurora product links replaced with live-published work: adlume, storygrid, glowbar, cuthouse, reels).
 - Service-page project links audited against the live merged catalog — all now resolve.
 - Meta events: `Lead` fires once per confirmed form submit; `Contact` fires once per WhatsApp/email click (handlers verified — no StrictMode/duplicate paths).
+
+### Fourth-round additions
+- `WebSite` JSON-LD: removed retired `SearchAction` (Google deprecated the sitelinks search box); Organization/ProfessionalService/WebSite/Service/BreadcrumbList/BlogPosting/CreativeWork/ItemList remain and all match visible content.
+- `/services` ItemList schema now links each offering to its dedicated service page (category → page map), improving crawl paths and entity clarity.
+- Sitemap `lastModified` no longer falls back to `Date.now()` — dates are emitted only when a real timestamp exists (avoids false freshness signals).
+- Blog deletion tombstones now suppress bundled twins (mergePosts keeps deleted docs; getBlogPostsWithFallback suppresses by id+slug and filters output); drafts get noindex + real 404s.
+- Meta `Contact` fires on all WhatsApp/email entry points (fab, footer, ContactActions, ContactView direct lines); `Lead` single-fires per confirmed submit — rapid submissions are client-guarded.
+- Remaining audit notes: OG image /brand/hero-studio.jpg exists; canonicals verified unique on all indexable routes; /blog/submit is noindex; /auth,/api,/checkout,/dashboard,/favourites,/login,/register,/notifications disallowed; middleware 301s www+legacy to apex.
