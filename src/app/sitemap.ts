@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { posts as seedPosts } from "@/data/posts";
+import { getBlogPostsWithFallback, posts as seedPosts } from "@/data/posts";
 import { projects as seedProjects } from "@/data/projects";
 import { site } from "@/data/site";
 import { fetchCatalogServer } from "@/lib/firebase/rest";
@@ -44,7 +44,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // in-app "not found" state. Seeds are the fallback when the fetch fails.
   const catalog = await fetchCatalogServer();
   const projects = catalog?.projects ?? seedProjects;
-  const posts = catalog?.posts ?? seedPosts;
+  // Same merged post list the blog views render — no orphaned URLs either way.
+  const posts = getBlogPostsWithFallback(catalog?.posts ?? seedPosts);
 
   const projectRoutes = projects
     .filter((project) => project.status === "published" && !project.deleted)
