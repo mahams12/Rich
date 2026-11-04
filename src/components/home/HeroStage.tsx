@@ -11,7 +11,7 @@ function HeroCopy({ stacked }: { stacked?: boolean }) {
   return (
     <>
       <p className="font-display text-lg tracking-tight text-white/80 sm:text-xl">novexa</p>
-      <Heading className="mt-2 max-w-xl text-[1.75rem] font-extrabold leading-[1.1] tracking-tight text-white sm:mt-3 sm:text-4xl md:text-6xl">
+      <Heading className="mt-2 max-w-xl text-[1.75rem] font-extrabold leading-[1.1] tracking-tight text-white sm:mt-3 sm:text-4xl md:text-5xl">
         Software development for websites, apps and digital products.
       </Heading>
       <p className="mt-3 max-w-lg text-sm leading-relaxed text-white/75 sm:mt-5 sm:text-base md:text-lg">
