@@ -75,14 +75,6 @@ export default function ServicesPage() {
         ))}
       </div>
 
-      <div className="mt-8 flex flex-wrap gap-2">
-        {serviceCatalog.map((group) => (
-          <a key={group.id} href={`#${group.id}`} className="rounded-full border border-black/10 bg-card px-3 py-1.5 text-xs font-semibold hover:border-[#c45c3a]/40">
-            {group.name.split("—")[0].split("&")[0].trim()}
-          </a>
-        ))}
-      </div>
-
       <div className="mt-12 space-y-12">
         {serviceCatalog.map((group) => (
           <section key={group.id} id={group.id} className="scroll-mt-28">
