@@ -628,8 +628,13 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       if (!item) return false;
       const next: BlogSubmission = { ...item, ...input, status: "pending", resubmitted: true, rejectReason: undefined };
       setSubmissions((current) => current.map((entry) => (entry.id === id ? next : entry)));
-      if (remote) void saveBlogSubmission(next).catch((error) => toast("Could not resubmit", firebaseErrorMessage(error)));
-      toast("Article resubmitted", "The studio will review it again.");
+      if (remote) {
+        void saveBlogSubmission(next)
+          .then(() => toast("Article resubmitted", "The studio will review it again."))
+          .catch((error) => toast("Could not resubmit", firebaseErrorMessage(error)));
+      } else {
+        toast("Article resubmitted", "The studio will review it again.");
+      }
       return true;
     },
     [toast, submissions],
