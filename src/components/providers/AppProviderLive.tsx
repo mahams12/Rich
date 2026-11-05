@@ -132,7 +132,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
     setToasts((current) => [...current, { id, title, detail }]);
     window.setTimeout(() => {
       setToasts((current) => current.filter((item) => item.id !== id));
-    }, 4200);
+    }, 9000);
   }, []);
 
   useEffect(() => {

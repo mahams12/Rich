@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useApp } from "@/components/providers/AppProvider";
 import { ProjectVisual } from "@/components/media/ProjectVisual";
 import { Badge, Section } from "@/components/ui/Button";
@@ -15,6 +15,7 @@ export function PortfolioView({ initialProjects }: { initialProjects?: Project[]
   // takes over once the client listener delivers fresher data.
   const effectiveProjects = catalogReady || !initialProjects?.length ? projects : initialProjects;
   const list = useMemo(() => getPublishedProjects(effectiveProjects), [effectiveProjects]);
+  const [visibleCount, setVisibleCount] = useState(12);
   const loading = !catalogReady && !initialProjects?.length;
 
   return (
@@ -31,7 +32,7 @@ export function PortfolioView({ initialProjects }: { initialProjects?: Project[]
             <div className="space-y-3 p-5"><div className="h-3 w-1/3 rounded bg-black/[0.07]" /><div className="h-5 w-3/4 rounded bg-black/[0.07]" /><div className="h-3 w-full rounded bg-black/[0.05]" /><div className="h-3 w-2/3 rounded bg-black/[0.05]" /></div>
           </div>
         )) : null}
-        {!loading ? list.map((project, index) => (
+        {!loading ? list.slice(0, visibleCount).map((project, index) => (
           <Link key={project.id} href={`/projects/${project.slug}`} className="group block">
             <div className="overflow-hidden rounded-2xl border border-black/10 bg-card">
               <div className="relative aspect-[4/3] overflow-hidden sm:aspect-[16/10]">
@@ -54,6 +55,17 @@ export function PortfolioView({ initialProjects }: { initialProjects?: Project[]
           </Link>
         )) : null}
       </div>
+      {!loading && list.length > visibleCount ? (
+        <div className="mt-8 text-center">
+          <button
+            type="button"
+            onClick={() => setVisibleCount((count) => count + 12)}
+            className="rounded-full border border-black/10 bg-card px-6 py-2.5 text-sm font-semibold text-[#16110e] transition hover:border-[#c45c3a]/40"
+          >
+            Load more projects
+          </button>
+        </div>
+      ) : null}
     </Section>
   );
 }

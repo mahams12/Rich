@@ -86,6 +86,7 @@ export function BlogView({ initialPosts }: { initialPosts?: BlogPost[] }) {
   // takes over once the client listener delivers fresher data.
   const effectivePosts = catalogReady || !initialPosts?.length ? posts : initialPosts;
   const published = useMemo(() => getBlogPostsWithFallback(effectivePosts), [effectivePosts]);
+  const [visibleCount, setVisibleCount] = useState(12);
   const loading = !catalogReady && !initialPosts?.length;
   const featured = useMemo(() => published.filter((post) => post.featured).slice(0, 3), [published]);
 
@@ -141,20 +142,24 @@ export function BlogView({ initialPosts }: { initialPosts?: BlogPost[] }) {
           <p className="mt-4 text-sm text-muted">No posts published yet.</p>
         ) : (
           <div className="grid items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {published.map((post, index) => <PostCard key={post.id} post={post} index={index} />)}
+            {published.slice(0, visibleCount).map((post, index) => <PostCard key={post.id} post={post} index={index} />)}
           </div>
         )}
+        {published.length > visibleCount ? (
+          <div className="mt-8 text-center">
+            <button
+              type="button"
+              onClick={() => setVisibleCount((count) => count + 12)}
+              className="rounded-full border border-black/10 bg-card px-6 py-2.5 text-sm font-semibold text-[#16110e] transition hover:border-[#c45c3a]/40"
+            >
+              Load more articles
+            </button>
+          </div>
+        ) : null}
       </div>
 
       <div className="mt-10 border-t border-black/10 pt-7">
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-black/10 bg-[#fffcf8] p-5">
-          <div>
-            <p className="font-semibold text-[#211a16]">Write for NovexaHub — earn $1 per article</p>
-            <p className="mt-1 text-sm text-[#756b63]">Share a practical article. Approved submissions are published under your name.</p>
-          </div>
-          <Button href="/blog/submit">Submit a blog</Button>
-        </div>
-        <div className="mt-6 flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-3">
           <Button href="/portfolio">Browse portfolio</Button>
           <Button href="/contact" variant="ghost">Talk to studio</Button>
         </div>
