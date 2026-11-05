@@ -27,7 +27,8 @@ export async function POST(req: Request) {
         ].join("\n"),
       }),
     });
-    return NextResponse.json({ ok: res.ok });
+    const result = res.ok ? {} : { status: res.status, error: (await res.text()).slice(0, 300) };
+    return NextResponse.json({ ok: res.ok, ...result });
   } catch {
     return NextResponse.json({ ok: false }, { status: 200 });
   }
