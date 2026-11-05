@@ -90,10 +90,10 @@ export function SubmitBlogView() {
               <textarea name="content" required minLength={200} className={`${inputClass} min-h-56`} placeholder="Write clearly, stay factual, and keep it practical — how-tos, checklists and real lessons work best." />
             </Field>
             <Field label="Tags (comma separated)">
-              <input name="tags" className={inputClass} placeholder="ecommerce, web development, pakistan" />
+              <input name="tags" className={inputClass} placeholder="ecommerce, web development, startups" />
             </Field>
             <Field label="Mobile / WhatsApp number (required for reward payout)">
-              <input name="phone" required className={inputClass} placeholder="+92 3xx xxxxxxx" inputMode="tel" />
+              <input name="phone" required className={inputClass} placeholder="+1 555 123 4567" inputMode="tel" />
             </Field>
             <Field label="Cover photo (required — shown on the blog list)">
               <input

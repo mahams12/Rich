@@ -66,12 +66,6 @@ const jsonLd = {
       url: site.url,
       email: site.email,
       telephone: site.whatsappDisplay,
-      address: {
-        "@type": "PostalAddress",
-        streetAddress: "Flat # 401, Building A-1, Sheranwala Heighs",
-        addressLocality: "Lahore",
-        addressCountry: "PK",
-      },
       description: site.description,
       slogan: site.tagline,
       logo: `${site.url}/brand/icon.svg`,

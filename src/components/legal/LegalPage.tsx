@@ -50,7 +50,6 @@ export function LegalContact() {
           {site.whatsappDisplay}
         </a>
       </p>
-      <p>Office: {site.address}</p>
     </div>
   );
 }

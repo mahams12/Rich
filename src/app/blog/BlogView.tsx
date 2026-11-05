@@ -172,7 +172,7 @@ export function BlogView({ initialPosts }: { initialPosts?: BlogPost[] }) {
       <div className="mt-10 border-t border-black/10 pt-7">
         <div className="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-black/10 bg-[#fffcf8] p-5">
           <div>
-            <p className="font-semibold text-[#211a16]">Write for NovexaHub — earn 50 PKR</p>
+            <p className="font-semibold text-[#211a16]">Write for NovexaHub — earn $1 per article</p>
             <p className="mt-1 text-sm text-[#756b63]">Share a practical article. Approved submissions are published under your name.</p>
           </div>
           <Button href="/blog/submit">Submit a blog</Button>
