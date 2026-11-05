@@ -602,10 +602,24 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       };
       if (remote) void saveBlogSubmission(item).catch((error) => toast("Could not submit", firebaseErrorMessage(error)));
       else setSubmissions((current) => [item, ...current]);
+      void fetch("/api/notify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "blog-submission", title: item.title, by: item.email }) }).catch(() => undefined);
       toast("Article submitted", "The studio will review it. Approved articles publish under your name.");
       return true;
     },
     [toast, user],
+  );
+
+  const rejectBlogSubmission = useCallback(
+    (id: string, reason: string) => {
+      const next = { status: "rejected" as const, rejectReason: reason };
+      setSubmissions((current) => current.map((item) => (item.id === id ? { ...item, ...next } : item)));
+      if (remote) {
+        const item = submissions.find((entry) => entry.id === id);
+        if (item) void saveBlogSubmission({ ...item, ...next }).catch((error) => toast("Could not reject", firebaseErrorMessage(error)));
+      }
+      toast("Submission rejected");
+    },
+    [toast, submissions],
   );
 
   const approveBlogSubmission = useCallback(
@@ -900,6 +914,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       submitBlogPost,
       approveBlogSubmission,
       deleteBlogSubmission,
+      rejectBlogSubmission,
       addReview,
       pushNotice,
       markNoticeRead,
@@ -923,6 +938,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       submitBlogPost,
       approveBlogSubmission,
       deleteBlogSubmission,
+      rejectBlogSubmission,
       addReview,
       checkout,
       catalogReady,

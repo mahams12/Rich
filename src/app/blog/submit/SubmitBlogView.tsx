@@ -34,6 +34,9 @@ export function SubmitBlogView() {
     event.preventDefault();
     if (!user || uploading) return;
     const data = new FormData(event.currentTarget);
+    const phone = String(data.get("phone") || "").trim();
+    if (!cover) { toast("Cover photo required", "Upload a cover image before submitting."); return; }
+    if (!phone) { toast("Mobile number required", "Add your WhatsApp/mobile number for reward payouts."); return; }
     const ok = submitBlogPost({
       title: String(data.get("title") || "").trim(),
       excerpt: String(data.get("excerpt") || "").trim(),
@@ -44,7 +47,8 @@ export function SubmitBlogView() {
         .filter(Boolean),
       author: user.name,
       email: user.email,
-      cover: cover || undefined,
+      phone,
+      cover,
     });
     if (ok) {
       setSent(true);
@@ -60,7 +64,7 @@ export function SubmitBlogView() {
       <p className="mt-3 max-w-xl text-[#6d655d]">
         Share a practical article on websites, software, ecommerce, mobile apps or automation. Every article our team
         approves is published under <strong className="text-ink">your name</strong> — and earns a
-        <strong className="text-ink"> 50 PKR reward</strong>.
+        <strong className="text-ink"> $1 reward</strong> (or the equivalent local amount at the applicable exchange rate).
       </p>
 
       {!ready ? (
@@ -88,7 +92,10 @@ export function SubmitBlogView() {
             <Field label="Tags (comma separated)">
               <input name="tags" className={inputClass} placeholder="ecommerce, web development, pakistan" />
             </Field>
-            <Field label="Cover photo (optional — shown on the blog list)">
+            <Field label="Mobile / WhatsApp number (required for reward payout)">
+              <input name="phone" required className={inputClass} placeholder="+92 3xx xxxxxxx" inputMode="tel" />
+            </Field>
+            <Field label="Cover photo (required — shown on the blog list)">
               <input
                 type="file"
                 accept="image/*"
@@ -124,13 +131,16 @@ export function SubmitBlogView() {
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="font-semibold">{item.title}</p>
-                        <p className="text-xs text-muted">{new Date(item.createdAt).toLocaleDateString()} · {item.status}</p>
+                        <p className="text-xs text-muted">{new Date(item.createdAt).toLocaleDateString()} · {item.status === "pending" ? "submitted" : item.status}</p>
                       </div>
                       <span className="rounded-full bg-black/[0.05] px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-[#6d655d]">
                         {item.status}
                       </span>
                     </div>
                     <p className="mt-2 line-clamp-2 text-sm text-muted">{item.excerpt}</p>
+                    {item.status === "rejected" && item.rejectReason ? (
+                      <p className="mt-2 rounded-xl bg-rose-50 px-3 py-2 text-xs text-rose-700">Reason: {item.rejectReason}</p>
+                    ) : null}
                   </article>
                 ))}
               </div>

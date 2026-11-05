@@ -6,7 +6,7 @@ import { Section } from "@/components/ui/Button";
 import { formatDate } from "@/lib/format";
 
 export function AdminRequestsView() {
-  const { contacts, customizations, submissions, deleteContact, deleteCustomization, approveBlogSubmission, deleteBlogSubmission } = useApp();
+  const { contacts, customizations, submissions, deleteContact, deleteCustomization, approveBlogSubmission, deleteBlogSubmission, rejectBlogSubmission } = useApp();
   return (
     <Section>
       <AdminGate>
@@ -101,6 +101,18 @@ export function AdminRequestsView() {
                     <button
                       type="button"
                       className="text-xs font-semibold text-rose-700 hover:underline"
+                      onClick={() => {
+                        const reason = window.prompt("Reason for rejection (required — shown to the contributor):");
+                        if (reason === null) return;
+                        if (!reason.trim()) { window.alert("A rejection reason is required."); return; }
+                        rejectBlogSubmission(item.id, reason.trim());
+                      }}
+                    >
+                      Reject
+                    </button>
+                    <button
+                      type="button"
+                      className="text-xs font-semibold text-[#6d655d] hover:underline"
                       onClick={() => {
                         if (window.confirm("Delete this submission?")) deleteBlogSubmission(item.id);
                       }}
