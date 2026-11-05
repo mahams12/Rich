@@ -97,7 +97,29 @@ export function SubmitBlogView() {
               <textarea name="excerpt" required minLength={30} className={`${inputClass} min-h-20`} placeholder="1–2 sentences that make a reader want the full article." />
             </Field>
             <Field label="Article body (paragraphs separated by a blank line)">
-              <textarea name="content" required minLength={200} className={`${inputClass} min-h-56`} placeholder="Write clearly, stay factual, and keep it practical — how-tos, checklists and real lessons work best." />
+              <textarea
+                name="content"
+                required
+                minLength={200}
+                className={`${inputClass} min-h-56`}
+                placeholder="Write clearly, stay factual, and keep it practical — how-tos, checklists and real lessons work best."
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && e.shiftKey) {
+                    e.preventDefault();
+                    const el = e.currentTarget;
+                    const { selectionStart, selectionEnd, value } = el;
+                    const insert = value.charAt(selectionStart - 1) === "\n" || selectionStart === 0 ? "- " : "\n- ";
+                    el.value = value.slice(0, selectionStart) + insert + value.slice(selectionEnd);
+                    el.selectionStart = el.selectionEnd = selectionStart + insert.length;
+                  }
+                }}
+              />
+              <p className="mt-2 text-xs leading-5 text-muted">
+                Formatting: <code className="rounded bg-black/[0.05] px-1"># Heading</code> large bold ·{" "}
+                <code className="rounded bg-black/[0.05] px-1">## Heading</code> smaller bold ·{" "}
+                <code className="rounded bg-black/[0.05] px-1">- item</code> bullet ·{" "}
+                <code className="rounded bg-black/[0.05] px-1">**bold**</code> · Shift+Enter adds a bullet.
+              </p>
             </Field>
             <Field label="Tags (comma separated)">
               <input name="tags" className={inputClass} placeholder="ecommerce, web development, startups" />

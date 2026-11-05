@@ -144,6 +144,9 @@ export function BlogPostView({ initialPosts }: { initialPosts?: BlogPost[] }) {
           if (block.startsWith("### ")) {
             return <h3 key={key} className="pt-3 text-xl font-bold leading-snug text-ink">{block.slice(4)}</h3>;
           }
+          if (block.startsWith("# ")) {
+            return <h2 key={key} className="pt-5 text-3xl font-bold leading-snug text-ink">{block.slice(2)}</h2>;
+          }
           if (block.startsWith("## ")) {
             return <h2 key={key} className="pt-5 text-2xl font-bold leading-snug text-ink">{block.slice(3)}</h2>;
           }
