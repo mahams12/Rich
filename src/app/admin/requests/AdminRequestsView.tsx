@@ -6,7 +6,7 @@ import { Section } from "@/components/ui/Button";
 import { formatDate } from "@/lib/format";
 
 export function AdminRequestsView() {
-  const { contacts, customizations, submissions, deleteContact, deleteCustomization, approveBlogSubmission, deleteBlogSubmission, rejectBlogSubmission } = useApp();
+  const { contacts, customizations, deleteContact, deleteCustomization } = useApp();
   return (
     <Section>
       <AdminGate>
@@ -67,84 +67,11 @@ export function AdminRequestsView() {
           </div>
           <div>
             <h2 className="text-sm uppercase tracking-[0.16em] text-muted">Blog submissions</h2>
-            {([
-              { key: "pending", label: "Pending approvals" },
-              { key: "approved", label: "Approved" },
-              { key: "rejected", label: "Rejected" },
-            ] as const).map((group) => {
-              const items = submissions.filter((item) => item.status === group.key);
-              return (
-                <div key={group.key} className="mt-5">
-                  <p className="text-xs font-semibold uppercase tracking-widest text-[#6d655d]">{group.label} ({items.length})</p>
-                  <div className="mt-3 space-y-3">
-                    {items.map((item) => (
-                      <article key={item.id} className="glass rounded-3xl p-4">
-                        {item.cover ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={item.cover} alt="" className="mb-3 h-28 w-full rounded-2xl border border-black/10 object-cover" />
-                        ) : null}
-                        <div className="flex items-start justify-between gap-3">
-                          <div>
-                            <p className="font-semibold">{item.title}{item.resubmitted ? " · resubmitted" : ""}</p>
-                            <p className="text-xs text-muted">{item.author} · {item.email}{item.phone ? ` · ${item.phone}` : ""} · {formatDate(item.createdAt)}</p>
-                          </div>
-                          <span className="shrink-0 rounded-full bg-black/[0.05] px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-[#6d655d]">
-                            {item.resubmitted && item.status === "pending" ? "Resubmitted" : item.status}
-                          </span>
-                        </div>
-                        <p className="mt-2 line-clamp-3 text-sm text-muted">{item.excerpt}</p>
-                        <details className="mt-2">
-                          <summary className="cursor-pointer text-xs font-semibold text-[#a14b30]">Read full article</summary>
-                          <p className="mt-2 whitespace-pre-line text-sm text-muted">{item.content}</p>
-                          {item.resubmitNote ? <p className="mt-2 rounded-xl bg-amber-50 px-3 py-2 text-xs text-amber-800">Contributor note: {item.resubmitNote}</p> : null}
-                        </details>
-                        {item.rejectReason ? <p className="mt-2 rounded-xl bg-rose-50 px-3 py-2 text-xs text-rose-700">Reason: {item.rejectReason}</p> : null}
-                        <div className="mt-3 flex gap-3">
-                          {item.status === "pending" ? (
-                            <>
-                              <button
-                                type="button"
-                                className="text-xs font-semibold text-[#a14b30] hover:underline"
-                                onClick={() => {
-                                  if (window.confirm(`Publish “${item.title}” under ${item.author}?`)) approveBlogSubmission(item);
-                                }}
-                              >
-                                Approve & publish
-                              </button>
-                              <button
-                                type="button"
-                                className="text-xs font-semibold text-rose-700 hover:underline"
-                                onClick={() => {
-                                  const reason = window.prompt("Reason for rejection (required — shown to the contributor):");
-                                  if (reason === null) return;
-                                  if (!reason.trim()) { window.alert("A rejection reason is required."); return; }
-                                  rejectBlogSubmission(item.id, reason.trim());
-                                }}
-                              >
-                                Reject
-                              </button>
-                            </>
-                          ) : null}
-                          {item.status === "rejected" ? (
-                            <button
-                              type="button"
-                              className="text-xs font-semibold text-rose-700 hover:underline"
-                              onClick={() => {
-                                if (window.confirm("Delete this rejected submission permanently?")) deleteBlogSubmission(item.id);
-                              }}
-                            >
-                              Delete
-                            </button>
-                          ) : null}
-                        </div>
-                      </article>
-                    ))}
-                    {!items.length ? <p className="text-xs text-muted">None.</p> : null}
-                  </div>
-                </div>
-              );
-            })}
-            {!submissions.length ? <p className="text-muted">No blog submissions.</p> : null}
+            <div className="glass mt-3 rounded-3xl p-4">
+              <p className="text-sm font-semibold">Review queue moved</p>
+              <p className="mt-1 text-xs text-muted">Pending, approved and rejected articles now live on a dedicated page.</p>
+              <a href="/admin/submissions" className="mt-2 inline-block text-xs font-semibold text-[#a14b30] underline-offset-4 hover:underline">Open submissions →</a>
+            </div>
           </div>
         </div>
       </AdminGate>

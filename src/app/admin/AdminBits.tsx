@@ -38,6 +38,7 @@ export function AdminNav() {
     ["/admin", "Overview"],
     ["/admin/projects", "Projects"],
     ["/admin/blog", "Blog"],
+    ["/admin/submissions", "Submissions"],
     ["/admin/notifications", "Notifications"],
     ["/admin/requests", "Requests"],
   ];
