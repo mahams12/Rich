@@ -79,7 +79,11 @@ service cloud.firestore {
       allow create: if signedIn()
         && request.resource.data.email == request.auth.token.email
         && request.resource.data.status == "pending";
-      allow update: if isAdmin();
+      allow update: if isAdmin()
+        || (signedIn()
+          && resource.data.email == request.auth.token.email
+          && request.resource.data.email == resource.data.email
+          && request.resource.data.status == "pending");
       allow delete: if isAdmin()
         || (signedIn() && resource.data.email == request.auth.token.email);
     }
