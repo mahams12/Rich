@@ -94,38 +94,15 @@ export function BlogView({ initialPosts }: { initialPosts?: BlogPost[] }) {
       <header className="border-b border-black/10 pb-8 sm:pb-10">
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#a14b30]">NovexaHub journal</p>
         <h1 className="display mt-3 max-w-3xl text-4xl leading-[1.08] sm:text-5xl">Ideas for building better digital products.</h1>
-        <div className="mt-8 rounded-[2rem] border border-black/10 bg-card p-6 sm:p-8">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div className="max-w-xl">
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#a14b30]">Write for NovexaHub — earn for your work</p>
-              <p className="mt-3 text-sm leading-6 text-[#6d655d]">
-                Passionate about technology, business, AI, digital innovation or creative writing? NovexaHub invites
-                writers, students and content creators worldwide to contribute original articles. Write useful content,
-                pass editorial review, and earn a reward for every approved article.
-              </p>
-            </div>
-            <Button href="/blog/submit" variant="light" className="shrink-0">Start writing</Button>
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-black/10 bg-card p-5 sm:p-6">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#a14b30]">Write for NovexaHub</p>
+            <p className="mt-1 text-sm text-[#756b63]">Contribute original articles and earn for every approved post.</p>
           </div>
-          <ol className="mt-6 grid gap-3 text-sm sm:grid-cols-3 lg:grid-cols-5">
-            {[
-              ["01", "Choose your topic", "Pick from approved categories — AI, development, business, marketing, productivity."],
-              ["02", "Write your article", "Original, informative and engaging, following editorial guidelines."],
-              ["03", "Submit for review", "Send it through the contributor submission portal."],
-              ["04", "Get approved", "Manual editorial review for quality, originality and relevance."],
-              ["05", "Earn your reward", "A reward for every approved article accumulates in your account."],
-            ].map(([n, t, d]) => (
-              <li key={n} className="rounded-2xl border border-black/5 bg-white/60 p-3">
-                <p className="text-[10px] font-bold text-[#a14b30]">{n}</p>
-                <p className="mt-1 font-semibold text-[#16110e]">{t}</p>
-                <p className="mt-1 text-xs leading-5 text-muted">{d}</p>
-              </li>
-            ))}
-          </ol>
-          <p className="mt-5 text-xs leading-5 text-muted">
-            Approved articles earn a $1 reward (or local equivalent at the applicable exchange rate), paid via
-            supported methods once the payout threshold is reached. All articles must be original — plagiarized or
-            AI-spun submissions are rejected, and submission does not guarantee approval.
-          </p>
+          <div className="flex flex-wrap gap-3">
+            <Button href="/blog/submit">Submit a blog</Button>
+            <Button href="/write-for-us" variant="ghost">How to write</Button>
+          </div>
         </div>
         <p className="mt-4 max-w-2xl text-base leading-7 text-[#756b63]">Practical advice on websites, software projects, mobile apps and AI automation — from the NovexaHub studio.</p>
       </header>
