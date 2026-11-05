@@ -86,11 +86,11 @@ export default function WriteForUsPage() {
         <div className="rounded-3xl border border-black/10 bg-card p-6">
           <h2 className="text-sm font-bold uppercase tracking-[0.16em] text-[#a14b30]">How much can you earn?</h2>
           <p className="mt-4 text-sm leading-6 text-[#4a423c]">
-            Contributors receive a fixed reward of <strong>$1 per approved article</strong>, calculated according
-            to our internal rules and regulations (or its equivalent in your local currency for eligible
-            international contributors, using the applicable exchange rate). <strong>Payouts are received
-            after 5 approved articles</strong> — earnings accumulate in your contributor account until the
-            threshold is reached.
+            Contributors receive a fixed reward of <strong>$1 for every 5–10 approved blogs</strong>, calculated
+            according to our internal rules and regulations (or its equivalent in your local currency for
+            eligible international contributors, using the applicable exchange rate). <strong>Payouts are
+            received after 5 approved articles</strong> — earnings accumulate in your contributor account
+            until the threshold is reached.
           </p>
           <h3 className="mt-5 text-xs font-bold uppercase tracking-[0.16em] text-[#a14b30]">Payment options</h3>
           <p className="mt-2 text-sm leading-6 text-[#4a423c]">

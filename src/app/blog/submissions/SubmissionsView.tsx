@@ -169,52 +169,57 @@ export function SubmissionsView() {
               ) : null}
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="divide-y divide-black/5 rounded-3xl border border-black/10 bg-white">
               {items.map((item) => (
-                <article key={item.id} className="rounded-3xl border border-black/10 bg-white p-4 sm:p-5">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="font-semibold text-[#16110e]">{item.title}</p>
-                      <p className="mt-0.5 text-xs text-muted">
+                <article key={item.id} className="px-4 py-3 sm:px-5">
+                  <button
+                    type="button"
+                    onClick={() => setExpanded(expanded === item.id ? null : item.id)}
+                    className="flex w-full items-center gap-3 text-left"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold text-[#16110e]">{item.title}</p>
+                      <p className="mt-0.5 truncate text-xs text-muted">
                         {new Date(item.createdAt).toLocaleDateString()}
-                        {item.resubmitted ? " · resubmitted" : ""}
+                        {item.resubmitted ? " · resubmitted" : ""} · {item.excerpt.slice(0, 70)}{item.excerpt.length > 70 ? "…" : ""}
                       </p>
                     </div>
                     <span className={`shrink-0 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-widest ${STATUS_CLASS[item.status]}`}>
                       {item.resubmitted && item.status === "pending" ? "Resubmitted" : item.status}
                     </span>
-                  </div>
-                  <p className={`mt-2 text-sm text-muted ${expanded === item.id ? "" : "line-clamp-2"}`}>{item.excerpt}</p>
-                  <button
-                    type="button"
-                    onClick={() => setExpanded(expanded === item.id ? null : item.id)}
-                    className="mt-1 text-xs font-semibold text-[#a14b30] underline-offset-4 hover:underline"
-                  >
-                    {expanded === item.id ? "Show less" : "Read full article"}
+                    <span className={`text-[#a14b30] transition ${expanded === item.id ? "rotate-180" : ""}`}>▾</span>
                   </button>
-                  {expanded === item.id ? <p className="mt-2 whitespace-pre-line text-sm text-muted">{item.content}</p> : null}
-                  {item.status === "rejected" && item.rejectReason ? (
-                    <p className="mt-3 rounded-xl bg-rose-50 px-3 py-2 text-xs text-rose-700">Reason: {item.rejectReason}</p>
-                  ) : null}
-                  {item.status === "rejected" ? (
-                    <div className="mt-3 flex flex-wrap gap-4 border-t border-black/5 pt-3">
-                      <button
-                        type="button"
-                        onClick={() => setEditing(editing === item.id ? null : item.id)}
-                        className="text-xs font-semibold text-[#a14b30] underline-offset-4 hover:underline"
-                      >
-                        {editing === item.id ? "Close editor" : "Edit & resubmit"}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => { if (window.confirm("Delete this rejected submission permanently?")) deleteBlogSubmission(item.id); }}
-                        className="text-xs font-semibold text-rose-700 underline-offset-4 hover:underline"
-                      >
-                        Delete
-                      </button>
+                  {expanded === item.id ? (
+                    <div className="mt-3 border-t border-black/5 pt-3">
+                      <p className="text-sm text-muted">{item.excerpt}</p>
+                      <details className="mt-2">
+                        <summary className="cursor-pointer text-xs font-semibold text-[#a14b30]">Read full article</summary>
+                        <p className="mt-2 whitespace-pre-line text-sm text-muted">{item.content}</p>
+                      </details>
+                      {item.status === "rejected" && item.rejectReason ? (
+                        <p className="mt-3 rounded-xl bg-rose-50 px-3 py-2 text-xs text-rose-700">Reason: {item.rejectReason}</p>
+                      ) : null}
+                      {item.status === "rejected" ? (
+                        <div className="mt-3 flex flex-wrap gap-4">
+                          <button
+                            type="button"
+                            onClick={() => setEditing(editing === item.id ? null : item.id)}
+                            className="text-xs font-semibold text-[#a14b30] underline-offset-4 hover:underline"
+                          >
+                            {editing === item.id ? "Close editor" : "Edit & resubmit"}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => { if (window.confirm("Delete this rejected submission permanently?")) deleteBlogSubmission(item.id); }}
+                            className="text-xs font-semibold text-rose-700 underline-offset-4 hover:underline"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      ) : null}
+                      {editing === item.id ? <EditResubmitForm item={item} onDone={() => setEditing(null)} /> : null}
                     </div>
                   ) : null}
-                  {editing === item.id ? <EditResubmitForm item={item} onDone={() => setEditing(null)} /> : null}
                 </article>
               ))}
             </div>

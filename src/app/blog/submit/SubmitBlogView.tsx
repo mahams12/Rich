@@ -70,8 +70,8 @@ export function SubmitBlogView() {
       <h1 className="display mt-4 text-4xl">Write for the NovexaHub journal</h1>
       <p className="mt-3 max-w-xl text-[#6d655d]">
         Share a practical article on websites, software, ecommerce, mobile apps or automation. Every article our team
-        approves is published under <strong className="text-ink">your name</strong> — and earns a
-        <strong className="text-ink"> $1 reward</strong> (or the equivalent local amount at the applicable exchange rate).
+        approves is published under <strong className="text-ink">your name</strong> — and earns
+        <strong className="text-ink"> $1 for every 5–10 approved blogs</strong> (or the equivalent local amount at the applicable exchange rate).
       </p>
 
       {!ready ? (
