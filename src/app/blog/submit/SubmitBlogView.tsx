@@ -7,7 +7,8 @@ import { Badge, Button, Field, Section, inputClass } from "@/components/ui/Butto
 import { uid } from "@/lib/format";
 
 export function SubmitBlogView() {
-  const { user, ready, submitBlogPost, toast } = useApp();
+  const { user, ready, submitBlogPost, submissions, toast } = useApp();
+  const lastPhone = user ? submissions.find((item) => item.email === user.email && item.phone)?.phone : undefined;
   const [sent, setSent] = useState(false);
   const [cover, setCover] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -125,7 +126,7 @@ export function SubmitBlogView() {
               <input name="tags" className={inputClass} placeholder="ecommerce, web development, startups" />
             </Field>
             <Field label="Mobile / WhatsApp number (required for reward payout)">
-              <input name="phone" required className={inputClass} placeholder="+1 555 123 4567" inputMode="tel" />
+              <input name="phone" required defaultValue={lastPhone} className={inputClass} placeholder="+1 555 123 4567" inputMode="tel" />
             </Field>
             <Field label="Cover photo (required — shown on the blog list)">
               <input

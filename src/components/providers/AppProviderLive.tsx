@@ -565,9 +565,10 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       const item: CustomizationRequest = { ...input, id: uid("cus"), createdAt: new Date().toISOString() };
       if (remote) void saveCustomization(item).catch((error) => toast("Could not save", firebaseErrorMessage(error)));
       else setCustomizations((current) => [item, ...current]);
+      void fetch("/api/notify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "customization", title: input.project || input.name || "Project customization", by: input.email || user?.email || "visitor" }) }).catch(() => undefined);
       toast("Customization saved", "Admin can review this request.");
     },
-    [toast],
+    [toast, user],
   );
 
   const deleteContact = useCallback(
@@ -669,12 +670,13 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
         publishedAt: now,
         updatedAt: now,
       };
+      const approved: BlogSubmission = { ...item, status: "approved", publishedSlug: slug };
       if (remote) {
         void savePost(post).catch((error) => toast("Could not publish", firebaseErrorMessage(error)));
-        void removeDoc("blogSubmissions", item.id).catch(() => undefined);
+        void saveBlogSubmission(approved).catch(() => undefined);
       }
       setPosts((current) => sortPostsNewestFirst([post, ...current.filter((p) => p.id !== post.id)]));
-      setSubmissions((current) => current.filter((entry) => entry.id !== item.id));
+      setSubmissions((current) => current.map((entry) => (entry.id === item.id ? approved : entry)));
       toast("Article published", `${item.title} is live under ${item.author}.`);
     },
     [posts, toast],

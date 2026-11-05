@@ -191,11 +191,20 @@ export function SubmissionsView() {
                   </button>
                   {expanded === item.id ? (
                     <div className="mt-3 border-t border-black/5 pt-3">
+                      {item.cover ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={item.cover} alt="" className="mb-3 h-28 w-full rounded-2xl border border-black/10 object-cover" />
+                      ) : null}
                       <p className="text-sm text-muted">{item.excerpt}</p>
                       <details className="mt-2">
                         <summary className="cursor-pointer text-xs font-semibold text-[#a14b30]">Read full article</summary>
                         <p className="mt-2 whitespace-pre-line text-sm text-muted">{item.content}</p>
                       </details>
+                      {item.status === "approved" && item.publishedSlug ? (
+                        <Link href={`/blog/${item.publishedSlug}`} className="mt-3 inline-block text-xs font-semibold text-emerald-700 underline-offset-4 hover:underline">
+                          View live article →
+                        </Link>
+                      ) : null}
                       {item.status === "rejected" && item.rejectReason ? (
                         <p className="mt-3 rounded-xl bg-rose-50 px-3 py-2 text-xs text-rose-700">Reason: {item.rejectReason}</p>
                       ) : null}

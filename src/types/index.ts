@@ -180,6 +180,7 @@ export interface BlogSubmission {
   rejectReason?: string;
   resubmitted?: boolean;
   resubmitNote?: string;
+  publishedSlug?: string;
   createdAt: string;
 }
 
