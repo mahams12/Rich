@@ -134,7 +134,7 @@ export function SubmitBlogView() {
                         <p className="text-xs text-muted">{new Date(item.createdAt).toLocaleDateString()} · {item.status === "pending" ? "submitted" : item.status}</p>
                       </div>
                       <span className="rounded-full bg-black/[0.05] px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-[#6d655d]">
-                        {item.status}
+                        {item.status === "pending" ? "submitted" : item.status}
                       </span>
                     </div>
                     <p className="mt-2 line-clamp-2 text-sm text-muted">{item.excerpt}</p>
