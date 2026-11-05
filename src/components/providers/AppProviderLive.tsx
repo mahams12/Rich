@@ -565,7 +565,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       const item: CustomizationRequest = { ...input, id: uid("cus"), createdAt: new Date().toISOString() };
       if (remote) void saveCustomization(item).catch((error) => toast("Could not save", firebaseErrorMessage(error)));
       else setCustomizations((current) => [item, ...current]);
-      void fetch("/api/notify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "customization", title: input.project || input.name || "Project customization", by: input.email || user?.email || "visitor" }) }).catch(() => undefined);
+      void fetch("/api/notify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "customization", title: input.projectTitle || "Project customization", by: input.email || user?.email || "visitor" }) }).catch(() => undefined);
       toast("Customization saved", "Admin can review this request.");
     },
     [toast, user],
