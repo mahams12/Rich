@@ -89,7 +89,11 @@ export function BlogPostView({ initialPosts }: { initialPosts?: BlogPost[] }) {
 
   const contentBlocks = post.content
     .split(/\n\s*\n+/)
-    .map((item) => item.replace(/https?:\/\/(?:www\.)?novexahub\.live(?:\/[a-zA-Z0-9/_-]*)?/g, "").replace(/\n[\t ]+/g, "\n").trim())
+    .map((item) => {
+      const trimmed = item.replace(/\n[\t ]+/g, "\n").trim();
+      if (/^https:\/\/novexahub\.live(?:\/[a-zA-Z0-9/_-]*)?(?:#[a-zA-Z0-9_-]+)?$/.test(trimmed)) return trimmed;
+      return trimmed.replace(/https?:\/\/(?:www\.)?novexahub\.live(?:\/[a-zA-Z0-9/_-]*)?(?:#[a-zA-Z0-9_-]+)?/g, "").trim();
+    })
     .filter(Boolean);
 
   return (
@@ -118,6 +122,25 @@ export function BlogPostView({ initialPosts }: { initialPosts?: BlogPost[] }) {
       <article className="mx-auto mt-8 max-w-3xl space-y-5 text-[1.05rem] leading-8 text-ink">
         {contentBlocks.map((block, index) => {
           const key = `${index}-${block.slice(0, 32)}`;
+          const isCtaUrl = (value: string) => /^https:\/\/novexahub\.live\/[a-zA-Z0-9/_-]*(?:#[a-zA-Z0-9_-]+)?$/.test(value);
+          if (isCtaUrl(block)) {
+            if (index > 0 && isCtaUrl(contentBlocks[index - 1])) return null;
+            let end = index;
+            while (end + 1 < contentBlocks.length && isCtaUrl(contentBlocks[end + 1])) end += 1;
+            const labels: Record<string, string> = {
+              "/services": "Explore ecommerce development",
+              "/portfolio": "View ecommerce work",
+              "/contact": "Discuss your store",
+            };
+            return (
+              <div key={key} className="flex flex-wrap gap-3">
+                {contentBlocks.slice(index, end + 1).map((url) => {
+                  const href = url.replace("https://novexahub.live", "");
+                  return <Button key={url} href={href} variant="ghost">{labels[href] || "Explore NovexaHub"}</Button>;
+                })}
+              </div>
+            );
+          }
           if (block.startsWith("### ")) {
             return <h3 key={key} className="pt-3 text-xl font-bold leading-snug text-ink">{block.slice(4)}</h3>;
           }
