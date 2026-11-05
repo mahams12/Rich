@@ -7,12 +7,11 @@ import { Badge, Button, Field, Section, inputClass } from "@/components/ui/Butto
 import { uid } from "@/lib/format";
 
 export function SubmitBlogView() {
-  const { user, ready, submitBlogPost, submissions, toast } = useApp();
+  const { user, ready, submitBlogPost, toast } = useApp();
   const [sent, setSent] = useState(false);
   const [cover, setCover] = useState("");
   const [uploading, setUploading] = useState(false);
   const submissionKey = useMemo(() => uid("sub"), []);
-  const mine = user ? submissions.filter((item) => item.email === user.email) : [];
 
   async function onFile(file?: File) {
     if (!file) return;
@@ -30,13 +29,21 @@ export function SubmitBlogView() {
     }
   }
 
+  const [formError, setFormError] = useState("");
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setFormError("");
     if (!user || uploading) return;
     const data = new FormData(event.currentTarget);
     const phone = String(data.get("phone") || "").trim();
-    if (!cover) { toast("Cover photo required", "Upload a cover image before submitting."); return; }
-    if (!phone) { toast("Mobile number required", "Add your WhatsApp/mobile number for reward payouts."); return; }
+    const title = String(data.get("title") || "").trim();
+    const excerpt = String(data.get("excerpt") || "").trim();
+    const content = String(data.get("content") || "").trim();
+    if (title.length < 10) { setFormError("Title needs at least 10 characters."); return; }
+    if (excerpt.length < 30) { setFormError("Summary needs at least 30 characters — 1–2 sentences."); return; }
+    if (content.length < 200) { setFormError("Article body needs at least 200 characters."); return; }
+    if (!cover) { setFormError("Cover photo is required — upload an image before submitting."); return; }
+    if (!phone) { setFormError("Mobile/WhatsApp number is required for reward payouts."); return; }
     const ok = submitBlogPost({
       title: String(data.get("title") || "").trim(),
       excerpt: String(data.get("excerpt") || "").trim(),
@@ -68,7 +75,10 @@ export function SubmitBlogView() {
       </p>
 
       {!ready ? (
-        <p className="mt-8 text-sm text-muted">Restoring your session…</p>
+        <div className="mt-16 flex flex-col items-center gap-4 text-center">
+          <div className="h-10 w-10 animate-spin rounded-full border-2 border-black/10 border-t-[#a14b30]" />
+          <p className="text-sm text-muted">Restoring your session…</p>
+        </div>
       ) : !user ? (
         <div className="mt-8 rounded-3xl border border-black/10 bg-card p-6">
           <p className="text-sm text-[#6d655d]">
@@ -116,36 +126,16 @@ export function SubmitBlogView() {
                 </div>
               ) : null}
             </Field>
+            {formError ? <p className="rounded-xl bg-rose-50 px-3 py-2 text-sm text-rose-700">{formError}</p> : null}
             <Button type="submit" disabled={uploading}>
               {uploading ? "Uploading…" : "Submit for review"}
             </Button>
             {sent ? <p className="text-sm text-[#a14b30]">Submitted — the studio will review it before publishing.</p> : null}
           </form>
 
-          {mine.length ? (
-            <div className="mt-8">
-              <h2 className="text-sm uppercase tracking-[0.16em] text-muted">Your submissions</h2>
-              <div className="mt-3 space-y-3">
-                {mine.map((item) => (
-                  <article key={item.id} className="rounded-3xl border border-black/10 bg-white p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="font-semibold">{item.title}</p>
-                        <p className="text-xs text-muted">{new Date(item.createdAt).toLocaleDateString()} · {item.status === "pending" ? "submitted" : item.status}</p>
-                      </div>
-                      <span className="rounded-full bg-black/[0.05] px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-[#6d655d]">
-                        {item.status === "pending" ? "submitted" : item.status}
-                      </span>
-                    </div>
-                    <p className="mt-2 line-clamp-2 text-sm text-muted">{item.excerpt}</p>
-                    {item.status === "rejected" && item.rejectReason ? (
-                      <p className="mt-2 rounded-xl bg-rose-50 px-3 py-2 text-xs text-rose-700">Reason: {item.rejectReason}</p>
-                    ) : null}
-                  </article>
-                ))}
-              </div>
-            </div>
-          ) : null}
+          <p className="mt-6 text-sm text-[#6d655d]">
+            <Link href="/blog/submissions" className="font-semibold text-[#a14b30] underline-offset-4 hover:underline">View your submissions</Link> — track pending, approved and rejected articles.
+          </p>
         </>
       )}
     </Section>

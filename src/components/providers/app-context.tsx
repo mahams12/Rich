@@ -64,6 +64,7 @@ export interface AppContextValue {
   approveBlogSubmission: (item: BlogSubmission) => void;
   deleteBlogSubmission: (id: string) => void;
   rejectBlogSubmission: (id: string, reason: string) => void;
+  resubmitBlogSubmission: (id: string, input: { title: string; excerpt: string; content: string; tags: string[]; cover?: string; phone?: string; resubmitNote?: string }) => boolean;
   addReview: (input: { projectSlug: string; projectType: string; quote: string; rating: number }) => boolean;
   pushNotice: (input: { kind: NoticeKind; title: string; body: string; href?: string }) => void;
   markNoticeRead: (id: string) => void;
@@ -120,6 +121,7 @@ export const stubAppValue: AppContextValue = {
   approveBlogSubmission: () => undefined,
   deleteBlogSubmission: () => undefined,
   rejectBlogSubmission: () => undefined,
+  resubmitBlogSubmission: () => false,
   addReview: () => false,
   pushNotice: () => undefined,
   markNoticeRead: () => undefined,

@@ -622,6 +622,19 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
     [toast, submissions],
   );
 
+  const resubmitBlogSubmission = useCallback(
+    (id: string, input: { title: string; excerpt: string; content: string; tags: string[]; cover?: string; phone?: string; resubmitNote?: string }) => {
+      const item = submissions.find((entry) => entry.id === id);
+      if (!item) return false;
+      const next: BlogSubmission = { ...item, ...input, status: "pending", resubmitted: true, rejectReason: undefined };
+      setSubmissions((current) => current.map((entry) => (entry.id === id ? next : entry)));
+      if (remote) void saveBlogSubmission(next).catch((error) => toast("Could not resubmit", firebaseErrorMessage(error)));
+      toast("Article resubmitted", "The studio will review it again.");
+      return true;
+    },
+    [toast, submissions],
+  );
+
   const approveBlogSubmission = useCallback(
     (item: BlogSubmission) => {
       const base =
@@ -915,6 +928,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       approveBlogSubmission,
       deleteBlogSubmission,
       rejectBlogSubmission,
+      resubmitBlogSubmission,
       addReview,
       pushNotice,
       markNoticeRead,
@@ -939,6 +953,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       approveBlogSubmission,
       deleteBlogSubmission,
       rejectBlogSubmission,
+      resubmitBlogSubmission,
       addReview,
       checkout,
       catalogReady,

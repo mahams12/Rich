@@ -178,6 +178,8 @@ export interface BlogSubmission {
   cover?: string;
   status: BlogSubmissionStatus;
   rejectReason?: string;
+  resubmitted?: boolean;
+  resubmitNote?: string;
   createdAt: string;
 }
 
