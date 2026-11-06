@@ -65,7 +65,7 @@ export function ProjectVisual({
           <img
             key={src}
             src={src}
-            alt={title}
+            alt={`${title} visual preview`}
             className={cn("h-full w-full", imgFit)}
             onError={() => markBroken(src)}
           />
@@ -80,7 +80,7 @@ export function ProjectVisual({
         <Image
           key={src}
           src={src}
-          alt={title}
+          alt={`${title} visual preview`}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           {...(preload
