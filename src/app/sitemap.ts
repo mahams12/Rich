@@ -40,37 +40,46 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: path === "" ? 1 : path === "/blog" ? 0.9 : 0.8,
   }));
 
-  // fetchCatalogServer returns the merged catalogue (remote + bundled seeds),
-  // the same source project pages resolve from — no emitted URL can hit the
-  // in-app "not found" state. Seeds are the fallback when the fetch fails.
+  // Match the published catalogue used by portfolio and project detail routes.
   const catalog = await fetchCatalogServer();
   const projects = catalog?.projects ?? seedProjects;
-  // Same merged post list the blog views render — no orphaned URLs either way.
   const posts = getBlogPostsWithFallback(catalog?.posts ?? seedPosts);
 
-  const projectRoutes = projects
-    .filter((project) => project.status === "published" && !project.deleted)
-    .map((project) => ({
+  // De-duplicate by slug so the sitemap never advertises competing URLs for
+  // the same detail route.
+  const uniqueProjects = Array.from(
+    new Map(
+      projects
+        .filter((project) => project.status === "published" && !project.deleted && project.slug)
+        .map((project) => [project.slug, project]),
+    ).values(),
+  );
+
+  const projectRoutes = uniqueProjects.map((project) => {
+    const modified = project.publishedAt || project.createdAt;
+    return {
       url: `${site.url}/projects/${project.slug}`,
-      lastModified: project.publishedAt || project.createdAt ? new Date((project.publishedAt || project.createdAt) as string) : undefined,
+      lastModified: modified && !Number.isNaN(Date.parse(modified)) ? new Date(modified) : undefined,
       changeFrequency: "weekly" as const,
       priority: 0.7,
-    }));
+    };
+  });
 
-  // Every code-published blog in src/data/posts.ts is included automatically.
-  // Keep this data-driven: never hardcode individual article slugs here.
   const postRoutes = Array.from(
     new Map(
       posts
         .filter((post) => post.status === "published" && !post.deleted && post.slug)
         .map((post) => [post.slug, post]),
     ).values(),
-  ).map((post) => ({
+  ).map((post) => {
+    const modified = post.updatedAt || post.publishedAt || post.createdAt;
+    return {
       url: `${site.url}/blog/${post.slug}`,
-      lastModified: post.updatedAt || post.publishedAt || post.createdAt ? new Date((post.updatedAt || post.publishedAt || post.createdAt) as string) : undefined,
+      lastModified: modified && !Number.isNaN(Date.parse(modified)) ? new Date(modified) : undefined,
       changeFrequency: "weekly" as const,
       priority: 0.85,
-    }));
+    };
+  });
 
   return [...staticRoutes, ...postRoutes, ...projectRoutes];
 }
