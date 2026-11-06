@@ -128,9 +128,10 @@ export function BlogPostView({ initialPosts }: { initialPosts?: BlogPost[] }) {
             let end = index;
             while (end + 1 < contentBlocks.length && isCtaUrl(contentBlocks[end + 1])) end += 1;
             const labels: Record<string, string> = {
-              "/services": "Explore ecommerce development",
-              "/portfolio": "View ecommerce work",
-              "/contact": "Discuss your store",
+              "/services": "Explore our services",
+              "/custom-software-development": "Explore custom software",
+              "/portfolio": "View our portfolio",
+              "/contact": "Discuss your project",
             };
             return (
               <div key={key} className="flex flex-wrap gap-3">
