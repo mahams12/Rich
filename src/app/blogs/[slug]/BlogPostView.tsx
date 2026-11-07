@@ -42,7 +42,7 @@ function PostCover({ src, alt, className, sizes }: { src: string; alt: string; c
   if (failed || src.startsWith("/") || src.startsWith("data:") || src.startsWith("blob:")) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img src={failed ? "/blog-cover-fallback.svg" : src} alt={alt} loading="lazy" className={className} onError={() => setFailed(true)} />
+      <img src={failed ? "/blogs-cover-fallback.svg" : src} alt={alt} loading="lazy" className={className} onError={() => setFailed(true)} />
     );
   }
   return <Image src={src} alt={alt} fill sizes={sizes} className={className} onError={() => setFailed(true)} />;
@@ -82,7 +82,7 @@ export function BlogPostView({ initialPosts }: { initialPosts?: BlogPost[] }) {
       <Section>
         <h1 className="display text-3xl">Post not found</h1>
         <p className="mt-3 text-muted">This article may be unpublished or moved.</p>
-        <Button href="/blog" className="mt-6">Back to blog</Button>
+        <Button href="/blogs" className="mt-6">Back to blog</Button>
       </Section>
     );
   }
@@ -184,20 +184,20 @@ export function BlogPostView({ initialPosts }: { initialPosts?: BlogPost[] }) {
       <div className="mx-auto mt-10 flex max-w-3xl flex-wrap gap-3 border-t border-black/10 pt-8">
         <Button href="/contact">Enquire with NovexaHub</Button>
         <Button href="/portfolio" variant="ghost">See portfolio</Button>
-        <Button href="/blog" variant="ghost">All posts</Button>
+        <Button href="/blogs" variant="ghost">All posts</Button>
       </div>
 
       {related.length ? (
         <section className="mx-auto mt-12 max-w-5xl">
           <div className="mb-5 flex items-end justify-between gap-4 border-b border-black/10 pb-3">
             <h2 className="display text-2xl">Related reading</h2>
-            <Link href="/blog" className="text-sm font-semibold text-[#a14b30] hover:underline">All articles</Link>
+            <Link href="/blogs" className="text-sm font-semibold text-[#a14b30] hover:underline">All articles</Link>
           </div>
           <div className="grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((item) => (
-              <Link key={item.id} href={`/blog/${item.slug}`} onClick={() => rememberBlogNavigation(item.slug)} className="group block overflow-hidden rounded-2xl border border-black/[0.09] bg-[#fffcf8] no-underline transition hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(22,17,14,0.08)]">
+              <Link key={item.id} href={`/blogs/${item.slug}`} onClick={() => rememberBlogNavigation(item.slug)} className="group block overflow-hidden rounded-2xl border border-black/[0.09] bg-[#fffcf8] no-underline transition hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(22,17,14,0.08)]">
                 <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#e8e1d7]">
-                  <PostCover src={item.cover || "/blog-cover-fallback.svg"} alt={`${item.title} article cover`} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="absolute inset-0 h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.025]" />
+                  <PostCover src={item.cover || "/blogs-cover-fallback.svg"} alt={`${item.title} article cover`} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="absolute inset-0 h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.025]" />
                 </div>
                 <div className="p-4">
                   <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#a14b30]">{item.tags?.[0] || "Insights"}</p>

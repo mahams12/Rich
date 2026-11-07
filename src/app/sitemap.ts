@@ -10,7 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [
     "",
     "/portfolio",
-    "/blog",
+    "/blogs",
     "/explore",
     "/services",
     "/web-development",
@@ -37,7 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ].map((path) => ({
     url: `${site.url}${path}`,
     changeFrequency: "weekly" as const,
-    priority: path === "" ? 1 : path === "/blog" ? 0.9 : 0.8,
+    priority: path === "" ? 1 : path === "/blogs" ? 0.9 : 0.8,
   }));
 
   // Match the published catalogue used by portfolio and project detail routes.
@@ -74,7 +74,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ).map((post) => {
     const modified = post.updatedAt || post.publishedAt || post.createdAt;
     return {
-      url: `${site.url}/blog/${post.slug}`,
+      url: `${site.url}/blogs/${post.slug}`,
       lastModified: modified && !Number.isNaN(Date.parse(modified)) ? new Date(modified) : undefined,
       changeFrequency: "weekly" as const,
       priority: 0.85,

@@ -107,7 +107,7 @@ export function SubmissionsView() {
         <h1 className="display mt-4 text-4xl">Track your articles</h1>
         <div className="mt-8 rounded-3xl border border-black/10 bg-card p-6">
           <p className="text-sm text-[#6d655d]">
-            <Link href="/login?next=/blog/submissions" className="font-semibold text-[#16110e]">Login</Link> to see
+            <Link href="/login?next=/blogs/submissions" className="font-semibold text-[#16110e]">Login</Link> to see
             the status of your submitted articles.
           </p>
         </div>
@@ -122,7 +122,7 @@ export function SubmissionsView() {
           <Badge>My submissions</Badge>
           <h1 className="display mt-4 text-4xl">Your articles</h1>
         </div>
-        <Button href="/blog/submit" variant="light">New submission</Button>
+        <Button href="/blogs/submit" variant="light">New submission</Button>
       </div>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[220px_1fr]">
@@ -165,7 +165,7 @@ export function SubmissionsView() {
                 {active === "pending" ? "Approved and rejected articles appear in their own tabs." : "Your articles will appear here as they move through review."}
               </p>
               {active === "pending" && !mine.length ? (
-                <Button href="/blog/submit" variant="ghost" className="mt-4">Write your first article</Button>
+                <Button href="/blogs/submit" variant="ghost" className="mt-4">Write your first article</Button>
               ) : null}
             </div>
           ) : (
@@ -201,7 +201,7 @@ export function SubmissionsView() {
                         <p className="mt-2 whitespace-pre-line text-sm text-muted">{item.content}</p>
                       </details>
                       {item.status === "approved" && item.publishedSlug ? (
-                        <Link href={`/blog/${item.publishedSlug}`} className="mt-3 inline-block text-xs font-semibold text-emerald-700 underline-offset-4 hover:underline">
+                        <Link href={`/blogs/${item.publishedSlug}`} className="mt-3 inline-block text-xs font-semibold text-emerald-700 underline-offset-4 hover:underline">
                           View live article →
                         </Link>
                       ) : null}

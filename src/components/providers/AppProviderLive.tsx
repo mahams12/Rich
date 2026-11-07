@@ -652,7 +652,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
           .replace(/[^a-z0-9]+/g, "-")
           .replace(/(^-|-$)/g, "") || "post";
       const taken = new Set(posts.map((post) => post.slug));
-      taken.add("submit"); // reserved route — /blog/submit is the submission form
+      taken.add("submit"); // reserved route — /blogs/submit is the submission form
       let slug = base === "submit" ? "submit-article" : base;
       for (let i = 2; taken.has(slug); i++) slug = `${base}-${i}`;
       const now = new Date().toISOString();

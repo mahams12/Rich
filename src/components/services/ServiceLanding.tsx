@@ -119,7 +119,7 @@ export function ServiceLanding({ data }: { data: ServicePageData }) {
             <ul className="mt-4 space-y-2">
               {data.posts.map((post) => (
                 <li key={post.slug}>
-                  <Link href={`/blog/${post.slug}`} className="font-semibold text-[#a14b30] underline decoration-[#c45c3a]/40 underline-offset-4 hover:decoration-current">
+                  <Link href={`/blogs/${post.slug}`} className="font-semibold text-[#a14b30] underline decoration-[#c45c3a]/40 underline-offset-4 hover:decoration-current">
                     {post.title}
                   </Link>
                 </li>

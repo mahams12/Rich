@@ -27,12 +27,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title,
     description,
     keywords: [...post.keywords, ...post.tags, "NovexaHub", "novexahub.live", "software project"],
-    alternates: { canonical: `${site.url}/blog/${post.slug}` },
+    alternates: { canonical: `${site.url}/blogs/${post.slug}` },
     openGraph: {
       type: "article",
       title: post.title,
       description,
-      url: `${site.url}/blog/${post.slug}`,
+      url: `${site.url}/blogs/${post.slug}`,
       images: post.cover ? [{ url: post.cover }] : undefined,
     },
   };
@@ -60,7 +60,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       url: site.url,
       logo: { "@type": "ImageObject", url: `${site.url}/brand/icon.svg` },
     },
-    mainEntityOfPage: `${site.url}/blog/${post.slug}`,
+    mainEntityOfPage: `${site.url}/blogs/${post.slug}`,
     keywords: post.keywords.join(", "),
     image: post.cover || undefined,
   };

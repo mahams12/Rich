@@ -23,14 +23,14 @@ function sourceFor(slug: string): BlogSource {
     sessionStorage.removeItem(KEY);
     if (raw) {
       const nav = JSON.parse(raw) as { slug: string; path: string; time: number };
-      if (nav.slug === slug && Date.now() - nav.time < 30000) return nav.path === "/blog" ? "blog_listing" : "internal";
+      if (nav.slug === slug && Date.now() - nav.time < 30000) return nav.path === "/blogs" ? "blog_listing" : "internal";
     }
     const lastPath = sessionStorage.getItem(LAST_PATH_KEY);
-    if (lastPath) return lastPath === "/blog" ? "blog_listing" : "internal";
+    if (lastPath) return lastPath === "/blogs" ? "blog_listing" : "internal";
     if (!document.referrer) return "direct";
     const ref = new URL(document.referrer);
     if (ref.origin !== location.origin) return "external";
-    return ref.pathname === "/blog" ? "blog_listing" : "internal";
+    return ref.pathname === "/blogs" ? "blog_listing" : "internal";
   } catch { return "direct"; }
 }
 export async function recordBlogVisit(slug: string) {

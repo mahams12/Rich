@@ -30,7 +30,7 @@ const fallbackCovers: Record<string, string> = {
 
 function CoverImage({ post, index }: { post: BlogPost; index: number }) {
   const [failed, setFailed] = useState(false);
-  const cover = post.cover || fallbackCovers[post.slug] || "/blog-cover-fallback.svg";
+  const cover = post.cover || fallbackCovers[post.slug] || "/blogs-cover-fallback.svg";
   const className = "absolute inset-0 h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.025]";
   // data:/blob: sources can't go through the image optimizer.
   if (!failed && (cover.startsWith("data:") || cover.startsWith("blob:"))) {
@@ -43,7 +43,7 @@ function CoverImage({ post, index }: { post: BlogPost; index: number }) {
   if (failed || cover.startsWith("/")) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img src="/blog-cover-fallback.svg" alt={`${post.title} article cover`} loading="lazy" className={className} />
+      <img src="/blogs-cover-fallback.svg" alt={`${post.title} article cover`} loading="lazy" className={className} />
     );
   }
   return (
@@ -64,7 +64,7 @@ function CoverImage({ post, index }: { post: BlogPost; index: number }) {
 function PostCard({ post, index }: { post: BlogPost; index: number }) {
   const category = post.tags?.[0] || "Insights";
   return (
-    <Link href={`/blog/${post.slug}`} onClick={() => rememberBlogNavigation(post.slug)} className="group block overflow-hidden rounded-2xl border border-black/[0.09] bg-[#fffcf8] no-underline transition duration-200 hover:-translate-y-1 hover:shadow-[0_16px_34px_rgba(22,17,14,0.08)]">
+    <Link href={`/blogs/${post.slug}`} onClick={() => rememberBlogNavigation(post.slug)} className="group block overflow-hidden rounded-2xl border border-black/[0.09] bg-[#fffcf8] no-underline transition duration-200 hover:-translate-y-1 hover:shadow-[0_16px_34px_rgba(22,17,14,0.08)]">
       <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#e8e1d7]">
         <CoverImage post={post} index={index} />
       </div>
@@ -101,7 +101,7 @@ export function BlogView({ initialPosts }: { initialPosts?: BlogPost[] }) {
             <p className="mt-1 text-sm text-[#756b63]">Contribute original articles and earn for every approved post.</p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Button href="/blog/submit">Submit a blog</Button>
+            <Button href="/blogs/submit">Submit a blog</Button>
             <Button href="/write-for-us" variant="ghost">How to write</Button>
           </div>
         </div>

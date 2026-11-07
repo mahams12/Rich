@@ -154,7 +154,7 @@ export function AdminBlogView() {
                       <Link href={`/admin/blog/${post.id}`} className="font-semibold text-[#a14b30]">
                         Edit
                       </Link>
-                      <Link href={`/blog/${post.slug}`} className="text-muted">
+                      <Link href={`/blogs/${post.slug}`} className="text-muted">
                         View
                       </Link>
                       <button

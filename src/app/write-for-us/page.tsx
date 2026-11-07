@@ -120,8 +120,8 @@ export default function WriteForUsPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
-          <Button href="/blog/submit">Submit a blog</Button>
-          <Button href="/blog" variant="ghost">Read the journal</Button>
+          <Button href="/blogs/submit">Submit a blog</Button>
+          <Button href="/blogs" variant="ghost">Read the journal</Button>
         </div>
       </div>
     </Section>

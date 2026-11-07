@@ -16,7 +16,7 @@ import { cn } from "@/lib/cn";
 
 const nav = [
   { href: "/portfolio", label: "Portfolio" },
-  { href: "/blog", label: "Blog" },
+  { href: "/blogs", label: "Blog" },
   { href: "/services", label: "Services" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
@@ -169,7 +169,7 @@ export function SiteFooter() {
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#6d655d]">Studio</p>
           <div className="mt-3 space-y-2 text-sm">
             <Link href="/portfolio" className="block hover:text-[#a14b30]">Portfolio</Link>
-            <Link href="/blog" className="block hover:text-[#a14b30]">Blog</Link>
+            <Link href="/blogs" className="block hover:text-[#a14b30]">Blog</Link>
             <Link href="/services" className="block hover:text-[#a14b30]">Services</Link>
             <Link href="/features" className="block hover:text-[#a14b30]">Feature modules</Link>
             <Link href="/contact" className="block hover:text-[#a14b30]">WhatsApp & email</Link>

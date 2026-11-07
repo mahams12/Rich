@@ -234,7 +234,7 @@ export function BlogForm({ existing }: { existing?: BlogPost }) {
               </Button>
             ) : null}
             {existing ? (
-              <Button type="button" variant="ghost" href={`/blog/${existing.slug}`}>
+              <Button type="button" variant="ghost" href={`/blogs/${existing.slug}`}>
                 Preview live page
               </Button>
             ) : null}

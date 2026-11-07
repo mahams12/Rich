@@ -83,7 +83,7 @@ export function SubmitBlogView() {
       ) : !user ? (
         <div className="mt-8 rounded-3xl border border-black/10 bg-card p-6">
           <p className="text-sm text-[#6d655d]">
-            <Link href="/login?next=/blog/submit" className="font-semibold text-[#16110e]">Login</Link> or{" "}
+            <Link href="/login?next=/blogs/submit" className="font-semibold text-[#16110e]">Login</Link> or{" "}
             <Link href="/register" className="font-semibold text-[#16110e]">create an account</Link> to submit an
             article. It is published under your name once the studio approves it.
           </p>
@@ -157,7 +157,7 @@ export function SubmitBlogView() {
           </form>
 
           <p className="mt-6 text-sm text-[#6d655d]">
-            <Link href="/blog/submissions" className="font-semibold text-[#a14b30] underline-offset-4 hover:underline">View your submissions</Link> — track pending, approved and rejected articles.
+            <Link href="/blogs/submissions" className="font-semibold text-[#a14b30] underline-offset-4 hover:underline">View your submissions</Link> — track pending, approved and rejected articles.
           </p>
         </>
       )}

@@ -14,11 +14,11 @@ export const metadata: Metadata = {
     "custom software tips",
     "final year project ideas",
   ],
-  alternates: { canonical: `${site.url}/blog` },
+  alternates: { canonical: `${site.url}/blogs` },
   openGraph: {
     title: "NovexaHub Blog",
     description: "Trends and guides on software projects, websites, apps, and the NovexaHub studio.",
-    url: `${site.url}/blog`,
+    url: `${site.url}/blogs`,
   },
 };
 
