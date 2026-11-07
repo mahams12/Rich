@@ -3,6 +3,13 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { hasAnalyticsConsent } from "@/lib/consent";
+import { useApp } from "@/components/providers/AppProvider";
+import { isAdminEmail } from "@/lib/firebase/config";
+
+const SKIP_PREFIXES = ["/admin", "/auth", "/login", "/register", "/dashboard", "/favourites", "/notifications", "/checkout"];
+function skipPath(path: string) {
+  return SKIP_PREFIXES.some((p) => path === p || path.startsWith(p + "/"));
+}
 
 function vid() {
   let v = localStorage.getItem("nx_vid");
@@ -39,8 +46,9 @@ function utm() {
   } catch { return {}; }
 }
 
+let isAdmin = false;
 function send(payload: Record<string, unknown>) {
-  if (!hasAnalyticsConsent()) return;
+  if (!hasAnalyticsConsent() || isAdmin) return;
   const body = JSON.stringify({ vid: vid(), sid: sid(), ...payload });
   if (navigator.sendBeacon) { navigator.sendBeacon("/api/track", new Blob([body], { type: "application/json" })); return; }
   fetch("/api/track", { method: "POST", headers: { "Content-Type": "application/json" }, body, keepalive: true }).catch(() => undefined);
@@ -48,14 +56,17 @@ function send(payload: Record<string, unknown>) {
 
 export function Tracker() {
   const pathname = usePathname();
+  const { user } = useApp();
   const startRef = useRef(0);
 
   useEffect(() => {
+    isAdmin = !!(user && isAdminEmail(user.email));
     if (typeof window === "undefined") return;
     (window as unknown as { __nxTrack?: typeof send }).__nxTrack = send;
-  }, []);
+  }, [user]);
 
   useEffect(() => {
+    if (skipPath(pathname)) return;
     startRef.current = Date.now();
     const t = setTimeout(() => send({
       kind: "pageview", path: pathname, title: document.title,

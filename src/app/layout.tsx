@@ -125,10 +125,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         <Suspense fallback={null}>
           <MetaPixel />
-          <Tracker />
         </Suspense>
         <ConsentBanner />
         <AppProvider>
+          <Suspense fallback={null}>
+            <Tracker />
+          </Suspense>
           <SiteHeader />
           <AdminBar />
           <main className="flex-1 overflow-x-clip max-w-full">{children}</main>
