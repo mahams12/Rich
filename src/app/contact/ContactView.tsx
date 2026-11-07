@@ -6,6 +6,7 @@ import { Badge, Button, Field, Section, inputClass } from "@/components/ui/Butto
 import { ContactActions } from "@/components/ui/ContactActions";
 import { openMailClient, whatsappUrl } from "@/lib/contact";
 import { trackMetaContact, trackMetaLead } from "@/lib/meta-pixel";
+import { trackConversion } from "@/components/analytics/Tracker";
 import { Icon } from "@/components/ui/Icon";
 import { site } from "@/data/site";
 
@@ -36,6 +37,7 @@ export function ContactView() {
 
       if (!leadTrackedForSubmission.current) {
         trackMetaLead();
+        trackConversion("contact");
         leadTrackedForSubmission.current = true;
       }
 

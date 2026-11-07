@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { preconnect } from "react-dom";
 import { MetaPixel } from "@/components/analytics/MetaPixel";
+import { Tracker } from "@/components/analytics/Tracker";
+import { ConsentBanner } from "@/components/analytics/ConsentBanner";
 import { AppProvider } from "@/components/providers/AppProvider";
 import { AdminBar } from "@/components/admin/AdminBar";
 import { SiteFooter, SiteHeader, WhatsAppFab } from "@/components/layout/SiteChrome";
@@ -123,7 +125,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         <Suspense fallback={null}>
           <MetaPixel />
+          <Tracker />
         </Suspense>
+        <ConsentBanner />
         <AppProvider>
           <SiteHeader />
           <AdminBar />

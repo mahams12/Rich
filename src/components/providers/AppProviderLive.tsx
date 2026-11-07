@@ -58,6 +58,7 @@ import {
   toggleFavouriteRemote,
 } from "@/lib/firebase/db";
 import { firebaseErrorMessage, resolveAuthErrorMessage } from "@/lib/firebase/errors";
+import { trackConversion } from "@/components/analytics/Tracker";
 import { ADMIN_INVALID_CREDENTIALS, INVALID_CREDENTIALS } from "@/lib/auth/messages";
 import { reportAdminLoginFailed } from "@/lib/security/reportAdminLoginFailed";
 import type {
@@ -566,6 +567,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       if (remote) void saveCustomization(item).catch((error) => toast("Could not save", firebaseErrorMessage(error)));
       else setCustomizations((current) => [item, ...current]);
       void fetch("/api/notify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "customization", title: input.projectTitle || "Project customization", by: input.email || user?.email || "visitor" }) }).catch(() => undefined);
+      trackConversion("customization");
       toast("Customization saved", "Admin can review this request.");
     },
     [toast, user],
@@ -604,6 +606,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
       if (remote) void saveBlogSubmission(item).catch((error) => toast("Could not submit", firebaseErrorMessage(error)));
       else setSubmissions((current) => [item, ...current]);
       void fetch("/api/notify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "blog-submission", title: item.title, by: item.email }) }).catch(() => undefined);
+      trackConversion("blog-submission");
       toast("Article submitted", "The studio will review it. Approved articles publish under your name.");
       return true;
     },

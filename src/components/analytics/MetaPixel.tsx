@@ -2,24 +2,34 @@
 
 import Script from "next/script";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { META_PIXEL_ID, trackMetaPageView } from "@/lib/meta-pixel";
 import { noteInternalPageview } from "@/lib/blogAnalytics";
+import { hasMarketingConsent } from "@/lib/consent";
 
 export function MetaPixel() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const skipNextPageView = useRef(true);
+  const [allowed, setAllowed] = useState(false);
+
+  useEffect(() => {
+    const sync = () => setAllowed(hasMarketingConsent());
+    sync();
+    window.addEventListener("nx-consent-change", sync);
+    return () => window.removeEventListener("nx-consent-change", sync);
+  }, []);
 
   useEffect(() => {
     noteInternalPageview(pathname);
-    if (skipNextPageView.current) {
+    if (!allowed || skipNextPageView.current) {
       skipNextPageView.current = false;
       return;
     }
     trackMetaPageView();
-  }, [pathname, searchParams]);
+  }, [pathname, searchParams, allowed]);
 
+  if (!allowed) return null;
   return (
     <>
       <Script id="meta-pixel-base" strategy="lazyOnload">

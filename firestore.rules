@@ -73,6 +73,15 @@ service cloud.firestore {
         || (signedIn() && resource.data.email == request.auth.token.email);
     }
 
+    match /analyticsEvents/{id} {
+      allow read: if isAdmin();
+      allow create: if true
+        && request.resource.data.keys().hasOnly(["kind","vid","sid","path","title","referrer","source","medium","campaign","term","content","fbclid","gclid","cType","seconds","device","os","browser","country","city","asn","dataCenter","ipHash","createdAt"])
+        && request.resource.data.kind in ["pageview","heartbeat","conversion"]
+        && request.resource.data.path is string
+        && request.resource.data.path.size() < 400;
+    }
+
     match /blogSubmissions/{id} {
       allow read: if isAdmin()
         || (signedIn() && resource.data.email == request.auth.token.email);

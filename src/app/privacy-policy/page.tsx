@@ -180,6 +180,34 @@ const sections: LegalSection[] = [
     ),
   },
   {
+    id: "analytics-tracking",
+    title: "Analytics & Tracking",
+    body: (
+      <>
+        <p>
+          With your consent, we collect privacy-friendly website analytics to understand how visitors use NovexaHub —
+          including pages viewed, approximate visit duration, traffic sources (such as UTM campaign parameters and
+          ad click identifiers like fbclid/gclid), referrer information, device type, operating system, browser and
+          approximate location derived from network signals (country/city level, which may be inaccurate and can
+          reflect VPN or proxy use).
+        </p>
+        <p>
+          Analytics data is pseudonymous: we use a random visitor identifier stored on your device rather than your
+          name or account details, and IP addresses are only stored in hashed form. We use this information to measure
+          campaign performance, identify returning visitors and genuine enquiries, filter automated or bot traffic,
+          and improve our website and services. We do not use analytics to build personal profiles for sale or share
+          identifiable analytics data with third parties.
+        </p>
+        <p>
+          You can control analytics and marketing cookies at any time through our cookie consent banner — analytics
+          and marketing measurement only run after you opt in, and necessary site functionality always works either
+          way. Marketing measurement (such as the Meta Pixel) is disabled unless you consent to the marketing
+          category.
+        </p>
+      </>
+    ),
+  },
+  {
     id: "data-retention",
     title: "Data Retention",
     body: (
