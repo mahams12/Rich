@@ -57,6 +57,7 @@ const nextConfig: NextConfig = {
   async redirects() {
     // Canonical homes for common legal-page URLs payment reviewers use.
     return [
+      { source: "/blogs", destination: "/blog", permanent: true },
       { source: "/terms-and-conditions", destination: "/terms", permanent: true },
       { source: "/terms-of-service", destination: "/terms", permanent: true },
       { source: "/privacy", destination: "/privacy-policy", permanent: true },
