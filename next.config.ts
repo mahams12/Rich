@@ -13,6 +13,9 @@ const workerSafeAliases = {
 };
 
 const nextConfig: NextConfig = {
+  // Serve blocking (non-streamed) metadata to all agents so title/canonical/
+  // robots/OG tags land in <head> — fixes "metadata outside head" audit flags.
+  htmlLimitedBots: /.*/,
   compress: true,
   poweredByHeader: false,
   transpilePackages: ["simple-icons"],
