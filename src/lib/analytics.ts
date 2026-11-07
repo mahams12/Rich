@@ -45,7 +45,12 @@ export function parseUa(ua: string) {
     : /iPhone|iPad|iPod/i.test(ua) ? "iOS"
     : /CrOS/i.test(ua) ? "ChromeOS"
     : /Linux/i.test(ua) ? "Linux" : "Other";
-  const browser = /Edg\//i.test(ua) ? "Edge"
+  const browser = /Instagram/i.test(ua) ? "Instagram app"
+    : /FBAN|FBAV|Facebook/i.test(ua) ? "Facebook app"
+    : /TikTok|musical_ly/i.test(ua) ? "TikTok app"
+    : /EdgiOS|Edg\//i.test(ua) ? "Edge"
+    : /CriOS/i.test(ua) ? "Chrome"
+    : /FxiOS/i.test(ua) ? "Firefox"
     : /OPR\/|Opera/i.test(ua) ? "Opera"
     : /Firefox\//i.test(ua) ? "Firefox"
     : /SamsungBrowser/i.test(ua) ? "Samsung Internet"
