@@ -274,7 +274,7 @@ function parseTextIntoResume(source, existing) {
     return digits.length >= 8 && digits.length <= 15 && !DATE_RANGE_RE.test(candidate);
   });
   const linkedinMatch = raw.match(/(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[A-Z0-9-_%]+/i);
-  const websiteSource = emailMatch ? raw.replace(emailMatch[0], " ") : raw;
+  const websiteSource = raw.replace(emailMatch?.[0] || "", " ").replace(linkedinMatch?.[0] || "", " ");
   const websiteMatch = websiteSource.match(/(?:https?:\/\/)?(?:www\.)?[A-Z0-9-]+\.(?:com|net|org|io|dev|co|me|app)(?:\/[^\s]*)?/i);
   const nameCandidate = header.find((line) =>
     line.length >= 3 &&
@@ -610,7 +610,7 @@ function ResumeSection({ title, children, className = "" }) {
 
 function ResumePreview({ resume, compact }) {
   const profile = resume.profile || {};
-  const template = resume.template || "modern";
+  const template = resume.template || "atelier";
   const hasSidebar = template === "folio";
   const main = (
     <>
