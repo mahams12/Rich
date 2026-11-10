@@ -325,7 +325,7 @@ function ResumePreview({ resume, compact }) {
   );
   return (
     <article className={"rb-resume-sheet rb-template-" + template + (compact ? " rb-resume-compact" : "")} style={{ "--resume-accent": resume.accent || "#b85c3d" }}>
-      {hasSidebar ? <>{side}<div className="rb-resume-main">{profile.summary ? <ResumeSection title="Profile"><p>{profile.summary}</p></ResumeSection> : null}{main}</div></> : main}
+      {hasSidebar ? <>{side}<div className="rb-resume-main">{main}</div></> : main}
     </article>
   );
 }
@@ -353,6 +353,7 @@ export default function ResumeBuilder() {
   const [toast, setToast] = useState("");
   const [showImport, setShowImport] = useState(false);
   const [showLinkedIn, setShowLinkedIn] = useState(false);
+  const [showUploadLinkedIn, setShowUploadLinkedIn] = useState(false);
   const [importText, setImportText] = useState("");
   const [jobDescription, setJobDescription] = useState("");
   const [keywordDraft, setKeywordDraft] = useState("");
@@ -456,9 +457,15 @@ export default function ResumeBuilder() {
 
   const printResume = () => {
     if (!current) return;
-    document.title = (profile.fullName || "Resume").replace(/[^a-z0-9 -]/gi, "").trim().replace(/\s+/g, "_") + "_Resume";
-    window.print();
-    window.setTimeout(() => { document.title = "NovexaHub Resume Studio"; }, 1000);
+    const runPrint = () => {
+      document.title = (profile.fullName || "Resume").replace(/[^a-z0-9 -]/gi, "").trim().replace(/\s+/g, "_") + "_Resume";
+      window.print();
+      window.setTimeout(() => { document.title = "NovexaHub Resume Studio"; }, 1000);
+    };
+    if (view !== "editor") {
+      setView("editor");
+      window.setTimeout(runPrint, 220);
+    } else runPrint();
   };
 
   const handleImportFiles = async (event) => {
@@ -659,7 +666,7 @@ export default function ResumeBuilder() {
 
             {view === "editor" ? (
               <div className="rb-editor-view">
-                <div className="rb-editor-toolbar"><div><input className="rb-title-input" aria-label="Resume title" value={current.title || ""} onChange={(event) => updateCurrent((resume) => ({ ...resume, title: event.target.value }))} /><span className="rb-saved-status"><i /> Saved locally</span></div><div className="rb-editor-toolbar-actions"><button className="rb-button rb-button-light" onClick={() => setView("templates")}>Change template</button><button className="rb-button rb-button-dark" onClick={printResume}>↓ Download PDF</button></div></div>
+                <div className="rb-editor-toolbar"><div><input className="rb-title-input" aria-label="Resume title" value={current.title || ""} onChange={(event) => updateCurrent((resume) => ({ ...resume, title: event.target.value }))} /><span className="rb-saved-status"><i /> Saved locally</span></div><div className="rb-editor-toolbar-actions"><button className="rb-button rb-button-light" onClick={() => setView("templates")}>Change template</button><button className="rb-button rb-button-light" onClick={() => setShowUploadLinkedIn(true)}>Share to LinkedIn ↗</button><button className="rb-button rb-button-dark" onClick={printResume}>↓ Download PDF</button></div></div>
                 <div className="rb-editor-layout">
                   <div className="rb-fields-panel">
                     <div className="rb-editor-progress"><div><b>Resume content</b><span>{[profile.fullName, profile.email, profile.summary].filter(Boolean).length}/3 essentials</span></div><div className="rb-progress-track"><i style={{ width: (Math.max(1, [profile.fullName, profile.email, profile.summary].filter(Boolean).length) / 3 * 100) + "%" }} /></div></div>
@@ -722,6 +729,7 @@ export default function ResumeBuilder() {
 
       {showLinkedIn ? <div className="rb-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowLinkedIn(false); }}><section className="rb-modal rb-linkedin-modal" role="dialog" aria-modal="true" aria-labelledby="rb-linkedin-title"><button className="rb-modal-close" onClick={() => setShowLinkedIn(false)} aria-label="Close">×</button><div className="rb-linkedin-mark">in</div><span className="rb-eyebrow rb-eyebrow-dark">LINKEDIN PROFILE IMPORT</span><h3 id="rb-linkedin-title">Bring your profile over.</h3><p>LinkedIn limits which profile fields third-party apps can read. The dependable route today is to request your data archive and import the relevant CSV files here.</p><ol className="rb-linkedin-steps"><li><b>Request your LinkedIn data</b><span>Open LinkedIn Settings and Privacy, then find Get a copy of your data.</span></li><li><b>Choose profile information</b><span>Include Profile, Positions, Education and Skills where available.</span></li><li><b>Import the CSV files</b><span>Return here and select the downloaded CSV files together.</span></li></ol><button className="rb-button rb-button-accent rb-modal-submit" onClick={() => { setShowLinkedIn(false); setShowImport(true); }}>Choose LinkedIn CSV files →</button><a className="rb-external-link" href="https://www.linkedin.com/" target="_blank" rel="noreferrer">Open LinkedIn ↗</a><small className="rb-modal-privacy">Your LinkedIn password is never requested or stored here.</small></section></div> : null}
 
+      {showUploadLinkedIn ? <div className="rb-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowUploadLinkedIn(false); }}><section className="rb-modal" role="dialog" aria-modal="true" aria-labelledby="rb-linkedin-upload-title"><button className="rb-modal-close" onClick={() => setShowUploadLinkedIn(false)} aria-label="Close">×</button><div className="rb-linkedin-mark">in</div><span className="rb-eyebrow rb-eyebrow-dark">SHARE YOUR RESUME</span><h3 id="rb-linkedin-upload-title">Ready for LinkedIn.</h3><p>LinkedIn does not provide a general-purpose API for third-party apps to upload a member resume to every profile or job application area. Export your PDF, then attach it in LinkedIn where you apply or manage your profile.</p><ol className="rb-linkedin-steps"><li><b>Save your PDF</b><span>Use Download PDF and choose Save as PDF in the browser print window.</span></li><li><b>Open LinkedIn</b><span>Go to Jobs and attach your saved resume when applying, or update the relevant profile section.</span></li><li><b>Keep a tailored version</b><span>Use a separate resume for each role so the content stays relevant.</span></li></ol><button className="rb-button rb-button-accent rb-modal-submit" onClick={() => { setShowUploadLinkedIn(false); printResume(); }}>Download PDF first →</button><a className="rb-external-link" href="https://www.linkedin.com/jobs/" target="_blank" rel="noreferrer">Open LinkedIn Jobs ↗</a><small className="rb-modal-privacy">Your resume is not sent to LinkedIn by this tool. You remain in control of the upload.</small></section></div> : null}
       {toast ? <div className="rb-toast" role="status">{toast}</div> : null}
       <input type="file" accept=".json" hidden onChange={handleImportFiles} />
     </main>
