@@ -8,7 +8,8 @@ Resume Studio is a browser-first React experience inside the existing Next.js Ap
 
 - Resume drafts and settings are stored in `localStorage` under `novexahub-resume-studio-v1`.
 - The editor and template picker use a full-window workspace so the form and document preview have dedicated screen space.
-- The six original layouts are Atelier, Swiss Grid, Folio, Signal, Monogram and Gridline.
+- The in-editor design panel customizes the accent color, typography, text size, spacing, photo visibility/shape/placement, sidebar width, section-heading style and section order. Design choices are stored with each resume and reflected in the live preview.
+- The 16 layouts are Professional, Chrono, Elegant, Circular, Modern, Luxe, Classic, Casual, Horizontal, Vertical Timeline, Atelier, Swiss Grid, Folio, Signal, Monogram and Gridline. The Vertical Timeline layout follows the supplied burgundy-side-rail reference: profile photo/contact/skills on the left and a connected education/experience timeline on the right.
 - PDF export uses the browser print dialog. Choose **Save as PDF** to create a selectable-text A4 document.
 - Editable JSON backup is available for moving a resume between browsers or devices.
 - PDF and DOCX text extraction run in the browser using PDF.js and Mammoth, loaded on demand from cdnjs only when a user selects a matching file. PDF items are grouped by page coordinates, column boundaries are detected heuristically, and column gaps are retained as field separators.
