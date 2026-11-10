@@ -127,7 +127,7 @@ function safeResume(value) {
       executive: "folio",
       tech: "signal",
       compact: "grid",
-    })[value.template] || (["atelier", "swiss", "folio", "signal", "monogram", "grid"].includes(value.template) ? value.template : "atelier"),
+    })[value.template] || (["professional", "chrono", "elegant", "circular", "modern", "luxe", "classic", "casual", "horizontal", "vertical", "atelier", "swiss", "folio", "signal", "monogram", "grid"].includes(value.template) ? value.template : "atelier"),
     profile: { ...base.profile, ...(value.profile || {}) },
     design: { ...DEFAULT_RESUME_DESIGN, ...(value.design || {}) },
     sectionOrder: Array.isArray(value.sectionOrder) ? value.sectionOrder : base.sectionOrder,
@@ -988,7 +988,7 @@ function ResumePreview({ resume, compact }) {
       {sidebarTemplates ? <>
         {sidebar}
         <div className="rb-resume-main">
-          {template === "vertical" || template === "modern" || template === "casual" ? header : null}
+          {template === "vertical" ? header : null}
           {orderedSections}
         </div>
       </> : <>
@@ -1023,6 +1023,7 @@ export default function ResumeBuilder() {
   const [showImport, setShowImport] = useState(false);
   const [showLinkedIn, setShowLinkedIn] = useState(false);
   const [showUploadLinkedIn, setShowUploadLinkedIn] = useState(false);
+  const [showDesignPanel, setShowDesignPanel] = useState(false);
   const [importText, setImportText] = useState("");
   const [importDraft, setImportDraft] = useState(null);
   const [importReport, setImportReport] = useState(null);
@@ -1096,6 +1097,16 @@ export default function ResumeBuilder() {
   }, [activeId]);
 
   const updateProfile = (key, value) => updateCurrent((resume) => ({ ...resume, profile: { ...resume.profile, [key]: value } }));
+  const updateDesign = (key, value) => updateCurrent((resume) => ({ ...resume, design: { ...DEFAULT_RESUME_DESIGN, ...(resume.design || {}), [key]: value } }));
+  const moveSection = (sectionId, direction) => updateCurrent((resume) => {
+    const order = [...(resume.sectionOrder || ["profile", "experience", "education", "projects", "skills", "certificates", "languages", "interests"])];
+    const index = order.indexOf(sectionId);
+    const target = index + direction;
+    if (index < 0 || target < 0 || target >= order.length) return resume;
+    [order[index], order[target]] = [order[target], order[index]];
+    return { ...resume, sectionOrder: order };
+  });
+
   const updateListItem = (section, index, key, value) => updateCurrent((resume) => ({
     ...resume,
     [section]: resume[section].map((item, itemIndex) => itemIndex === index ? { ...item, [key]: value } : item),
@@ -1115,6 +1126,9 @@ export default function ResumeBuilder() {
     const fresh = starterResume(makeId());
     fresh.title = "Untitled resume";
     fresh.profile = { ...fresh.profile, fullName: "", headline: "", email: "", phone: "", location: "", website: "", linkedin: "", summary: "", photo: "" };
+    fresh.design = { ...DEFAULT_RESUME_DESIGN };
+    fresh.sectionOrder = [...DEFAULT_RESUME_DESIGN.sectionOrder || ["profile", "experience", "education", "projects", "skills", "certificates", "languages", "interests"]];
+    fresh.interests = [];
     fresh.experience = [];
     fresh.education = [];
     fresh.projects = [];
