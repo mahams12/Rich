@@ -82,6 +82,7 @@ function starterResume(id) {
     ],
     skills: ["JavaScript", "React", "Node.js", "REST APIs", "PostgreSQL", "Git", "UI Engineering"],
     languages: ["English — Native"],
+    interests: ["Continuous learning", "Volunteering"],
     certificates: [],
     keywords: [],
   };
@@ -108,6 +109,7 @@ function blankImportResume(existing) {
     skills: [],
     languages: [],
     certificates: [],
+    interests: [],
     keywords: [],
   };
 }
@@ -138,6 +140,7 @@ function safeResume(value) {
     skills: Array.isArray(value.skills) ? value.skills : base.skills,
     languages: Array.isArray(value.languages) ? value.languages : base.languages,
     certificates: Array.isArray(value.certificates) ? value.certificates : base.certificates,
+    interests: Array.isArray(value.interests) ? value.interests : [],
     keywords: Array.isArray(value.keywords) ? value.keywords : [],
   };
 }
@@ -1127,7 +1130,7 @@ export default function ResumeBuilder() {
     fresh.title = "Untitled resume";
     fresh.profile = { ...fresh.profile, fullName: "", headline: "", email: "", phone: "", location: "", website: "", linkedin: "", summary: "", photo: "" };
     fresh.design = { ...DEFAULT_RESUME_DESIGN };
-    fresh.sectionOrder = [...DEFAULT_RESUME_DESIGN.sectionOrder || ["profile", "experience", "education", "projects", "skills", "certificates", "languages", "interests"]];
+    fresh.sectionOrder = ["profile", "experience", "education", "projects", "skills", "certificates", "languages", "interests"];
     fresh.interests = [];
     fresh.experience = [];
     fresh.education = [];
