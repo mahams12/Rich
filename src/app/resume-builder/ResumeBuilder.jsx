@@ -253,7 +253,11 @@ function parseEntryBlocks(lines, kind) {
       return { name: role, role: organization, link: "", details: [parts.slice(2).join(" · "), details].filter(Boolean).join("\n") };
     }
     return { role, company: organization, location: "", start: startDate, end: endDate, details };
-  }).filter((item) => Object.values(item).some((value) => String(value || "").trim()));
+  }).filter((item) => kind === "education"
+    ? Boolean(item.degree || item.school || item.details)
+    : kind === "project"
+      ? Boolean(item.name || item.details || item.link)
+      : Boolean(item.role || item.company || item.details));
 }
 
 function parseTextIntoResume(source, existing) {
@@ -893,6 +897,7 @@ export default function ResumeBuilder() {
         const file = documentFiles[0];
         const extension = file.name.split(".").pop().toLowerCase();
         if (extension === "json") {
+          if (file.size > 10 * 1024 * 1024) throw new Error("JSON backup is larger than 10 MB. Remove large embedded images and export it again.");
           const parsed = JSON.parse(await file.text());
           const result = validateResumeJson(parsed, blankImportResume(current));
           imported = result.resume;
@@ -1006,7 +1011,7 @@ export default function ResumeBuilder() {
           <h1>Make your next move<br /><em>look as good as it feels.</em></h1>
           <p>Build a clear, confident resume with beautifully crafted templates. Edit every detail, match your language to the role and keep your files in your own browser.</p>
           <div className="rb-hero-actions">
-            <button className="rb-button rb-button-accent" onClick={() => goToApp("dashboard")}>Build my resume <span>→</span></button>
+            <button className="rb-button rb-button-accent" onClick={createResume}>Build my resume <span>→</span></button>
             <button className="rb-button rb-button-ghost" onClick={() => goToApp("templates")}>Explore templates</button>
           </div>
           <div className="rb-trust-row"><span>✓ Free to use</span><span>✓ Live preview</span><span>✓ PDF export</span><span>✓ Local-first privacy</span></div>
