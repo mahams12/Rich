@@ -432,16 +432,23 @@ async function extractDocumentText(file) {
   throw new Error("Unsupported document type. Choose a text-based PDF, DOCX or TXT file.");
 }
 function importLinkedInRows(files, base) {
-  const result = { ...base };
-  const experience = [...base.experience];
-  const education = [...base.education];
-  const skills = [...base.skills];
+  if (!files.length) throw new Error("Choose at least one LinkedIn CSV export file.");
+  const result = { ...base, profile: { ...base.profile } };
+  const experience = [];
+  const education = [];
+  const skills = [];
+  const certificates = [];
+  const importedParts = [];
   files.forEach(({ name, rows }) => {
     const label = name.toLowerCase();
+    if (!rows.length) throw new Error(name + " is empty or could not be read as CSV.");
+    const headers = Object.keys(rows[0] || {});
+    const has = (keys) => keys.some((key) => headers.some((header) => header.toLowerCase().replace(/[^a-z0-9]/g, "") === key.toLowerCase().replace(/[^a-z0-9]/g, "")));
     if (label.includes("profile")) {
-      const profile = rows[0] || {};
-      const first = getValue(profile, ["First Name", "First name"]);
-      const last = getValue(profile, ["Last Name", "Last name"]);
+      if (!has(["First Name", "Last Name", "Headline", "Summary"])) throw new Error(name + " does not look like a LinkedIn Profile export.");
+      const profile = rows.find((row) => getValue(row, ["First Name", "Last Name", "Headline", "Summary"])) || rows[0];
+      const first = getValue(profile, ["First Name"]);
+      const last = getValue(profile, ["Last Name"]);
       result.profile = {
         ...result.profile,
         fullName: [first, last].filter(Boolean).join(" ") || result.profile.fullName,
@@ -450,7 +457,9 @@ function importLinkedInRows(files, base) {
         location: getValue(profile, ["Geo Location", "Location"]) || result.profile.location,
         website: getValue(profile, ["Websites", "Website"]) || result.profile.website,
       };
+      importedParts.push("Profile");
     } else if (label.includes("position") || label.includes("experience")) {
+      if (!has(["Title", "Company Name"])) throw new Error(name + " is missing LinkedIn position columns.");
       rows.forEach((item) => {
         const role = getValue(item, ["Title", "Position"]);
         const company = getValue(item, ["Company Name", "Company"]);
@@ -458,36 +467,120 @@ function importLinkedInRows(files, base) {
           role, company,
           location: getValue(item, ["Location"]),
           start: getValue(item, ["Started On", "Start Date"]),
-          end: getValue(item, ["Finished On", "End Date"]) || "Present",
+          end: getValue(item, ["Finished On", "End Date"]) || "",
           details: getValue(item, ["Description"]),
         });
       });
+      importedParts.push("Positions");
     } else if (label.includes("education")) {
+      if (!has(["School Name", "Degree Name", "Field Of Study"])) throw new Error(name + " is missing LinkedIn education columns.");
       rows.forEach((item) => {
         const degree = getValue(item, ["Degree Name", "Degree"]);
         const school = getValue(item, ["School Name", "School"]);
         if (degree || school) education.push({
           degree: [degree, getValue(item, ["Field Of Study"])].filter(Boolean).join(" — "),
           school,
-          location: getValue(item, ["Activities"]),
+          location: "",
           start: getValue(item, ["Start Date", "Started On"]),
           end: getValue(item, ["End Date", "Finished On"]),
-          details: getValue(item, ["Notes"]),
+          details: getValue(item, ["Notes", "Activities"]),
         });
       });
+      importedParts.push("Education");
     } else if (label.includes("skill")) {
+      if (!has(["Name", "Skill"])) throw new Error(name + " is missing LinkedIn skill columns.");
       rows.forEach((item) => {
         const skill = getValue(item, ["Name", "Skill"]);
         if (skill && !skills.some((current) => current.toLowerCase() === skill.toLowerCase())) skills.push(skill);
       });
+      importedParts.push("Skills");
+    } else if (label.includes("certification")) {
+      if (!has(["Name", "Authority", "Company"])) throw new Error(name + " does not look like a LinkedIn certification export.");
+      rows.forEach((item) => {
+        const certificate = getValue(item, ["Name"]);
+        if (certificate) certificates.push({
+          name: certificate,
+          issuer: getValue(item, ["Authority", "Company"]),
+          date: getValue(item, ["Started On", "Issue Date"]),
+          link: getValue(item, ["Url", "URL"]),
+        });
+      });
+      importedParts.push("Certifications");
+    } else {
+      throw new Error(name + " is not a recognized LinkedIn export. Select Profile, Positions, Education, Skills or Certifications CSV files.");
     }
   });
   result.experience = experience;
   result.education = education;
   result.skills = skills;
-  return result;
+  result.certificates = certificates;
+  const meaningful = [
+    result.profile.fullName, result.profile.headline, result.profile.summary,
+    experience.length, education.length, skills.length, certificates.length,
+  ].filter(Boolean).length;
+  if (meaningful < 2) throw new Error("LinkedIn CSV files were read, but too little profile information was found. Include Profile and at least one other export such as Positions, Education or Skills.");
+  return {
+    resume: result,
+    report: {
+      source: "LinkedIn CSV export",
+      importedParts,
+      detected: {
+        name: Boolean(result.profile.fullName),
+        email: Boolean(result.profile.email),
+        phone: Boolean(result.profile.phone),
+        summary: Boolean(result.profile.summary),
+        experience: experience.length,
+        education: education.length,
+        projects: 0,
+        skills: skills.length,
+        certificates: certificates.length,
+        languages: 0,
+      },
+      warnings: [
+        "LinkedIn data exports do not include every profile field. Review contact details, dates and descriptions before using this resume.",
+        ...(experience.length ? [] : ["No positions were detected in the selected files."]),
+        ...(education.length ? [] : ["No education entries were detected in the selected files."]),
+      ],
+      valid: true,
+      characters: 0,
+    },
+  };
 }
 
+function validateResumeJson(payload, base) {
+  const candidate = payload?.resume || payload?.data?.resume || payload;
+  if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) {
+    throw new Error("This JSON file does not contain a resume object.");
+  }
+  const hasResumeFields = ["profile", "experience", "education", "projects", "skills", "languages", "certificates"].some((key) => Object.prototype.hasOwnProperty.call(candidate, key));
+  if (!hasResumeFields) throw new Error("This JSON file is not a NovexaHub resume backup.");
+  const resume = safeResume(candidate);
+  const detected = {
+    name: Boolean(resume.profile.fullName),
+    email: Boolean(resume.profile.email),
+    phone: Boolean(resume.profile.phone),
+    summary: Boolean(resume.profile.summary),
+    experience: resume.experience.length,
+    education: resume.education.length,
+    projects: resume.projects.length,
+    skills: resume.skills.length,
+    certificates: resume.certificates.length,
+    languages: resume.languages.length,
+  };
+  const meaningful = Object.values(detected).filter(Boolean).length;
+  if (meaningful < 2) throw new Error("The resume backup is valid JSON but contains too little resume information.");
+  return {
+    resume: { ...base, ...resume, id: base.id },
+    report: {
+      source: "NovexaHub JSON backup",
+      importedParts: ["Resume data"],
+      detected,
+      warnings: ["Review all sections and links after restoring this backup."],
+      valid: true,
+      characters: 0,
+    },
+  };
+}
 function ResumeSection({ title, children }) {
   return (
     <section className="rb-resume-section">
