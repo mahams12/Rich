@@ -731,7 +731,7 @@ export default function ResumeBuilder() {
   }, []);
 
   useEffect(() => {
-    document.body.classList.toggle("rb-full-resume-editor", view === "editor");
+    document.body.classList.toggle("rb-full-resume-editor", view === "editor" || view === "templates");
     return () => document.body.classList.remove("rb-full-resume-editor");
   }, [view]);
 
@@ -990,7 +990,7 @@ export default function ResumeBuilder() {
   ];
 
   return (
-    <div className={"rb-page" + (view === "editor" ? " rb-full-editor" : "")}>
+    <div className={"rb-page" + (view === "editor" || view === "templates" ? " rb-full-editor" : "")}>
       <header className="rb-site-header">
         <a className="rb-brand" href="/" aria-label="NovexaHub home">
           <span className="rb-brand-mark">N</span>
@@ -1086,9 +1086,9 @@ export default function ResumeBuilder() {
 
             {view === "templates" ? (
               <div className="rb-templates-view">
-                <div className="rb-view-intro"><div><span className="rb-eyebrow rb-eyebrow-dark">THE RIGHT FIRST IMPRESSION</span><h3>Find a format that <em>fits your story.</em></h3><p>Each original design uses editable text sections and a consistent document structure. Choose one, then make it yours.</p></div><button className="rb-button rb-button-accent" onClick={createResume}>＋ Start from scratch</button></div>
+                <div className="rb-view-intro"><div><span className="rb-eyebrow rb-eyebrow-dark">THE RIGHT FIRST IMPRESSION</span><h3>Find a format that <em>fits your story.</em></h3><p>Each original design uses editable text sections and a consistent document structure. Choose one, then make it yours.</p></div><div className="rb-view-actions"><button className="rb-button rb-button-light" onClick={() => setView("editor")}>← Back to editor</button><button className="rb-button rb-button-accent" onClick={createResume}>＋ Start from scratch</button></div></div>
                 <div className="rb-template-grid">
-                  {TEMPLATE_OPTIONS.map((template) => <button key={template.id} className={"rb-template-card" + (current.template === template.id ? " selected" : "")} onClick={() => { updateCurrent((resume) => ({ ...resume, template: template.id })); setToast(template.name + " template selected."); }}>
+                  {TEMPLATE_OPTIONS.map((template) => <button key={template.id} className={"rb-template-card" + (current.template === template.id ? " selected" : "")} onClick={() => { updateCurrent((resume) => ({ ...resume, template: template.id })); setToast(template.name + " template selected."); setView("editor"); }}>
                     <div className={"rb-template-thumb rb-thumb-" + template.id} style={{ "--thumb-accent": template.color }}><ResumePreview resume={{ ...current, template: template.id, accent: template.color }} compact /></div>
                     <div className="rb-template-card-copy"><span className="rb-template-tag">{template.tag}</span><strong>{template.name}</strong><small>{template.note}</small><span className="rb-template-use">{current.template === template.id ? "Selected ✓" : "Use template →"}</span></div>
                   </button>)}
