@@ -936,7 +936,7 @@ function ResumePreview({ resume, compact }) {
 
   const header = (
     <header className={"rb-resume-heading" + (template === "professional" ? " rb-professional-header" : "")}>
-      {showPhoto && photoPosition === "header" ? <img className={photoClass} src={profile.photo} alt="" /> : null}
+      {showPhoto && (!sidebarTemplates || photoPosition === "header") ? <img className={photoClass} src={profile.photo} alt="" /> : null}
       <div className="rb-resume-heading-copy">
         <h1>{profile.fullName || "Your Name"}</h1>
         {profile.headline ? <p className="rb-resume-headline">{profile.headline}</p> : null}
@@ -950,7 +950,7 @@ function ResumePreview({ resume, compact }) {
 
   const sidebar = (
     <aside className={"rb-resume-sidebar" + (template === "vertical" ? " rb-vertical-sidebar" : "")}>
-      {showPhoto && photoPosition !== "header" ? <img className={photoClass + " rb-sidebar-photo"} src={profile.photo} alt="" /> : null}
+      {showPhoto && sidebarTemplates && photoPosition === "sidebar" ? <img className={photoClass + " rb-sidebar-photo"} src={profile.photo} alt="" /> : null}
       {sidebarIdentity ? <>
         <h2>{profile.fullName || "Your Name"}</h2>
         {profile.headline ? <p className="rb-sidebar-role">{profile.headline}</p> : null}
@@ -1435,7 +1435,7 @@ export default function ResumeBuilder() {
               <div className="rb-templates-view">
                 <div className="rb-view-intro"><div><span className="rb-eyebrow rb-eyebrow-dark">THE RIGHT FIRST IMPRESSION</span><h3>Find a format that <em>fits your story.</em></h3><p>Each original design uses editable text sections and a consistent document structure. Choose one, then make it yours.</p></div><div className="rb-view-actions"><button className="rb-button rb-button-light" onClick={() => setView("editor")}>← Back to editor</button><button className="rb-button rb-button-accent" onClick={createResume}>＋ Start from scratch</button></div></div>
                 <div className="rb-template-grid">
-                  {TEMPLATE_OPTIONS.map((template) => <button key={template.id} className={"rb-template-card" + (current.template === template.id ? " selected" : "")} onClick={() => { updateCurrent((resume) => ({ ...resume, template: template.id, accent: template.color })); setToast(template.name + " template selected. Customize the design while editing."); setShowDesignPanel(true); setView("editor"); }}>
+                  {TEMPLATE_OPTIONS.map((template) => <button key={template.id} className={"rb-template-card" + (current.template === template.id ? " selected" : "")} onClick={() => { const sideTemplate = ["elegant", "circular", "modern", "casual", "vertical", "folio"].includes(template.id); updateCurrent((resume) => ({ ...resume, template: template.id, accent: template.color, design: { ...DEFAULT_RESUME_DESIGN, ...(resume.design || {}), photoPosition: sideTemplate ? "sidebar" : "header" }, sectionOrder: template.id === "vertical" ? ["education", "experience", "projects", "profile", "skills", "certificates", "interests", "languages"] : resume.sectionOrder })); setToast(template.name + " template selected. Customize the design while editing."); setShowDesignPanel(true); setView("editor"); }}>
                     <div className={"rb-template-thumb rb-thumb-" + template.id} style={{ "--thumb-accent": template.color }}><ResumePreview resume={{ ...TEMPLATE_PREVIEW, template: template.id, accent: template.color }} compact /></div>
                     <div className="rb-template-card-copy"><span className="rb-template-tag">{template.tag}</span><strong>{template.name}</strong><small>{template.note}</small><span className="rb-template-use">{current.template === template.id ? "Selected ✓" : "Use template →"}</span></div>
                   </button>)}
