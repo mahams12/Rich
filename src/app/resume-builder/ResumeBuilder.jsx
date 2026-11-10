@@ -56,6 +56,24 @@ function makeId() {
   return "resume-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 7);
 }
 
+function blankImportResume(existing) {
+  const base = starterResume(existing?.id || makeId());
+  return {
+    ...base,
+    title: "Imported resume",
+    template: existing?.template || "modern",
+    accent: existing?.accent || "#b85c3d",
+    profile: { fullName: "", headline: "", email: "", phone: "", location: "", website: "", linkedin: "", summary: "", photo: "" },
+    experience: [],
+    education: [],
+    projects: [],
+    skills: [],
+    languages: [],
+    certificates: [],
+    keywords: [],
+  };
+}
+
 function safeResume(value) {
   if (!value || typeof value !== "object") return null;
   const base = starterResume(value.id || makeId());
@@ -145,11 +163,11 @@ function parseTextIntoResume(text, existing) {
     title: existing.title || "Imported resume",
     profile: {
       ...existing.profile,
-      fullName: existing.profile.fullName === "Jordan Lee" ? firstLine : existing.profile.fullName,
+      fullName: !existing.profile.fullName || existing.profile.fullName === "Jordan Lee" ? firstLine : existing.profile.fullName,
       email: email ? email[0] : existing.profile.email,
       phone: phone ? phone[0].trim() : existing.profile.phone,
       linkedin: linked ? linked[0] : existing.profile.linkedin,
-      summary: summary || (existing.profile.summary ? existing.profile.summary : lines.slice(1, 7).join(" ")),
+      summary: summary || lines.slice(1, 7).join(" ") || existing.profile.summary,
     },
     skills: skillsLine ? skillsLine.split(/[,;|•]/).map((item) => item.trim()).filter(Boolean).slice(0, 24) : existing.skills,
   };
@@ -478,7 +496,7 @@ export default function ResumeBuilder() {
     if (!files.length) return;
     setBusy(true);
     try {
-      let imported = safeResume(current);
+      let imported = blankImportResume(current);
       const csvFiles = [];
       for (const file of files) {
         const extension = file.name.split(".").pop().toLowerCase();
@@ -489,6 +507,7 @@ export default function ResumeBuilder() {
           imported = safeResume(parsed.resume || parsed.profile || parsed) || imported;
         } else if (["pdf", "docx", "txt"].includes(extension)) {
           const text = await extractDocumentText(file);
+          if (!text.trim()) throw new Error("No selectable text was found. This may be a scanned PDF; use a text-based PDF or paste its text instead.");
           imported = parseTextIntoResume(text, imported);
         } else {
           throw new Error("Supported files: PDF, DOCX, TXT, JSON and LinkedIn CSV exports.");
@@ -510,7 +529,7 @@ export default function ResumeBuilder() {
 
   const importPastedText = () => {
     if (!importText.trim()) { setToast("Paste your resume text first."); return; }
-    const imported = parseTextIntoResume(importText, current);
+    const imported = parseTextIntoResume(importText, blankImportResume(current));
     imported.id = current.id;
     imported.title = "Imported resume";
     setResumes((all) => all.map((resume) => resume.id === activeId ? imported : resume));
