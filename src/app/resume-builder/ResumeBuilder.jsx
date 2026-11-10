@@ -513,10 +513,7 @@ async function extractDocumentText(file) {
           width: Number(item.width || 0),
           height: Math.abs(Number(item.transform?.[3] || item.transform?.[0] || 10)),
         }))
-        .sort((a, b) => {
-          const vertical = b.y - a.y;
-          return Math.abs(vertical) > 1 ? vertical : a.x - b.x;
-        });
+        .sort((a, b) => (b.y - a.y) || (a.x - b.x));
       const rows = [];
       positioned.forEach((item) => {
         let row = rows.find((candidate) => Math.abs(candidate.y - item.y) <= Math.max(2.2, Math.min(item.height, 14) * 0.22));
@@ -528,10 +525,16 @@ async function extractDocumentText(file) {
       });
       rows.sort((a, b) => b.y - a.y);
 
-      const rowStarts = rows
-        .map((row) => Math.min(...row.items.map((item) => item.x)))
-        .filter((x) => Number.isFinite(x))
-        .sort((a, b) => a - b);
+      const rowStarts = rows.flatMap((row) => {
+        const sorted = [...row.items].sort((a, b) => a.x - b.x);
+        const starts = [];
+        let previousRight = null;
+        sorted.forEach((item) => {
+          if (previousRight === null || item.x - previousRight > 58) starts.push(item.x);
+          previousRight = item.x + item.width;
+        });
+        return starts;
+      }).filter((x) => Number.isFinite(x)).sort((a, b) => a - b);
       let columnSplit = null;
       let largestGap = 0;
       for (let index = 1; index < rowStarts.length; index += 1) {
