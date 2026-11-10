@@ -470,9 +470,9 @@
   .rb-footer > small { grid-column:auto; }
   .rb-modal { padding:25px 18px; }
 }
-body:has(.rb-page) > header, body:has(.rb-page) > footer { display:none !important; }
-body:has(.rb-page) a[href*="wa.me"] { display:none !important; }
-body.rb-resume-mode > header, body.rb-resume-mode > footer { display:none !important; }
+body:has(.rb-page) header.sticky, body.rb-resume-mode header.sticky { display:none !important; }
+body:has(.rb-page) footer:not(.rb-footer), body.rb-resume-mode footer:not(.rb-footer) { display:none !important; }
+body:has(.rb-page) a[href*="wa.me"], body.rb-resume-mode a[href*="wa.me"] { display:none !important; }
 body.rb-resume-mode a[href*="wa.me"] { display:none !important; }
 @media print {
   @page { size:A4; margin:0; }
