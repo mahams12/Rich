@@ -856,6 +856,8 @@ function ResumePreview({ resume, compact }) {
   const photoClass = "rb-resume-photo rb-photo-" + (design.photoShape || "circle");
   const avatarText = String(profile.fullName || "Your Name").split(/\s+/).map((part) => part[0]).filter(Boolean).slice(0, 2).join("").toUpperCase();
   const contactItems = [profile.email, profile.phone, profile.location, profile.website, profile.linkedin].filter(Boolean);
+  const headerContactItems = template === "professional" ? [profile.email, profile.phone].filter(Boolean) : contactItems;
+  const professionalAsideItems = [profile.location, profile.website, profile.linkedin].filter(Boolean);
 
   const sectionNodes = {
     profile: profile.summary ? (
@@ -945,7 +947,7 @@ function ResumePreview({ resume, compact }) {
       <div className="rb-resume-heading-copy">
         <h1>{profile.fullName || "Your Name"}</h1>
         {profile.headline ? <p className="rb-resume-headline">{profile.headline}</p> : null}
-        {!sidebarTemplates ? <div className="rb-resume-contact">{contactItems.join("  •  ")}</div> : null}
+        {!sidebarTemplates ? <div className="rb-resume-contact">{headerContactItems.join("  •  ")}</div> : null}
       </div>
       {template === "professional" && showPhoto && photoPosition !== "header"
         ? <img className={photoClass} src={profile.photo} alt="" />
@@ -984,6 +986,8 @@ function ResumePreview({ resume, compact }) {
     "--resume-section-gap": design.spacing === "compact" ? "13px" : design.spacing === "spacious" ? "27px" : "20px",
     "--resume-sidebar-width": (Number(design.sidebarWidth) || 34) + "%",
   };
+  const professionalMainSections = ["profile", "experience", "education", "projects", "certificates"].map((id) => sectionNodes[id]).filter(Boolean);
+  const professionalAsideSections = ["skills", "languages", "interests"].map((id) => sectionNodes[id]).filter(Boolean);
 
   return (
     <article
@@ -995,6 +999,15 @@ function ResumePreview({ resume, compact }) {
         <div className="rb-resume-main">
           {template === "vertical" ? header : sidebarIdentity && showPhoto && photoPosition === "header" ? <div className="rb-sidebar-photo-header"><img className={photoClass} src={profile.photo} alt="" /></div> : null}
           {orderedSections}
+        </div>
+      </> : template === "professional" ? <>
+        {header}
+        <div className="rb-professional-body">
+          <div className="rb-professional-main">{professionalMainSections}</div>
+          <aside className="rb-professional-aside">
+            <section><h3>Personal details</h3>{professionalAsideItems.map((item, index) => <span key={index}>{item}</span>)}</section>
+            {professionalAsideSections}
+          </aside>
         </div>
       </> : <>
         {header}
