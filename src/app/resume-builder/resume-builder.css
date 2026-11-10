@@ -982,3 +982,30 @@ body:has(.rb-page.rb-full-editor) a[href*="wa.me"] { display:none !important; }
   background:#f3f7f1;
   color:#4d6851;
 }
+
+.rb-import-raw {
+  margin-top:11px;
+  border:1px solid #e5e2da;
+  border-radius:7px;
+  background:#faf9f5;
+}
+.rb-import-raw summary {
+  padding:9px 10px;
+  color:#687168;
+  cursor:pointer;
+  font-size:8px;
+  font-weight:800;
+}
+.rb-import-raw pre {
+  max-height:230px;
+  overflow:auto;
+  margin:0;
+  padding:10px;
+  border-top:1px solid #e9e6de;
+  color:#667064;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:8px;
+  line-height:1.55;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
