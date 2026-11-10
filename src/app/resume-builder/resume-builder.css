@@ -1692,3 +1692,91 @@ body:has(.rb-page.rb-full-editor) a[href*="wa.me"] { display:none !important; }
   .rb-template-luxe .rb-resume-heading h1 { font-size:21px; }
   .rb-template-classic { padding:27px 22px; }
 }
+
+
+/* Professional separates the core story from contact and skills, as in the reference editor. */
+.rb-template-professional .rb-professional-body {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 205px;
+  gap:29px;
+  align-items:start;
+}
+.rb-template-professional .rb-professional-main { min-width:0; }
+.rb-template-professional .rb-professional-aside {
+  display:grid;
+  gap:19px;
+  min-width:0;
+  padding-left:20px;
+  border-left:1px solid #e0e2e5;
+}
+.rb-template-professional .rb-professional-aside > section:not(.rb-resume-section) {
+  display:grid;
+  gap:8px;
+}
+.rb-template-professional .rb-professional-aside > section > h3 {
+  margin:0 0 4px;
+  padding-bottom:7px;
+  border-bottom:1px solid #dfe2e5;
+  color:#303846;
+  font-size:11px;
+  font-weight:600;
+}
+.rb-template-professional .rb-professional-aside > section > span {
+  color:#67707c;
+  font-size:8px;
+  line-height:1.5;
+  overflow-wrap:anywhere;
+}
+.rb-template-professional .rb-professional-aside .rb-resume-section {
+  margin-top:0;
+}
+.rb-template-professional .rb-professional-aside .rb-resume-section h3 {
+  color:#303846;
+  border-color:#dfe2e5;
+}
+.rb-template-professional .rb-professional-aside .rb-resume-skill-list span {
+  padding:4px 6px;
+  color:#424d5c;
+  background:#f0f2f4;
+}
+.rb-template-professional .rb-professional-aside .rb-languages-section p,
+.rb-template-professional .rb-professional-aside .rb-interests-section p {
+  color:#5e6876;
+  font-size:8px;
+  line-height:1.6;
+}
+
+/* Side-rail templates already contain these sections in their left column. */
+.rb-template-vertical .rb-resume-main .rb-skills-section,
+.rb-template-vertical .rb-resume-main .rb-languages-section,
+.rb-template-elegant .rb-resume-main .rb-skills-section,
+.rb-template-elegant .rb-resume-main .rb-languages-section,
+.rb-template-elegant .rb-resume-main .rb-interests-section,
+.rb-template-circular .rb-resume-main .rb-skills-section,
+.rb-template-circular .rb-resume-main .rb-languages-section,
+.rb-template-circular .rb-resume-main .rb-interests-section,
+.rb-template-modern .rb-resume-main .rb-skills-section,
+.rb-template-modern .rb-resume-main .rb-languages-section,
+.rb-template-modern .rb-resume-main .rb-interests-section,
+.rb-template-casual .rb-resume-main .rb-skills-section,
+.rb-template-casual .rb-resume-main .rb-languages-section,
+.rb-template-casual .rb-resume-main .rb-interests-section,
+.rb-template-folio .rb-resume-main .rb-skills-section,
+.rb-template-folio .rb-resume-main .rb-languages-section,
+.rb-template-folio .rb-resume-main .rb-interests-section { display:none; }
+
+@media print {
+  .rb-template-professional { padding:0 17mm 15mm !important; }
+  .rb-template-professional .rb-resume-heading { margin:0 -17mm 8mm !important; padding:10mm 17mm !important; }
+  .rb-template-professional .rb-professional-body { grid-template-columns:minmax(0,1fr) 52mm !important; gap:7mm !important; }
+  .rb-template-professional .rb-professional-aside { padding-left:5mm !important; }
+}
+@media (max-width:800px) {
+  .rb-template-professional .rb-professional-body { grid-template-columns:minmax(0,1fr) 175px; gap:16px; }
+  .rb-template-professional .rb-professional-aside { padding-left:12px; }
+}
+@media (max-width:560px) {
+  .rb-template-professional .rb-professional-body { grid-template-columns:1fr; }
+  .rb-template-professional .rb-professional-aside { grid-template-columns:1fr 1fr; padding:15px 0 0; border-top:1px solid #e0e2e5; border-left:0; }
+  .rb-template-professional .rb-professional-aside > section:first-child { grid-column:1/-1; }
+}
