@@ -159,10 +159,10 @@ function getValue(record, candidates) {
 }
 
 const SECTION_PATTERNS = [
-  ["summary", /^(professional summary|summary|profile|career profile|objective|career objective|about me|professional profile)$/i],
+  ["summary", /^(professional summary|career summary|summary|profile|career profile|objective|career objective|about me|professional profile)$/i],
   ["experience", /^(professional experience|work experience|employment history|work history|experience|employment|career history|work experience and internships)$/i],
   ["education", /^(education|academic background|education and training|qualifications|academic qualifications)$/i],
-  ["skills", /^(technical skills|core skills|key skills|skills|competencies|expertise|technical expertise)$/i],
+  ["skills", /^(technical skills|core skills|key skills|skills|competencies|core competencies|expertise|technical expertise|skill set|areas of expertise)$/i],
   ["projects", /^(selected projects|personal projects|academic projects|projects|portfolio|key projects)$/i],
   ["certificates", /^(certifications|certificates|licenses and certifications|licenses|courses|professional development)$/i],
   ["languages", /^(languages|language skills)$/i],
@@ -173,7 +173,7 @@ const MONTH_RE = "(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:
 const DATE_POINT_RE = "(?:" + MONTH_RE + "\\s+(?:19|20)\\d{2}|(?:0?[1-9]|1[0-2])[/.](?:19|20)?\\d{2}|(?:19|20)\\d{2}|present|current|now)";
 const DATE_RANGE_RE = new RegExp("(" + DATE_POINT_RE + ")\\s*(?:-|–|—|to|until|through)\\s*(" + DATE_POINT_RE + ")", "i");
 
-const ROLE_WORD_RE = /\b(engineer|developer|designer|manager|analyst|consultant|intern|specialist|coordinator|director|lead|architect|officer|teacher|accountant|technician|administrator|founder|owner|associate|executive|researcher|scientist|product|sales|marketing|support|nurse|doctor|lawyer|editor|operator|supervisor| strategist|representative|assistant|producer|writer|recruiter|trainer|auditor|planner|advisor|adviser)\b/i;
+const ROLE_WORD_RE = /\b(engineer|developer|programmer|designer|manager|analyst|consultant|intern|specialist|coordinator|director|lead|architect|officer|teacher|accountant|technician|administrator|founder|owner|associate|executive|researcher|scientist|product|sales|marketing|support|nurse|doctor|lawyer|editor|operator|supervisor|strategist|representative|assistant|producer|writer|recruiter|trainer|auditor|planner|advisor|adviser)\b/i;
 const ACTION_START_RE = /^(built|developed|created|designed|led|managed|worked|responsible|using|used|improved|increased|reduced|delivered|collaborated|implemented|supported|coordinated|maintained|launched|achieved|conducted|provided|performed|assisted|analyzed|analysed|contributed|automated|deployed|integrated|optimized|optimised|organized|organised|executed|streamlined|oversaw|spearheaded|successfully|results-driven|detail-oriented)\b/i;
 const DEGREE_RE = /\b(b\.?\s?sc|bachelor|master|m\.?\s?sc|mba|ph\.?\s?d|doctorate|diploma|associate|matric|intermediate|fsc|a-level|o-level|bs\b|ms\b|bba\b|m\.?phil|certification)\b/i;
 const INSTITUTION_RE = /\b(university|college|school|institute|academy|polytechnic)\b/i;
@@ -300,7 +300,7 @@ function parseEntryBlocks(lines, kind) {
 
   clean.forEach((line) => {
     const date = extractDateRange(line);
-    const withoutDate = date ? line.replace(DATE_RANGE_RE, " ").replace(/[·•]+/g, " ").replace(/\s+/g, " ").replace(/[|]+$/g, "").trim() : line;
+    const withoutDate = date ? line.replace(DATE_RANGE_RE, " ").replace(/[·•]+/g, " ").replace(/\s+/g, " ").replace(/[|\s]+$/g, "").trim() : line;
     const newTitle = isLikelyEntryTitle(withoutDate, kind);
     if (current.length && date && hasDate()) flush();
     else if (current.length && newTitle && currentHasTitle() && (hasDate() || currentText().length >= (kind === "project" ? 4 : 2))) flush();
