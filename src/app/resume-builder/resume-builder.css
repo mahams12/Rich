@@ -470,12 +470,18 @@
   .rb-footer > small { grid-column:auto; }
   .rb-modal { padding:25px 18px; }
 }
+body.rb-resume-mode > header, body.rb-resume-mode > footer { display:none !important; }
+body.rb-resume-mode a[href*="wa.me"] { display:none !important; }
 @media print {
   @page { size:A4; margin:0; }
   body { background:#fff !important; }
   body * { visibility:hidden !important; }
-  .rb-resume-sheet, .rb-resume-sheet * { visibility:visible !important; }
-  .rb-resume-sheet { position:absolute !important; left:0 !important; top:0 !important; width:210mm !important; min-height:297mm !important; margin:0 !important; padding:16mm 17mm !important; box-shadow:none !important; print-color-adjust:exact; -webkit-print-color-adjust:exact; }
+  .rb-live-preview .rb-resume-sheet, .rb-live-preview .rb-resume-sheet * { visibility:visible !important; }
+  .rb-resume-card-preview .rb-resume-sheet, .rb-template-thumb .rb-resume-sheet { visibility:hidden !important; }
+  .rb-live-preview { position:static !important; overflow:visible !important; border:0 !important; }
+  .rb-live-preview .rb-preview-head, .rb-live-preview .rb-preview-foot { display:none !important; }
+  .rb-live-preview .rb-preview-canvas { overflow:visible !important; max-height:none !important; padding:0 !important; }
+  .rb-live-preview .rb-resume-sheet { position:absolute !important; left:0 !important; top:0 !important; width:210mm !important; min-height:297mm !important; margin:0 !important; padding:16mm 17mm !important; box-shadow:none !important; print-color-adjust:exact; -webkit-print-color-adjust:exact; }
   .rb-template-executive { padding:0 !important; grid-template-columns:54mm 1fr !important; gap:7mm !important; }
   .rb-template-executive .rb-resume-sidebar { padding:16mm 6mm !important; }
   .rb-template-executive .rb-resume-main { padding:16mm 8mm 16mm 0 !important; }
