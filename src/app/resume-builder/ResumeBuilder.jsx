@@ -21,7 +21,7 @@ const TEMPLATE_OPTIONS = [
   { id: "folio", name: "Folio", note: "A refined side rail for a fuller profile", tag: "Profile-led", color: "#263f49" },
   { id: "signal", name: "Signal", note: "High-contrast design for digital roles", tag: "Technology", color: "#2457a6" },
   { id: "monogram", name: "Monogram", note: "Elegant typography with a classic rhythm", tag: "Timeless", color: "#675044" },
-  { id: "grid", name: "Gridline", note: "Compact, information-dense and composed", tag: "Compact", color: "#3d5148" },
+  { id: "gridline", name: "Gridline", note: "Compact, information-dense and composed", tag: "Compact", color: "#3d5148" },
 ];
 
 const SECTION_ORDER_OPTIONS = [
@@ -125,8 +125,9 @@ function safeResume(value) {
       minimal: "swiss",
       executive: "folio",
       tech: "signal",
-      compact: "grid",
-    })[value.template] || (["professional", "chrono", "elegant", "circular", "modern", "luxe", "classic", "casual", "horizontal", "vertical", "atelier", "swiss", "folio", "signal", "monogram", "grid"].includes(value.template) ? value.template : "vertical"),
+      compact: "gridline",
+      grid: "gridline",
+    })[value.template] || (["professional", "chrono", "elegant", "circular", "modern", "luxe", "classic", "casual", "horizontal", "vertical", "atelier", "swiss", "folio", "signal", "monogram", "gridline"].includes(value.template) ? value.template : "vertical"),
     profile: { ...base.profile, ...(value.profile || {}) },
     design: { ...DEFAULT_RESUME_DESIGN, ...(value.design || {}) },
     sectionOrder: Array.isArray(value.sectionOrder) ? value.sectionOrder : base.sectionOrder,
@@ -1452,7 +1453,7 @@ export default function ResumeBuilder() {
             {view === "templates" ? (
               <div className="rb-templates-view">
                 <div className="rb-view-intro"><div><span className="rb-eyebrow rb-eyebrow-dark">THE RIGHT FIRST IMPRESSION</span><h3>Find a format that <em>fits your story.</em></h3><p>Each original design uses editable text sections and a consistent document structure. Choose one, then make it yours.</p></div><div className="rb-view-actions"><button className="rb-button rb-button-light" onClick={() => setView("editor")}>← Back to editor</button><button className="rb-button rb-button-accent" onClick={createResume}>＋ Start from scratch</button></div></div>
-                <div className="rb-template-grid">
+                <div className="rb-template-gallery-grid">
                   {TEMPLATE_OPTIONS.map((template) => <button key={template.id} className={"rb-template-card" + (current.template === template.id ? " selected" : "")} onClick={() => { const sideTemplate = ["elegant", "circular", "modern", "casual", "vertical", "folio"].includes(template.id); updateCurrent((resume) => ({ ...resume, template: template.id, accent: template.color, design: { ...DEFAULT_RESUME_DESIGN, ...(resume.design || {}), photoPosition: sideTemplate ? "sidebar" : "header" }, sectionOrder: template.id === "vertical" ? ["education", "experience", "projects", "profile", "skills", "certificates", "interests", "languages"] : resume.sectionOrder })); setToast(template.name + " template selected. Customize the design while editing."); setShowDesignPanel(true); setView("editor"); }}>
                     <div className={"rb-template-thumb rb-thumb-" + template.id} style={{ "--thumb-accent": template.color }}><ResumePreview resume={{ ...TEMPLATE_PREVIEW, template: template.id, accent: template.color }} compact /></div>
                     <div className="rb-template-card-copy"><span className="rb-template-tag">{template.tag}</span><strong>{template.name}</strong><small>{template.note}</small><span className="rb-template-use">{current.template === template.id ? "Selected ✓" : "Use template →"}</span></div>
