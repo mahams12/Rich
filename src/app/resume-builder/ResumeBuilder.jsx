@@ -832,9 +832,9 @@ function validateResumeJson(payload, base) {
     },
   };
 }
-function ResumeSection({ title, children, className = "" }) {
+function ResumeSection({ title, children, className = "", sectionId }) {
   return (
-    <section className={"rb-resume-section " + className}>
+    <section className={"rb-resume-section " + className} data-section={sectionId || ""}>
       <h3>{title}</h3>
       {children}
     </section>
@@ -843,40 +843,51 @@ function ResumeSection({ title, children, className = "" }) {
 
 function ResumePreview({ resume, compact }) {
   const profile = resume.profile || {};
-  const template = resume.template || "atelier";
-  const hasSidebar = template === "folio";
-  const main = (
-    <>
-      <header className="rb-resume-heading">
-        <div>
-          <h1>{profile.fullName || "Your Name"}</h1>
-          {profile.headline ? <p className="rb-resume-headline">{profile.headline}</p> : null}
-          <div className="rb-resume-contact">
-            {[profile.email, profile.phone, profile.location, profile.website, profile.linkedin].filter(Boolean).join("  •  ")}
-          </div>
-        </div>
-        {profile.photo ? <img className="rb-resume-photo" src={profile.photo} alt="" /> : null}
-      </header>
-      {profile.summary ? <ResumeSection title="Profile"><p>{profile.summary}</p></ResumeSection> : null}
-      {resume.experience?.length ? <ResumeSection title="Experience">
+  const design = { ...DEFAULT_RESUME_DESIGN, ...(resume.design || {}) };
+  const template = resume.template || "vertical";
+  const sidebarTemplates = ["folio", "elegant", "circular", "modern", "casual", "vertical"].includes(template);
+  const sidebarIdentity = template !== "vertical";
+  const showPhoto = design.showPhoto && Boolean(profile.photo);
+  const photoPosition = design.photoPosition || (sidebarTemplates ? "sidebar" : "header");
+  const photoClass = "rb-resume-photo rb-photo-" + (design.photoShape || "circle");
+  const contactItems = [profile.email, profile.phone, profile.location, profile.website, profile.linkedin].filter(Boolean);
+
+  const sectionNodes = {
+    profile: profile.summary ? (
+      <ResumeSection key="profile" sectionId="profile" title="Profile" className="rb-profile-section">
+        <p>{profile.summary}</p>
+      </ResumeSection>
+    ) : null,
+    experience: resume.experience?.length ? (
+      <ResumeSection key="experience" sectionId="experience" title={template === "vertical" ? "Professional Experience" : "Experience"} className="rb-experience-section">
         {resume.experience.map((item, index) => (
           <div className="rb-resume-entry" key={"work-" + index}>
-            <div className="rb-resume-entry-top"><strong>{item.role || "Role"}</strong><span>{[item.start, item.end].filter(Boolean).join(" – ")}</span></div>
+            <div className="rb-resume-entry-top">
+              <strong>{item.role || "Role"}</strong>
+              <span>{[item.start, item.end].filter(Boolean).join(" – ")}</span>
+            </div>
             <div className="rb-resume-subline">{[item.company, item.location].filter(Boolean).join(" · ")}</div>
             {item.details ? <p>{item.details}</p> : null}
           </div>
         ))}
-      </ResumeSection> : null}
-      {resume.education?.length ? <ResumeSection title="Education">
+      </ResumeSection>
+    ) : null,
+    education: resume.education?.length ? (
+      <ResumeSection key="education" sectionId="education" title="Education" className="rb-education-section">
         {resume.education.map((item, index) => (
           <div className="rb-resume-entry" key={"edu-" + index}>
-            <div className="rb-resume-entry-top"><strong>{item.degree || "Degree"}</strong><span>{[item.start, item.end].filter(Boolean).join(" – ")}</span></div>
+            <div className="rb-resume-entry-top">
+              <strong>{item.degree || "Degree"}</strong>
+              <span>{[item.start, item.end].filter(Boolean).join(" – ")}</span>
+            </div>
             <div className="rb-resume-subline">{[item.school, item.location].filter(Boolean).join(" · ")}</div>
             {item.details ? <p>{item.details}</p> : null}
           </div>
         ))}
-      </ResumeSection> : null}
-      {resume.projects?.some((item) => item.name || item.details) ? <ResumeSection title="Projects">
+      </ResumeSection>
+    ) : null,
+    projects: resume.projects?.some((item) => item.name || item.details) ? (
+      <ResumeSection key="projects" sectionId="projects" title="Projects" className="rb-projects-section">
         {resume.projects.filter((item) => item.name || item.details).map((item, index) => (
           <div className="rb-resume-entry" key={"project-" + index}>
             <div className="rb-resume-entry-top"><strong>{item.name}</strong><span>{item.role}</span></div>
@@ -884,27 +895,106 @@ function ResumePreview({ resume, compact }) {
             {item.details ? <p>{item.details}</p> : null}
           </div>
         ))}
-      </ResumeSection> : null}
-      {resume.skills?.filter(Boolean).length ? <ResumeSection title="Skills" className="rb-skills-section"><div className="rb-resume-skill-list">{resume.skills.filter(Boolean).map((skill, index) => <span key={skill + "-" + index}>{skill}</span>)}</div></ResumeSection> : null}
-      {resume.certificates?.some((item) => item.name) ? <ResumeSection title="Certifications">
-        {resume.certificates.filter((item) => item.name).map((item, index) => <div className="rb-resume-entry" key={"cert-" + index}><div className="rb-resume-entry-top"><strong>{item.name}</strong><span>{item.date}</span></div><div className="rb-resume-subline">{item.issuer}</div></div>)}
-      </ResumeSection> : null}
-      {resume.languages?.filter(Boolean).length ? <ResumeSection title="Languages" className="rb-languages-section"><p>{resume.languages.filter(Boolean).join("  ·  ")}</p></ResumeSection> : null}
-    </>
+      </ResumeSection>
+    ) : null,
+    skills: resume.skills?.filter(Boolean).length ? (
+      <ResumeSection key="skills" sectionId="skills" title="Skills" className="rb-skills-section">
+        <div className="rb-resume-skill-list">
+          {resume.skills.filter(Boolean).map((skill, index) => <span key={skill + "-" + index}>{skill}</span>)}
+        </div>
+      </ResumeSection>
+    ) : null,
+    certificates: resume.certificates?.some((item) => item.name) ? (
+      <ResumeSection key="certificates" sectionId="certificates" title="Certifications" className="rb-certificates-section">
+        {resume.certificates.filter((item) => item.name).map((item, index) => (
+          <div className="rb-resume-entry" key={"cert-" + index}>
+            <div className="rb-resume-entry-top"><strong>{item.name}</strong><span>{item.date}</span></div>
+            <div className="rb-resume-subline">{item.issuer}</div>
+          </div>
+        ))}
+      </ResumeSection>
+    ) : null,
+    languages: resume.languages?.filter(Boolean).length ? (
+      <ResumeSection key="languages" sectionId="languages" title="Languages" className="rb-languages-section">
+        <p>{resume.languages.filter(Boolean).join("  ·  ")}</p>
+      </ResumeSection>
+    ) : null,
+    interests: resume.interests?.filter(Boolean).length ? (
+      <ResumeSection key="interests" sectionId="interests" title="Hobbies & Interests" className="rb-interests-section">
+        <p>{resume.interests.filter(Boolean).join("  ·  ")}</p>
+      </ResumeSection>
+    ) : null,
+  };
+
+  const defaultOrder = ["profile", "experience", "education", "projects", "skills", "certificates", "languages", "interests"];
+  const requestedOrder = Array.isArray(resume.sectionOrder) && resume.sectionOrder.length
+    ? resume.sectionOrder
+    : (template === "vertical" ? ["education", "experience", "projects", "profile", "skills", "certificates", "interests", "languages"] : defaultOrder);
+  const orderedSections = [...new Set([...requestedOrder, ...defaultOrder])]
+    .filter((sectionId) => sectionNodes[sectionId])
+    .map((sectionId) => sectionNodes[sectionId]);
+
+  const header = (
+    <header className={"rb-resume-heading" + (template === "professional" ? " rb-professional-header" : "")}>
+      {showPhoto && photoPosition === "header" ? <img className={photoClass} src={profile.photo} alt="" /> : null}
+      <div className="rb-resume-heading-copy">
+        <h1>{profile.fullName || "Your Name"}</h1>
+        {profile.headline ? <p className="rb-resume-headline">{profile.headline}</p> : null}
+        {!sidebarTemplates ? <div className="rb-resume-contact">{contactItems.join("  •  ")}</div> : null}
+      </div>
+      {template === "professional" && showPhoto && photoPosition !== "header"
+        ? <img className={photoClass} src={profile.photo} alt="" />
+        : null}
+    </header>
   );
-  const side = (
-    <aside className="rb-resume-sidebar">
-      {profile.photo ? <img className="rb-resume-photo rb-sidebar-photo" src={profile.photo} alt="" /> : null}
-      <h2>{profile.fullName || "Your Name"}</h2>
-      {profile.headline ? <p className="rb-sidebar-role">{profile.headline}</p> : null}
-      <div className="rb-sidebar-contact">{[profile.email, profile.phone, profile.location, profile.website, profile.linkedin].filter(Boolean).map((item, index) => <span key={index}>{item}</span>)}</div>
-      {resume.skills?.length ? <div className="rb-sidebar-block"><h3>Core skills</h3><p>{resume.skills.join(" · ")}</p></div> : null}
-      {resume.languages?.length ? <div className="rb-sidebar-block"><h3>Languages</h3><p>{resume.languages.join(" · ")}</p></div> : null}
+
+  const sidebar = (
+    <aside className={"rb-resume-sidebar" + (template === "vertical" ? " rb-vertical-sidebar" : "")}>
+      {showPhoto && photoPosition !== "header" ? <img className={photoClass + " rb-sidebar-photo"} src={profile.photo} alt="" /> : null}
+      {sidebarIdentity ? <>
+        <h2>{profile.fullName || "Your Name"}</h2>
+        {profile.headline ? <p className="rb-sidebar-role">{profile.headline}</p> : null}
+      </> : null}
+      {contactItems.length ? (
+        <div className="rb-sidebar-contact">
+          {contactItems.map((item, index) => <span key={index}>{item}</span>)}
+        </div>
+      ) : null}
+      {resume.languages?.filter(Boolean).length ? (
+        <div className="rb-sidebar-block rb-sidebar-languages"><h3>Languages</h3><ul>{resume.languages.filter(Boolean).map((language, index) => <li key={index}>{language}</li>)}</ul></div>
+      ) : null}
+      {resume.skills?.filter(Boolean).length ? (
+        <div className="rb-sidebar-block rb-sidebar-skills"><h3>{template === "vertical" ? "Software & Skills" : "Core Skills"}</h3><ul>{resume.skills.filter(Boolean).map((skill, index) => <li key={index}>{skill}</li>)}</ul></div>
+      ) : null}
+      {resume.interests?.filter(Boolean).length && template !== "vertical" ? (
+        <div className="rb-sidebar-block"><h3>Interests</h3><p>{resume.interests.join(" · ")}</p></div>
+      ) : null}
     </aside>
   );
+
+  const style = {
+    "--resume-accent": resume.accent || "#920b36",
+    "--resume-font-family": design.font === "serif" ? 'Georgia, "Times New Roman", serif' : design.font === "humanist" ? '"Trebuchet MS", Arial, sans-serif' : 'Arial, Helvetica, sans-serif',
+    "--resume-font-scale": design.textSize === "small" ? "0.92" : design.textSize === "large" ? "1.08" : "1",
+    "--resume-section-gap": design.spacing === "compact" ? "13px" : design.spacing === "spacious" ? "27px" : "20px",
+    "--resume-sidebar-width": (Number(design.sidebarWidth) || 34) + "%",
+  };
+
   return (
-    <article className={"rb-resume-sheet rb-template-" + template + (compact ? " rb-resume-compact" : "")} style={{ "--resume-accent": resume.accent || "#b85c3d" }}>
-      {hasSidebar ? <>{side}<div className="rb-resume-main">{main}</div></> : main}
+    <article
+      className={"rb-resume-sheet rb-template-" + template + " rb-font-" + design.font + " rb-density-" + design.spacing + (compact ? " rb-resume-compact" : "") + (design.sectionStyle === "block" ? " rb-sections-block" : design.sectionStyle === "minimal" ? " rb-sections-minimal" : "")}
+      style={style}
+    >
+      {sidebarTemplates ? <>
+        {sidebar}
+        <div className="rb-resume-main">
+          {template === "vertical" || template === "modern" || template === "casual" ? header : null}
+          {orderedSections}
+        </div>
+      </> : <>
+        {header}
+        <div className="rb-resume-main">{orderedSections}</div>
+      </>}
     </article>
   );
 }
