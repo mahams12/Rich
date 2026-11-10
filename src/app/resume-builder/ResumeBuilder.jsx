@@ -226,6 +226,28 @@ function extractDateRange(line) {
   return { start: match[1].trim(), end: match[2].trim(), text: match[0] };
 }
 
+function extractLabeledValue(source, labels) {
+  for (const label of labels) {
+    const expression = new RegExp("(?:^|\\n)\\s*" + label + "\\s*[:：–—-]\\s*([^\\n]+)", "i");
+    const match = String(source || "").match(expression);
+    if (match?.[1]) return match[1].trim().replace(/[|•·]+$/, "").trim();
+  }
+  return "";
+}
+
+function extractSkillItems(lines) {
+  const categoryPrefix = /^(?:programming languages?|languages?|frameworks?|libraries|tools?|platforms?|databases?|cloud|technologies|technical skills|soft skills|core competencies|methodologies|other skills?)\s*[:：-]\s*/i;
+  const items = [];
+  (lines || []).forEach((line) => {
+    const value = String(line || "").replace(categoryPrefix, "").trim();
+    value.split(/[,;|•·\u2022]+/).forEach((item) => {
+      const clean = item.replace(/^[•●▪◦‣*·\-–—]+\s*/, "").trim();
+      if (clean.length > 1 && clean.length < 54 && !/^skills?$/i.test(clean)) items.push(clean);
+    });
+  });
+  return Array.from(new Map(items.map((item) => [item.toLowerCase(), item])).values()).slice(0, 50);
+}
+
 function isLikelyEntryTitle(line, kind) {
   const value = String(line || "").replace(/^[•●▪◦‣*·]\s*/, "").trim();
   if (value.length < 3 || value.length > 115 || ACTION_START_RE.test(value)) return false;
@@ -346,6 +368,8 @@ function parseTextIntoResume(source, existing) {
   const { sections, headingLines } = splitResumeSections(lines);
   const header = [...(sections.header || []), ...(sections.contact || [])];
   const explicitName = raw.match(/(?:^|\n)\s*(?:full\s+name|name)\s*[:：-]\s*([^\n]+)/i);
+  const explicitHeadline = extractLabeledValue(raw, ["professional headline", "headline", "job title", "designation", "title"]);
+  const explicitLocation = extractLabeledValue(raw, ["location", "city", "current location", "address"]);
   const emailMatch = raw.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
   const phoneCandidates = raw.match(/(?:\+\d{1,3}[ .-]?)?(?:\(?\d{2,4}\)?[ .-]?)?\d[\d .()-]{5,13}\d/g) || [];
   const phoneMatch = phoneCandidates.find((candidate) => {
@@ -362,11 +386,12 @@ function parseTextIntoResume(source, existing) {
     !/^(resume|curriculum vitae|curriculum vit[aá]e|cv|profile|personal details|contact|contact details|contact information|personal information)$/i.test(line) &&
     !DATE_RANGE_RE.test(line)
   ) || "";
-  const headlineCandidate = header.find((line) =>
+  const headlineCandidate = explicitHeadline || header.find((line) =>
     line !== nameCandidate &&
     line.length >= 3 &&
     line.length <= 90 &&
     !/@|https?:\/\/|linkedin\.com|\d{5,}/i.test(line) &&
+    !/^(location|city|address|phone|mobile|email)\s*[:：]/i.test(line) &&
     !DATE_RANGE_RE.test(line)
   ) || "";
 
@@ -375,12 +400,7 @@ function parseTextIntoResume(source, existing) {
   const experience = parseEntryBlocks(sections.experience || [], "experience").slice(0, 12);
   const education = parseEntryBlocks(sections.education || [], "education").slice(0, 8);
   const projects = parseEntryBlocks(sections.projects || [], "project").slice(0, 12);
-  const skills = (sections.skills || [])
-    .join(",")
-    .split(/[,;|•·]\s*|\n/)
-    .map((item) => item.replace(/^[•●▪◦‣*·\-–—]\s*/, "").trim())
-    .filter((item) => item.length > 1 && item.length < 54)
-    .slice(0, 40);
+  const skills = extractSkillItems(sections.skills || []);
   const certificates = (sections.certificates || []).map((line) => line.trim()).filter(Boolean).slice(0, 12).map((line) => ({
     name: line,
     issuer: "",
@@ -393,9 +413,10 @@ function parseTextIntoResume(source, existing) {
     fullName: nameCandidate || existing.profile.fullName || "",
     headline: headlineCandidate || existing.profile.headline || "",
     email: emailMatch ? emailMatch[0] : "",
-    phone: phoneMatch && phoneMatch[0].trim().length <= 28 ? phoneMatch[0].trim() : "",
+    phone: phoneMatch ? phoneMatch.trim() : "",
     linkedin: linkedinMatch ? linkedinMatch[0] : "",
-    website: websiteMatch ? websiteMatch[0] : "",
+    website: extractLabeledValue(raw, ["portfolio", "website", "personal website"]) || (websiteMatch ? websiteMatch[0] : ""),
+    location: explicitLocation || existing.profile.location || "",
     summary: summary || "",
   };
   const resume = {
