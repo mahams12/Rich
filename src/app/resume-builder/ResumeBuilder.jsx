@@ -156,31 +156,199 @@ function getValue(record, candidates) {
   return "";
 }
 
-function parseTextIntoResume(text, existing) {
-  const lines = String(text || "").split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
-  const email = String(text).match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
-  const phone = String(text).match(/(?:\+\d{1,3}[\s-]?)?(?:\(?\d{2,4}\)?[\s.-]?)?[\d\s.-]{7,}/);
-  const linked = String(text).match(/(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[A-Za-z0-9-_%]+/i);
-  const firstLine = lines.find((line) => line.length > 2 && line.length < 64) || "Imported resume";
-  const summaryStart = lines.findIndex((line) => /summary|profile|objective|about me/i.test(line));
-  const skillsStart = lines.findIndex((line) => /^skills|technical skills/i.test(line));
-  const skillsLine = skillsStart >= 0 ? lines.slice(skillsStart + 1, skillsStart + 8).join(", ") : "";
-  const summary = summaryStart >= 0 ? lines.slice(summaryStart + 1, Math.min(summaryStart + 5, lines.length)).join(" ") : "";
-  return {
-    ...existing,
-    title: existing.title || "Imported resume",
-    profile: {
-      ...existing.profile,
-      fullName: !existing.profile.fullName || existing.profile.fullName === "Jordan Lee" ? firstLine : existing.profile.fullName,
-      email: email ? email[0] : existing.profile.email,
-      phone: phone ? phone[0].trim() : existing.profile.phone,
-      linkedin: linked ? linked[0] : existing.profile.linkedin,
-      summary: summary || lines.slice(1, 7).join(" ") || existing.profile.summary,
-    },
-    skills: skillsLine ? skillsLine.split(/[,;|•]/).map((item) => item.trim()).filter(Boolean).slice(0, 24) : existing.skills,
-  };
+const SECTION_PATTERNS = [
+  ["summary", /^(professional summary|summary|profile|career profile|objective|career objective|about me|professional profile)$/i],
+  ["experience", /^(professional experience|work experience|employment history|work history|experience|employment)$/i],
+  ["education", /^(education|academic background|education and training|qualifications)$/i],
+  ["skills", /^(technical skills|core skills|key skills|skills|competencies|expertise)$/i],
+  ["projects", /^(selected projects|personal projects|academic projects|projects|portfolio)$/i],
+  ["certificates", /^(certifications|certificates|licenses and certifications|licenses|courses)$/i],
+  ["languages", /^(languages|language skills)$/i],
+];
+
+const DATE_RANGE_RE = /(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?\s+)?(?:19|20)\d{2}\s*(?:-|–|—|to|until)\s*(?:(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?\s+)?(?:(?:19|20)\d{2}|present|current|now))|(?:19|20)\d{2}\s*[-–—]\s*(?:present|current|now)/i;
+
+function normalizeResumeLines(source) {
+  return String(source || "")
+    .replace(/\u0000/g, " ")
+    .replace(/\u00a0/g, " ")
+    .replace(/\r/g, "\n")
+    .split("\n")
+    .map((line) => line.replace(/\s+/g, " ").replace(/^[•●▪◦‣*·\-–—]\s*/, "").trim())
+    .filter((line) => line && !/^(page\s+)?\d+\s*(of\s+\d+)?$/i.test(line));
 }
 
+function splitResumeSections(lines) {
+  const sections = { header: [] };
+  let current = "header";
+  let sectionCount = 0;
+  const headingLines = [];
+  lines.forEach((line) => {
+    const normalized = line.replace(/[:：]\s*$/, "").trim();
+    const match = SECTION_PATTERNS.find(([, pattern]) => pattern.test(normalized));
+    if (match) {
+      current = match[0];
+      if (!sections[current]) sections[current] = [];
+      sectionCount += 1;
+      headingLines.push(normalized);
+    } else {
+      if (!sections[current]) sections[current] = [];
+      sections[current].push(line);
+    }
+  });
+  return { sections, sectionCount, headingLines };
+}
+
+function parseEntryBlocks(lines, kind) {
+  const clean = lines.filter(Boolean);
+  if (!clean.length) return [];
+  const blocks = [];
+  let block = [];
+  clean.forEach((line) => {
+    const isDateLine = DATE_RANGE_RE.test(line) || /^(19|20)\d{2}\s*[-–—]\s*(present|current|now)$/i.test(line);
+    if (isDateLine) {
+      block.push(line);
+      blocks.push(block);
+      block = [];
+      return;
+    }
+    if (block.length >= 4 && !/^[•●▪◦‣*·]/.test(line) && line.length < 85 && !/[.!?]$/.test(line)) {
+      blocks.push(block);
+      block = [];
+    }
+    block.push(line);
+  });
+  if (block.length) blocks.push(block);
+
+  return blocks.map((items) => {
+    const dateLine = items.find((line) => DATE_RANGE_RE.test(line));
+    const dateText = dateLine ? dateLine.match(DATE_RANGE_RE)?.[0] || "" : "";
+    const content = items.filter((line) => line !== dateLine);
+    const first = content.shift() || "";
+    const parts = first.split(/\s+[|·•]\s+/).filter(Boolean);
+    const role = parts[0] || first;
+    let organization = parts[1] || "";
+    if (!organization && content.length && content[0].length < 86 && !/[.!?]$/.test(content[0]) && !/^(built|developed|created|led|managed|designed|worked|responsible|using|used|improved|increased|reduced|delivered|collaborated|implemented)\b/i.test(content[0])) {
+      organization = content.shift() || "";
+    }
+    const details = content.join("\n").replace(/^[•●▪◦‣*·]\s*/gm, "").trim();
+    if (kind === "education") {
+      return {
+        degree: [role, parts[2]].filter(Boolean).join(" — "),
+        school: organization,
+        location: "",
+        start: dateText,
+        end: "",
+        details,
+      };
+    }
+    if (kind === "project") {
+      return { name: role, role: organization, link: "", details: [parts.slice(2).join(" · "), details].filter(Boolean).join("\n") };
+    }
+    return { role, company: organization, location: "", start: dateText, end: "", details };
+  }).filter((item) => Object.values(item).some((value) => String(value || "").trim()));
+}
+
+function parseTextIntoResume(source, existing) {
+  const raw = String(source || "").replace(/\u0000/g, " ").trim();
+  const lines = normalizeResumeLines(raw);
+  const { sections, headingLines } = splitResumeSections(lines);
+  const header = sections.header || [];
+  const emailMatch = raw.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+  const phoneMatch = raw.match(/(?:\+\d{1,3}[\s.-]?)?(?:\(?\d{2,4}\)?[\s.-]?)?[\d\s().-]{7,}/);
+  const linkedinMatch = raw.match(/(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[A-Z0-9-_%]+/i);
+  const websiteMatch = raw.match(/(?:https?:\/\/)?(?:www\.)?[A-Z0-9-]+\.(?:com|net|org|io|dev|co|me|app)(?:\/[^\s]*)?/i);
+  const nameCandidate = header.find((line) =>
+    line.length >= 3 &&
+    line.length <= 58 &&
+    !/@|https?:\/\/|linkedin\.com|\d{5,}/i.test(line) &&
+    !/^(resume|curriculum vitae|curriculum vit[aá]e|cv|profile|personal details)$/i.test(line) &&
+    !DATE_RANGE_RE.test(line)
+  ) || "";
+  const headlineCandidate = header.find((line) =>
+    line !== nameCandidate &&
+    line.length >= 3 &&
+    line.length <= 90 &&
+    !/@|https?:\/\/|linkedin\.com|\d{5,}/i.test(line) &&
+    !DATE_RANGE_RE.test(line)
+  ) || "";
+
+  const summaryLines = (sections.summary || []).slice(0, 9);
+  const summary = summaryLines.join(" ").replace(/\s+/g, " ").trim();
+  const experience = parseEntryBlocks(sections.experience || [], "experience").slice(0, 12);
+  const education = parseEntryBlocks(sections.education || [], "education").slice(0, 8);
+  const projects = parseEntryBlocks(sections.projects || [], "project").slice(0, 12);
+  const skills = (sections.skills || [])
+    .join(",")
+    .split(/[,;|•·]\s*|\n/)
+    .map((item) => item.replace(/^[•●▪◦‣*·\-–—]\s*/, "").trim())
+    .filter((item) => item.length > 1 && item.length < 54)
+    .slice(0, 40);
+  const certificates = (sections.certificates || []).map((line) => line.trim()).filter(Boolean).slice(0, 12).map((line) => ({
+    name: line,
+    issuer: "",
+    date: "",
+    link: "",
+  }));
+  const languages = (sections.languages || []).join(",").split(/[,;|•·]\s*|\n/).map((item) => item.trim()).filter(Boolean).slice(0, 12);
+  const profile = {
+    ...existing.profile,
+    fullName: nameCandidate || existing.profile.fullName || "",
+    headline: headlineCandidate || existing.profile.headline || "",
+    email: emailMatch ? emailMatch[0] : "",
+    phone: phoneMatch && phoneMatch[0].trim().length <= 28 ? phoneMatch[0].trim() : "",
+    linkedin: linkedinMatch ? linkedinMatch[0] : "",
+    website: websiteMatch ? websiteMatch[0] : "",
+    summary: summary || "",
+  };
+  const resume = {
+    ...existing,
+    title: "Imported resume",
+    profile,
+    experience: experience.length ? experience : [],
+    education: education.length ? education : [],
+    projects: projects.length ? projects : [],
+    skills,
+    languages,
+    certificates,
+  };
+  const detected = {
+    name: Boolean(profile.fullName),
+    email: Boolean(profile.email),
+    phone: Boolean(profile.phone),
+    summary: Boolean(profile.summary),
+    experience: experience.length,
+    education: education.length,
+    projects: projects.length,
+    skills: skills.length,
+    certificates: certificates.length,
+    languages: languages.length,
+  };
+  const sectionTotal = [detected.summary, detected.experience, detected.education, detected.projects, detected.skills, detected.certificates, detected.languages].filter(Boolean).length;
+  const identityFound = detected.name || detected.email || detected.phone;
+  const contentFound = sectionTotal > 0;
+  const warnings = [];
+  if (!detected.name) warnings.push("A clear name was not detected. Add it manually before exporting.");
+  if (!detected.experience) warnings.push("No work-experience section was confidently detected.");
+  if (!detected.education) warnings.push("No education section was confidently detected.");
+  if (!detected.skills) warnings.push("No skills section was confidently detected.");
+  if (!detected.email && !detected.phone) warnings.push("No email address or phone number was detected.");
+  const report = {
+    characters: raw.length,
+    detected,
+    headingLines,
+    warnings,
+    valid: raw.length >= 80 && contentFound && (identityFound || sectionTotal >= 2),
+    message: raw.length < 80
+      ? "The file contains too little readable text to safely build a resume."
+      : !contentFound
+        ? "Resume sections could not be identified. Try a text-based PDF, DOCX or paste the resume text."
+        : !identityFound && sectionTotal < 2
+          ? "We could not identify enough resume information. Check the file and try again."
+          : "",
+  };
+  return { resume, report };
+}
 function loadScript(src, id, globalName) {
   return new Promise((resolve, reject) => {
     if (typeof window !== "undefined" && window[globalName]) { resolve(window[globalName]); return; }
