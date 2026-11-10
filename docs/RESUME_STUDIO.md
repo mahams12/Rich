@@ -7,9 +7,12 @@ Public route: `/resume-builder`
 Resume Studio is a browser-first React experience inside the existing Next.js App Router application. It intentionally has no resume API, account system, database or file-storage dependency in V1.
 
 - Resume drafts and settings are stored in `localStorage` under `novexahub-resume-studio-v1`.
+- The editor and template picker use a full-window workspace so the form and document preview have dedicated screen space.
+- The six original layouts are Atelier, Swiss Grid, Folio, Signal, Monogram and Gridline.
 - PDF export uses the browser print dialog. Choose **Save as PDF** to create a selectable-text A4 document.
 - Editable JSON backup is available for moving a resume between browsers or devices.
-- PDF and DOCX text extraction run in the browser using PDF.js and Mammoth, loaded on demand from cdnjs only when a user selects a matching file.
+- PDF and DOCX text extraction run in the browser using PDF.js and Mammoth, loaded on demand from cdnjs only when a user selects a matching file. PDF text items are grouped by page coordinates to preserve line order where possible.
+- Imports are staged for review. The app checks for readable text, recognizable sections, file-type limits and LinkedIn CSV headers before the user confirms replacing a resume. Image-only/scanned PDFs are rejected because OCR is not included.
 - TXT, JSON and LinkedIn CSV imports are parsed locally. LinkedIn exports can be selected as multiple CSV files (Profile, Positions, Education and Skills).
 - The keyword lab extracts recurring terms from a job description and compares them with the current resume text locally. It does not call a language model, job board or paid API.
 - A profile photo is resized in the browser before it is written to local storage.
