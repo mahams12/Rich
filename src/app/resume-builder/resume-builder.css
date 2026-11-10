@@ -794,7 +794,7 @@ body.rb-full-resume-editor a[href*="wa.me"] { display:none !important; }
 .rb-template-monogram .rb-resume-skill-list { justify-content:center; }
 .rb-template-monogram .rb-resume-skill-list span { border:0; border-bottom:1px solid #d9cec5; border-radius:0; color:#68564a; background:transparent; }
 
-.rb-template-grid {
+.rb-template-gridline {
   padding:48px 54px;
   border-top:8px solid #3d5148;
   font-family:Arial,Helvetica,sans-serif;
@@ -806,15 +806,15 @@ body.rb-full-resume-editor a[href*="wa.me"] { display:none !important; }
   padding-bottom:17px;
   border-bottom:1px solid #cfd9d1;
 }
-.rb-template-grid .rb-resume-heading h1 { color:#263a31; font-size:27px; letter-spacing:-.055em; text-transform:none; }
-.rb-template-grid .rb-resume-headline { color:#3d6d56; font-size:9px; text-transform:uppercase; letter-spacing:.12em; }
-.rb-template-grid .rb-resume-contact { color:#748078; font-size:8px; }
+.rb-template-gridline .rb-resume-heading h1 { color:#263a31; font-size:27px; letter-spacing:-.055em; text-transform:none; }
+.rb-template-gridline .rb-resume-headline { color:#3d6d56; font-size:9px; text-transform:uppercase; letter-spacing:.12em; }
+.rb-template-gridline .rb-resume-contact { color:#748078; font-size:8px; }
 .rb-template-gridline .rb-resume-section { margin-top:16px; }
-.rb-template-grid .rb-resume-section h3 { padding:6px 8px; border:0; color:#315342; background:#edf2ed; font-size:8px; letter-spacing:.14em; }
+.rb-template-gridline .rb-resume-section h3 { padding:6px 8px; border:0; color:#315342; background:#edf2ed; font-size:8px; letter-spacing:.14em; }
 .rb-template-gridline .rb-resume-entry { margin-top:8px; }
-.rb-template-grid .rb-resume-entry-top strong { font-size:9px; }
-.rb-template-grid .rb-resume-entry p { font-size:9px; line-height:1.45; }
-.rb-template-grid .rb-resume-subline { color:#547463; }
+.rb-template-gridline .rb-resume-entry-top strong { font-size:9px; }
+.rb-template-gridline .rb-resume-entry p { font-size:9px; line-height:1.45; }
+.rb-template-gridline .rb-resume-subline { color:#547463; }
 .rb-template-gridline .rb-resume-skill-list span { padding:4px 7px; border-color:#d9e4db; border-radius:3px; color:#365746; background:#f4f7f3; font-size:8px; }
 
 .rb-resume-skill-list {
@@ -1636,12 +1636,12 @@ body:has(.rb-page.rb-full-editor) a[href*="wa.me"] { display:none !important; }
 
 /* Tablet and phone: gallery and design controls collapse without clipping. */
 @media (max-width:1100px) {
-  .rb-template-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .rb-template-gridline { grid-template-columns:repeat(3,minmax(0,1fr)); }
   .rb-design-controls { grid-template-columns:repeat(4,minmax(100px,1fr)); }
   .rb-design-colors { grid-column:span 2; }
 }
 @media (max-width:800px) {
-  .rb-template-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .rb-template-gridline { grid-template-columns:repeat(3,minmax(0,1fr)); }
   .rb-design-panel { max-height:none; overflow:visible; }
   .rb-design-controls { grid-template-columns:repeat(3,minmax(0,1fr)); }
   .rb-design-colors { grid-column:span 3; }
@@ -1650,7 +1650,7 @@ body:has(.rb-page.rb-full-editor) a[href*="wa.me"] { display:none !important; }
   .rb-full-editor .rb-design-panel { margin-top:9px; }
 }
 @media (max-width:560px) {
-  .rb-template-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .rb-template-gridline { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .rb-design-panel { padding:12px; }
   .rb-design-controls { grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
   .rb-design-colors { grid-column:span 2; }
