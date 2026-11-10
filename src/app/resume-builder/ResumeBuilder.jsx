@@ -273,6 +273,8 @@ function splitRoleAndOrganization(value) {
   const text = String(value || "").trim();
   const pipeParts = text.split(/\s+[|·•]\s+/).map((part) => part.trim()).filter(Boolean);
   if (pipeParts.length >= 2) return { title: pipeParts[0], organization: pipeParts[1], extras: pipeParts.slice(2) };
+  const spacedParts = text.split(/\s{2,}/).map((part) => part.trim()).filter(Boolean);
+  if (spacedParts.length >= 2) return { title: spacedParts[0], organization: spacedParts[1], extras: spacedParts.slice(2) };
   const atMatch = text.match(/^(.+?)\s+at\s+(.+)$/i);
   if (atMatch) return { title: atMatch[1].trim(), organization: atMatch[2].trim(), extras: [] };
   return { title: text, organization: "", extras: [] };
@@ -394,6 +396,7 @@ function parseTextIntoResume(source, existing) {
     line.length >= 3 &&
     line.length <= 58 &&
     !/@|https?:\/\/|linkedin\.com|\d{5,}/i.test(line) &&
+    !/\b(?:Pakistan|India|United States|United Kingdom|Canada|Australia|UAE|Dubai|Lahore|Karachi|Islamabad|Delhi|Mumbai)\b/i.test(line) &&
     !/^(resume|curriculum vitae|curriculum vit[aá]e|cv|profile|personal details|contact|contact details|contact information|personal information)$/i.test(line) &&
     !DATE_RANGE_RE.test(line)
   ) || "";
@@ -402,6 +405,7 @@ function parseTextIntoResume(source, existing) {
     line.length >= 3 &&
     line.length <= 90 &&
     !/@|https?:\/\/|linkedin\.com|\d{5,}/i.test(line) &&
+    !/\b(?:Pakistan|India|United States|United Kingdom|Canada|Australia|UAE|Dubai|Lahore|Karachi|Islamabad|Delhi|Mumbai)\b/i.test(line) &&
     !/^(location|city|address|phone|mobile|email)\s*[:：]/i.test(line) &&
     !DATE_RANGE_RE.test(line)
   ) || "";
@@ -1351,7 +1355,10 @@ export default function ResumeBuilder() {
         <div className="rb-import-review">
           <div className="rb-import-review-head"><div><span className="rb-import-ready-dot" /> PARSE COMPLETE</div><small>{importReport.characters ? importReport.characters.toLocaleString() + " readable characters" : "Structured data detected"}</small></div>
           <div className="rb-import-detected"><div><b>{importReport.detected.name ? "✓" : "—"}</b><span>Name</span></div><div><b>{importReport.detected.email ? "✓" : "—"}</b><span>Email</span></div><div><b>{importReport.detected.experience || 0}</b><span>Experience</span></div><div><b>{importReport.detected.education || 0}</b><span>Education</span></div><div><b>{importReport.detected.skills || 0}</b><span>Skills</span></div><div><b>{importReport.detected.projects || 0}</b><span>Projects</span></div></div>
-          <div className="rb-import-preview"><strong>{importDraft.profile.fullName || "Name not detected"}</strong><span>{importDraft.profile.headline || "Professional headline not detected"}</span><p>{importDraft.profile.summary || "No summary was detected. You can add one after import."}</p></div>
+          <div className="rb-import-preview"><strong>{importDraft.profile.fullName || "Name not detected"}</strong><span>{importDraft.profile.headline || "Professional headline not detected"}</span><p>{importDraft.profile.summary || "No summary was detected. You can add one after import."}</p><div className="rb-import-contact-preview">{[importDraft.profile.email, importDraft.profile.phone, importDraft.profile.location, importDraft.profile.website, importDraft.profile.linkedin].filter(Boolean).map((value, index) => <span key={index}>{value}</span>)}</div></div>
+          {importDraft.experience?.length ? <div className="rb-import-records"><b>Experience extracted</b>{importDraft.experience.slice(0, 5).map((item, index) => <div key={index}><strong>{item.role || "Role not detected"}</strong><span>{[item.company, item.start, item.end].filter(Boolean).join(" · ")}</span>{item.details ? <p>{item.details.slice(0, 190)}{item.details.length > 190 ? "…" : ""}</p> : null}</div>)}</div> : null}
+          {importDraft.education?.length ? <div className="rb-import-records"><b>Education extracted</b>{importDraft.education.slice(0, 5).map((item, index) => <div key={index}><strong>{item.degree || "Qualification not detected"}</strong><span>{[item.school, item.start, item.end].filter(Boolean).join(" · ")}</span></div>)}</div> : null}
+          {importDraft.skills?.length ? <div className="rb-import-records"><b>Skills extracted</b><div className="rb-import-skill-list">{importDraft.skills.slice(0, 28).map((skill, index) => <span key={index}>{skill}</span>)}</div></div> : null}
           {importReport.importedParts?.length ? <div className="rb-import-parts"><b>Sections read</b><span>{importReport.importedParts.join(" · ")}</span></div> : null}
           {importReport.warnings?.length ? <div className="rb-import-warnings"><b>Review these items</b><ul>{importReport.warnings.map((warning, index) => <li key={index}>{warning}</li>)}</ul></div> : null}
           <p className="rb-import-privacy-note">Nothing has replaced your current resume yet. Confirm below to apply these extracted details, then review every section in the editor.</p>
