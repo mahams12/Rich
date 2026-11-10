@@ -805,6 +805,7 @@ function importLinkedInRows(files, base) {
         name: Boolean(result.profile.fullName),
         email: Boolean(result.profile.email),
         phone: Boolean(result.profile.phone),
+        github: Boolean(result.profile.github),
         summary: Boolean(result.profile.summary),
         experience: experience.length,
         education: education.length,
@@ -847,6 +848,7 @@ function validateResumeJson(payload, base) {
     name: Boolean(resume.profile.fullName),
     email: Boolean(resume.profile.email),
     phone: Boolean(resume.profile.phone),
+    github: Boolean(resume.profile.github),
     summary: Boolean(resume.profile.summary),
     experience: resume.experience.length,
     education: resume.education.length,
@@ -888,9 +890,9 @@ function ResumePreview({ resume, compact }) {
   const photoPosition = design.photoPosition || (sidebarTemplates ? "sidebar" : "header");
   const photoClass = "rb-resume-photo rb-photo-" + (design.photoShape || "circle");
   const avatarText = String(profile.fullName || "Your Name").split(/\s+/).map((part) => part[0]).filter(Boolean).slice(0, 2).join("").toUpperCase();
-  const contactItems = [profile.email, profile.phone, profile.location, profile.website, profile.linkedin, profile.github].filter(Boolean);
+  const contactItems = [profile.email, profile.phone, profile.location, profile.website, profile.linkedin, profile.github ? "GitHub: " + profile.github : ""].filter(Boolean);
   const headerContactItems = template === "professional" ? [profile.email, profile.phone].filter(Boolean) : contactItems;
-  const professionalAsideItems = [profile.location, profile.website, profile.linkedin, profile.github].filter(Boolean);
+  const professionalAsideItems = [profile.location, profile.website, profile.linkedin, profile.github ? "GitHub: " + profile.github : ""].filter(Boolean);
 
   const sectionNodes = {
     profile: profile.summary ? (
@@ -1599,7 +1601,7 @@ export default function ResumeBuilder() {
         <div className="rb-import-review">
           <div className="rb-import-review-head"><div><span className="rb-import-ready-dot" /> PARSE COMPLETE</div><small>{importReport.characters ? importReport.characters.toLocaleString() + " readable characters" : "Structured data detected"}</small></div>
           <div className="rb-import-detected"><div><b>{importReport.detected.name ? "✓" : "—"}</b><span>Name</span></div><div><b>{importReport.detected.email ? "✓" : "—"}</b><span>Email</span></div><div><b>{importReport.detected.phone ? "✓" : "—"}</b><span>Phone</span></div><div><b>{importReport.detected.github ? "✓" : "—"}</b><span>GitHub</span></div><div><b>{importReport.detected.experience || 0}</b><span>Experience</span></div><div><b>{importReport.detected.education || 0}</b><span>Education</span></div><div><b>{importReport.detected.skills || 0}</b><span>Skills</span></div><div><b>{importReport.detected.projects || 0}</b><span>Projects</span></div><div><b>{importReport.detected.interests || 0}</b><span>Interests</span></div></div>
-          <div className="rb-import-preview"><strong>{importDraft.profile.fullName || "Name not detected"}</strong><span>{importDraft.profile.headline || "Professional headline not detected"}</span><p>{importDraft.profile.summary || "No summary was detected. You can add one after import."}</p><div className="rb-import-contact-preview">{[importDraft.profile.email, importDraft.profile.phone, importDraft.profile.location, importDraft.profile.website, importDraft.profile.linkedin, importDraft.profile.github].filter(Boolean).map((value, index) => <span key={index}>{value}</span>)}</div></div>
+          <div className="rb-import-preview"><strong>{importDraft.profile.fullName || "Name not detected"}</strong><span>{importDraft.profile.headline || "Professional headline not detected"}</span><p>{importDraft.profile.summary || "No summary was detected. You can add one after import."}</p><div className="rb-import-contact-preview">{[importDraft.profile.email, importDraft.profile.phone, importDraft.profile.location, importDraft.profile.website, importDraft.profile.linkedin, importDraft.profile.github ? "GitHub: " + importDraft.profile.github : ""].filter(Boolean).map((value, index) => <span key={index}>{value}</span>)}</div></div>
           {importDraft.experience?.length ? <div className="rb-import-records"><b>Experience extracted</b>{importDraft.experience.slice(0, 5).map((item, index) => <div key={index}><strong>{item.role || "Role not detected"}</strong><span>{[item.company, item.start, item.end].filter(Boolean).join(" · ")}</span>{item.details ? <p>{item.details.slice(0, 190)}{item.details.length > 190 ? "…" : ""}</p> : null}</div>)}</div> : null}
           {importDraft.education?.length ? <div className="rb-import-records"><b>Education extracted</b>{importDraft.education.slice(0, 5).map((item, index) => <div key={index}><strong>{item.degree || "Qualification not detected"}</strong><span>{[item.school, item.start, item.end].filter(Boolean).join(" · ")}</span></div>)}</div> : null}
           {importDraft.skills?.length ? <div className="rb-import-records"><b>Skills extracted</b><div className="rb-import-skill-list">{importDraft.skills.slice(0, 28).map((skill, index) => <span key={index}>{skill}</span>)}</div></div> : null}
