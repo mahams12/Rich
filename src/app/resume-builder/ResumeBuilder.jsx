@@ -478,6 +478,16 @@ function importLinkedInRows(files, base) {
         website: getValue(profile, ["Websites", "Website"]) || result.profile.website,
       };
       importedParts.push("Profile");
+    } else if (label.includes("email")) {
+      if (!has(["Email Address", "Email"])) throw new Error(name + " does not contain a recognized LinkedIn email column.");
+      const emailRow = rows.find((row) => getValue(row, ["Email Address", "Email"]));
+      result.profile.email = getValue(emailRow, ["Email Address", "Email"]) || result.profile.email;
+      importedParts.push("Email address");
+    } else if (label.includes("phone")) {
+      if (!has(["Number", "Phone Number", "Phone"])) throw new Error(name + " does not contain a recognized LinkedIn phone column.");
+      const phoneRow = rows.find((row) => getValue(row, ["Number", "Phone Number", "Phone"]));
+      result.profile.phone = getValue(phoneRow, ["Number", "Phone Number", "Phone"]) || result.profile.phone;
+      importedParts.push("Phone number");
     } else if (label.includes("position") || label.includes("experience")) {
       if (!has(["Title", "Company Name"])) throw new Error(name + " is missing LinkedIn position columns.");
       rows.forEach((item) => {
@@ -527,7 +537,7 @@ function importLinkedInRows(files, base) {
       });
       importedParts.push("Certifications");
     } else {
-      throw new Error(name + " is not a recognized LinkedIn export. Select Profile, Positions, Education, Skills or Certifications CSV files.");
+      throw new Error(name + " is not a recognized LinkedIn export. Select Profile, Positions, Education, Skills, Email Addresses or Certifications CSV files.");
     }
   });
   result.experience = experience;
@@ -1185,7 +1195,7 @@ export default function ResumeBuilder() {
         <small className="rb-modal-privacy">Files are processed locally in your browser. They are not uploaded to NovexaHub. Imported data is staged for review before it replaces anything.</small>
       </>}</section></div> : null}
 
-      {showLinkedIn ? <div className="rb-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowLinkedIn(false); }}><section className="rb-modal rb-linkedin-modal" role="dialog" aria-modal="true" aria-labelledby="rb-linkedin-title"><button className="rb-modal-close" onClick={() => setShowLinkedIn(false)} aria-label="Close">×</button><div className="rb-linkedin-mark">in</div><span className="rb-eyebrow rb-eyebrow-dark">LINKEDIN PROFILE IMPORT</span><h3 id="rb-linkedin-title">Bring your profile over.</h3><p>LinkedIn limits which profile fields third-party apps can read. The dependable route today is to request your data archive and import the relevant CSV files here.</p><ol className="rb-linkedin-steps"><li><b>Request your LinkedIn data</b><span>Open LinkedIn Settings and Privacy, then find Get a copy of your data.</span></li><li><b>Choose profile information</b><span>Include Profile, Positions, Education and Skills where available.</span></li><li><b>Import the CSV files</b><span>Return here and select the downloaded CSV files together.</span></li></ol><button className="rb-button rb-button-accent rb-modal-submit" onClick={() => { setShowLinkedIn(false); openImport(); }}>Choose LinkedIn CSV files →</button><a className="rb-external-link" href="https://www.linkedin.com/" target="_blank" rel="noreferrer">Open LinkedIn ↗</a><small className="rb-modal-privacy">Your LinkedIn password is never requested or stored here.</small></section></div> : null}
+      {showLinkedIn ? <div className="rb-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowLinkedIn(false); }}><section className="rb-modal rb-linkedin-modal" role="dialog" aria-modal="true" aria-labelledby="rb-linkedin-title"><button className="rb-modal-close" onClick={() => setShowLinkedIn(false)} aria-label="Close">×</button><div className="rb-linkedin-mark">in</div><span className="rb-eyebrow rb-eyebrow-dark">LINKEDIN PROFILE IMPORT</span><h3 id="rb-linkedin-title">Bring your profile over.</h3><p>LinkedIn limits which profile fields third-party apps can read. The dependable route today is to request your data archive and import the relevant CSV files here.</p><ol className="rb-linkedin-steps"><li><b>Request your LinkedIn data</b><span>Open LinkedIn Settings and Privacy, then find Get a copy of your data.</span></li><li><b>Choose profile information</b><span>Include Profile, Positions, Education and Skills; include Email Addresses or Phone Numbers if available.</span></li><li><b>Import the CSV files</b><span>Return here and select the downloaded CSV files together.</span></li></ol><button className="rb-button rb-button-accent rb-modal-submit" onClick={() => { setShowLinkedIn(false); openImport(); }}>Choose LinkedIn CSV files →</button><a className="rb-external-link" href="https://www.linkedin.com/" target="_blank" rel="noreferrer">Open LinkedIn ↗</a><small className="rb-modal-privacy">Your LinkedIn password is never requested or stored here.</small></section></div> : null}
 
       {showUploadLinkedIn ? <div className="rb-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowUploadLinkedIn(false); }}><section className="rb-modal" role="dialog" aria-modal="true" aria-labelledby="rb-linkedin-upload-title"><button className="rb-modal-close" onClick={() => setShowUploadLinkedIn(false)} aria-label="Close">×</button><div className="rb-linkedin-mark">in</div><span className="rb-eyebrow rb-eyebrow-dark">SHARE YOUR RESUME</span><h3 id="rb-linkedin-upload-title">Ready for LinkedIn.</h3><p>LinkedIn does not provide a general-purpose API for third-party apps to upload a member resume to every profile or job application area. Export your PDF, then attach it in LinkedIn where you apply or manage your profile.</p><ol className="rb-linkedin-steps"><li><b>Save your PDF</b><span>Use Download PDF and choose Save as PDF in the browser print window.</span></li><li><b>Open LinkedIn</b><span>Go to Jobs and attach your saved resume when applying, or update the relevant profile section.</span></li><li><b>Keep a tailored version</b><span>Use a separate resume for each role so the content stays relevant.</span></li></ol><button className="rb-button rb-button-accent rb-modal-submit" onClick={() => { setShowUploadLinkedIn(false); printResume(); }}>Download PDF first →</button><a className="rb-external-link" href="https://www.linkedin.com/jobs/" target="_blank" rel="noreferrer">Open LinkedIn Jobs ↗</a><small className="rb-modal-privacy">Your resume is not sent to LinkedIn by this tool. You remain in control of the upload.</small></section></div> : null}
       {toast ? <div className="rb-toast" role="status">{toast}</div> : null}
