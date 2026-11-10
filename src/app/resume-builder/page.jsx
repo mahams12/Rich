@@ -2,15 +2,16 @@ import ResumeBuilder from "./ResumeBuilder";
 import { site } from "@/data/site";
 
 export const metadata = {
-  title: "Free Resume Builder Online | ATS-Friendly CV Templates",
+  title: "Free Resume Builder Online | Professional CV Templates",
   description:
-    "Create a professional resume for free with NovexaHub Resume Studio. Customize modern CV templates, import PDF or Word resumes, optimize keywords for a job description and save your resume as PDF.",
+    "Build a professional resume for free with NovexaHub Resume Studio. Customize editable CV templates, import PDF or Word resumes, compare job-description keywords and save your resume as PDF.",
   keywords: [
     "free resume builder",
     "online resume builder",
     "free CV maker",
     "professional CV templates",
-    "ATS friendly resume",
+    "ATS-conscious resume structure",
+    "resume keyword checker",
     "resume builder for fresh graduates",
     "resume keyword optimizer",
     "download resume as PDF",
