@@ -634,7 +634,7 @@ function ResumePreview({ resume, compact }) {
           </div>
         ))}
       </ResumeSection> : null}
-      {resume.skills?.filter(Boolean).length ? <ResumeSection title="Skills"><p className="rb-resume-skill-list">{resume.skills.filter(Boolean).join("  ·  ")}</p></ResumeSection> : null}
+      {resume.skills?.filter(Boolean).length ? <ResumeSection title="Skills"><div className="rb-resume-skill-list">{resume.skills.filter(Boolean).map((skill, index) => <span key={skill + "-" + index}>{skill}</span>)}</div></ResumeSection> : null}
       {resume.certificates?.some((item) => item.name) ? <ResumeSection title="Certifications">
         {resume.certificates.filter((item) => item.name).map((item, index) => <div className="rb-resume-entry" key={"cert-" + index}><div className="rb-resume-entry-top"><strong>{item.name}</strong><span>{item.date}</span></div><div className="rb-resume-subline">{item.issuer}</div></div>)}
       </ResumeSection> : null}
