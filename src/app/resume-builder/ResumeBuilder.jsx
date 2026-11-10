@@ -185,6 +185,7 @@ function normalizeResumeLines(source) {
     .replace(/\u00a0/g, " ")
     .replace(/\uFB01/g, "fi")
     .replace(/\uFB02/g, "fl")
+    .replace(/\t+/g, " | ")
     .replace(/\f/g, "\n")
     .replace(/\r/g, "\n")
     .split("\n")
@@ -295,7 +296,7 @@ function parseEntryBlocks(lines, kind) {
 
   clean.forEach((line) => {
     const date = extractDateRange(line);
-    const withoutDate = date ? line.replace(DATE_RANGE_RE, " ").replace(/[|·•–—-]+/g, " ").replace(/\s+/g, " ").trim() : line;
+    const withoutDate = date ? line.replace(DATE_RANGE_RE, " ").replace(/[·•]+/g, " ").replace(/\s+/g, " ").trim() : line;
     const newTitle = isLikelyEntryTitle(withoutDate, kind);
     if (current.length && date && hasDate()) flush();
     else if (current.length && newTitle && currentHasTitle() && (hasDate() || currentText().length >= 3)) flush();
@@ -575,7 +576,7 @@ async function extractDocumentText(file) {
         let line = "";
         let previousRight = null;
         sorted.forEach((item) => {
-          if (previousRight !== null && item.x - previousRight > 20) line += "  ";
+          if (previousRight !== null && item.x - previousRight > 20) line += " | ";
           else if (line && !/\s$/.test(line)) line += " ";
           line += item.text;
           previousRight = item.x + item.width;
