@@ -988,7 +988,7 @@ function ResumePreview({ resume, compact }) {
       {sidebarTemplates ? <>
         {sidebar}
         <div className="rb-resume-main">
-          {template === "vertical" ? header : null}
+          {template === "vertical" ? header : sidebarIdentity && showPhoto && photoPosition === "header" ? <div className="rb-sidebar-photo-header"><img className={photoClass} src={profile.photo} alt="" /></div> : null}
           {orderedSections}
         </div>
       </> : <>
@@ -1466,7 +1466,7 @@ export default function ResumeBuilder() {
                       <label className="rb-design-control"><span>Text size</span><select value={currentDesign.textSize} onChange={(event) => updateDesign("textSize", event.target.value)}><option value="small">Compact</option><option value="normal">Regular</option><option value="large">Large</option></select></label>
                       <label className="rb-design-control"><span>Section spacing</span><select value={currentDesign.spacing} onChange={(event) => updateDesign("spacing", event.target.value)}><option value="compact">Compact</option><option value="comfortable">Comfortable</option><option value="spacious">Spacious</option></select></label>
                       <label className="rb-design-control"><span>Photo shape</span><select value={currentDesign.photoShape} onChange={(event) => updateDesign("photoShape", event.target.value)}><option value="circle">Circle</option><option value="rounded">Rounded</option><option value="square">Square</option></select></label>
-                      <label className="rb-design-control"><span>Photo placement</span><select value={currentDesign.photoPosition} onChange={(event) => updateDesign("photoPosition", event.target.value)}><option value="sidebar">Sidebar</option><option value="header">Header</option></select></label>
+                      <label className="rb-design-control"><span>Photo placement</span><select value={currentDesign.photoPosition} onChange={(event) => updateDesign("photoPosition", event.target.value)}><option value="header">Header</option><option value="sidebar" disabled={!["elegant", "circular", "modern", "casual", "vertical", "folio"].includes(current.template)}>Sidebar</option></select></label>
                       <label className="rb-design-control"><span>Sidebar width</span><select value={currentDesign.sidebarWidth} onChange={(event) => updateDesign("sidebarWidth", event.target.value)}><option value="28">Narrow · 28%</option><option value="32">Balanced · 32%</option><option value="34">Standard · 34%</option><option value="38">Wide · 38%</option></select></label>
                       <label className="rb-design-control"><span>Section heading style</span><select value={currentDesign.sectionStyle} onChange={(event) => updateDesign("sectionStyle", event.target.value)}><option value="line">Underline</option><option value="block">Color blocks</option><option value="minimal">Minimal</option></select></label>
                       <label className="rb-design-toggle"><input type="checkbox" checked={currentDesign.showPhoto} onChange={(event) => updateDesign("showPhoto", event.target.checked)} /><span>Show profile photo</span></label>
