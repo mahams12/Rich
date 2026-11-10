@@ -507,7 +507,7 @@ function parseTextIntoResume(source, existing) {
     languages: languages.length,
     interests: interests.length,
   };
-  const sectionTotal = [detected.summary, detected.experience, detected.education, detected.projects, detected.skills, detected.certificates, detected.languages].filter(Boolean).length;
+  const sectionTotal = [detected.summary, detected.experience, detected.education, detected.projects, detected.skills, detected.certificates, detected.languages, detected.interests].filter(Boolean).length;
   const identityFound = detected.name || detected.email || detected.phone;
   const contentFound = sectionTotal > 0;
   const warnings = [];
@@ -1070,6 +1070,7 @@ export default function ResumeBuilder() {
       skills: current.skills,
       languages: current.languages,
       certificates: current.certificates,
+      interests: current.interests,
     }).toLowerCase();
   }, [current]);
   const matchedKeywords = suggestedKeywords.filter((word) => resumeText.includes(word));
@@ -1564,7 +1565,7 @@ export default function ResumeBuilder() {
         <p className="rb-import-source">Source: <strong>{importSource}</strong></p>
         <div className="rb-import-review">
           <div className="rb-import-review-head"><div><span className="rb-import-ready-dot" /> PARSE COMPLETE</div><small>{importReport.characters ? importReport.characters.toLocaleString() + " readable characters" : "Structured data detected"}</small></div>
-          <div className="rb-import-detected"><div><b>{importReport.detected.name ? "✓" : "—"}</b><span>Name</span></div><div><b>{importReport.detected.email ? "✓" : "—"}</b><span>Email</span></div><div><b>{importReport.detected.phone ? "✓" : "—"}</b><span>Phone</span></div><div><b>{importReport.detected.experience || 0}</b><span>Experience</span></div><div><b>{importReport.detected.education || 0}</b><span>Education</span></div><div><b>{importReport.detected.skills || 0}</b><span>Skills</span></div><div><b>{importReport.detected.projects || 0}</b><span>Projects</span></div></div>
+          <div className="rb-import-detected"><div><b>{importReport.detected.name ? "✓" : "—"}</b><span>Name</span></div><div><b>{importReport.detected.email ? "✓" : "—"}</b><span>Email</span></div><div><b>{importReport.detected.phone ? "✓" : "—"}</b><span>Phone</span></div><div><b>{importReport.detected.experience || 0}</b><span>Experience</span></div><div><b>{importReport.detected.education || 0}</b><span>Education</span></div><div><b>{importReport.detected.skills || 0}</b><span>Skills</span></div><div><b>{importReport.detected.projects || 0}</b><span>Projects</span></div><div><b>{importReport.detected.interests || 0}</b><span>Interests</span></div></div>
           <div className="rb-import-preview"><strong>{importDraft.profile.fullName || "Name not detected"}</strong><span>{importDraft.profile.headline || "Professional headline not detected"}</span><p>{importDraft.profile.summary || "No summary was detected. You can add one after import."}</p><div className="rb-import-contact-preview">{[importDraft.profile.email, importDraft.profile.phone, importDraft.profile.location, importDraft.profile.website, importDraft.profile.linkedin].filter(Boolean).map((value, index) => <span key={index}>{value}</span>)}</div></div>
           {importDraft.experience?.length ? <div className="rb-import-records"><b>Experience extracted</b>{importDraft.experience.slice(0, 5).map((item, index) => <div key={index}><strong>{item.role || "Role not detected"}</strong><span>{[item.company, item.start, item.end].filter(Boolean).join(" · ")}</span>{item.details ? <p>{item.details.slice(0, 190)}{item.details.length > 190 ? "…" : ""}</p> : null}</div>)}</div> : null}
           {importDraft.education?.length ? <div className="rb-import-records"><b>Education extracted</b>{importDraft.education.slice(0, 5).map((item, index) => <div key={index}><strong>{item.degree || "Qualification not detected"}</strong><span>{[item.school, item.start, item.end].filter(Boolean).join(" · ")}</span></div>)}</div> : null}
