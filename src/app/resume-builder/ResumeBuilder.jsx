@@ -166,7 +166,9 @@ const SECTION_PATTERNS = [
   ["languages", /^(languages|language skills)$/i],
 ];
 
-const DATE_RANGE_RE = /(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?\s+)?(?:19|20)\d{2}\s*(?:-|–|—|to|until)\s*(?:(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?\s+)?(?:(?:19|20)\d{2}|present|current|now))|(?:19|20)\d{2}\s*[-–—]\s*(?:present|current|now)/i;
+const MONTH_RE = "(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)";
+const DATE_POINT_RE = "(?:(?:" + MONTH_RE + ")\\\\s+)?(?:(?:19|20)\\\\d{2}|present|current|now)";
+const DATE_RANGE_RE = new RegExp(DATE_POINT_RE + "\\\\s*(?:-|–|—|to|until)\\\\s*" + DATE_POINT_RE, "i");
 
 function normalizeResumeLines(source) {
   return String(source || "")
