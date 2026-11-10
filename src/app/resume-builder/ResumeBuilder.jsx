@@ -271,13 +271,17 @@ function isLikelyEntryTitle(line, kind) {
 }
 
 function splitRoleAndOrganization(value) {
-  const text = String(value || "").trim();
-  const pipeParts = text.split(/\s+[|·•]\s+/).map((part) => part.trim()).filter(Boolean);
-  if (pipeParts.length >= 2) return { title: pipeParts[0], organization: pipeParts[1], extras: pipeParts.slice(2) };
+  const text = String(value || "").trim().replace(/[|·•]+$/g, "").trim();
+  const explicitParts = text.split(/\s+[|·•]\s+|\s+[–—-]\s+/).map((part) => part.trim()).filter(Boolean);
+  if (explicitParts.length >= 2) return { title: explicitParts[0], organization: explicitParts[1], extras: explicitParts.slice(2) };
   const spacedParts = text.split(/\s{2,}/).map((part) => part.trim()).filter(Boolean);
   if (spacedParts.length >= 2) return { title: spacedParts[0], organization: spacedParts[1], extras: spacedParts.slice(2) };
   const atMatch = text.match(/^(.+?)\s+at\s+(.+)$/i);
   if (atMatch) return { title: atMatch[1].trim(), organization: atMatch[2].trim(), extras: [] };
+  const commaParts = text.split(/,\s*/).map((part) => part.trim()).filter(Boolean);
+  if (commaParts.length >= 2 && ROLE_WORD_RE.test(commaParts[0])) {
+    return { title: commaParts[0], organization: commaParts.slice(1).join(", "), extras: [] };
+  }
   return { title: text, organization: "", extras: [] };
 }
 
@@ -469,6 +473,7 @@ function parseTextIntoResume(source, existing) {
   if (!detected.email && !detected.phone) warnings.push("No email address or phone number was detected.");
   const report = {
     characters: raw.length,
+    rawPreview: raw.slice(0, 6000),
     detected,
     headingLines,
     warnings,
@@ -1362,6 +1367,7 @@ export default function ResumeBuilder() {
           {importDraft.skills?.length ? <div className="rb-import-records"><b>Skills extracted</b><div className="rb-import-skill-list">{importDraft.skills.slice(0, 28).map((skill, index) => <span key={index}>{skill}</span>)}</div></div> : null}
           {importReport.importedParts?.length ? <div className="rb-import-parts"><b>Sections read</b><span>{importReport.importedParts.join(" · ")}</span></div> : null}
           {importReport.warnings?.length ? <div className="rb-import-warnings"><b>Review these items</b><ul>{importReport.warnings.map((warning, index) => <li key={index}>{warning}</li>)}</ul></div> : null}
+          {importReport.rawPreview ? <details className="rb-import-raw"><summary>Inspect extracted text</summary><pre>{importReport.rawPreview}</pre></details> : null}
           <p className="rb-import-privacy-note">Nothing has replaced your current resume yet. Confirm below to apply these extracted details, then review every section in the editor.</p>
           <div className="rb-import-review-actions"><button className="rb-button rb-button-light" onClick={() => { setImportDraft(null); setImportReport(null); setImportSource(""); }}>Discard import</button><button className="rb-button rb-button-accent" onClick={applyImportDraft}>Use this imported resume →</button></div>
         </div>
