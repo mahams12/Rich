@@ -207,11 +207,23 @@ function splitResumeSections(lines) {
   const headingLines = [];
   lines.forEach((line) => {
     const normalized = normalizeSectionHeading(line);
-    const match = SECTION_PATTERNS.find(([, pattern]) => pattern.test(normalized));
+    let match = SECTION_PATTERNS.find(([, pattern]) => pattern.test(normalized));
+    let inlineContent = "";
+
+    if (!match) {
+      const delimiter = String(line).match(/^(.{2,54}?)(?:\s*[:：]\s*|\s+[|]\s+|\s+[–—-]\s+)(.+)$/);
+      if (delimiter) {
+        const possibleHeading = normalizeSectionHeading(delimiter[1]);
+        match = SECTION_PATTERNS.find(([, pattern]) => pattern.test(possibleHeading));
+        if (match) inlineContent = delimiter[2].trim();
+      }
+    }
+
     if (match) {
       current = match[0];
       if (!sections[current]) sections[current] = [];
       headingLines.push(normalized);
+      if (inlineContent) sections[current].push(inlineContent);
     } else {
       if (!sections[current]) sections[current] = [];
       sections[current].push(line);
@@ -219,7 +231,6 @@ function splitResumeSections(lines) {
   });
   return { sections, headingLines };
 }
-
 function extractDateRange(line) {
   const match = String(line || "").match(DATE_RANGE_RE);
   if (!match) return null;
