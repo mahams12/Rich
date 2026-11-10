@@ -871,3 +871,35 @@ body.rb-full-resume-editor a[href*="wa.me"] { display:none !important; }
 .rb-import-rules b { color:#555e55; font-size:8px; }
 .rb-import-rules span { color:#858b81; font-size:8px; line-height:1.6; }
 .rb-dropzone-hint { max-width:320px; color:#898d83; font-size:7px !important; line-height:1.5; text-align:center; }
+
+/* Layout refinements for the replacement templates and A4 printing. */
+body:has(.rb-page.rb-full-editor) header.sticky,
+body:has(.rb-page.rb-full-editor) footer:not(.rb-footer),
+body:has(.rb-page.rb-full-editor) a[href*="wa.me"] { display:none !important; }
+@media print {
+  .rb-template-folio {
+    padding:0 !important;
+    grid-template-columns:54mm 1fr !important;
+    gap:0 !important;
+  }
+  .rb-template-folio .rb-resume-sidebar { padding:16mm 6mm !important; }
+  .rb-template-folio .rb-resume-main { padding:16mm 8mm 16mm 0 !important; }
+}
+@media (max-width:560px) {
+  .rb-template-folio { grid-template-columns:125px 1fr; gap:0; }
+  .rb-template-folio .rb-resume-sidebar { padding:25px 12px; }
+  .rb-template-folio .rb-resume-sidebar h2 { font-size:14px; }
+  .rb-template-folio .rb-sidebar-contact,
+  .rb-template-folio .rb-sidebar-block p { font-size:7px; }
+  .rb-template-folio .rb-resume-main { padding:25px 15px 25px 0; }
+  .rb-template-swiss .rb-resume-section { grid-template-columns:74px 1fr; gap:9px; }
+  .rb-template-atelier { padding:30px 23px 30px 35px; border-top-width:7px; }
+  .rb-template-atelier::before { left:20px; top:30px; bottom:30px; }
+  .rb-template-atelier .rb-resume-heading h1 { font-size:22px; }
+  .rb-template-signal { padding:0 23px 28px; }
+  .rb-template-signal .rb-resume-heading { margin:0 -23px 18px; padding:24px 23px 18px; }
+  .rb-template-signal .rb-resume-heading h1 { font-size:20px; }
+  .rb-template-monogram { padding:35px 24px; }
+  .rb-template-monogram .rb-resume-heading h1 { font-size:23px; }
+  .rb-template-grid { padding:27px 22px; border-top-width:6px; }
+}
