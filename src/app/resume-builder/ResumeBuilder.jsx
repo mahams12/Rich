@@ -499,8 +499,10 @@ async function extractDocumentText(file) {
       throw new Error("This PDF has more than 35 pages. Split it into smaller files before importing.");
     }
     const pages = [];
+    const extractionWarnings = [];
     for (let pageNumber = 1; pageNumber <= documentPdf.numPages; pageNumber += 1) {
       const page = await documentPdf.getPage(pageNumber);
+      const viewport = page.getViewport({ scale: 1 });
       const content = await page.getTextContent();
       const positioned = content.items
         .filter((item) => typeof item.str === "string" && item.str.trim())
@@ -509,36 +511,82 @@ async function extractDocumentText(file) {
           x: Number(item.transform?.[4] || 0),
           y: Number(item.transform?.[5] || 0),
           width: Number(item.width || 0),
+          height: Math.abs(Number(item.transform?.[3] || item.transform?.[0] || 10)),
         }))
-        .sort((a, b) => Math.abs(b.y - a.y) > 2.5 ? b.y - a.y : a.x - b.x);
+        .sort((a, b) => {
+          const vertical = b.y - a.y;
+          return Math.abs(vertical) > 1 ? vertical : a.x - b.x;
+        });
       const rows = [];
       positioned.forEach((item) => {
-        let row = rows.find((candidate) => Math.abs(candidate.y - item.y) <= 2.5);
+        let row = rows.find((candidate) => Math.abs(candidate.y - item.y) <= Math.max(2.2, Math.min(item.height, 14) * 0.22));
         if (!row) {
           row = { y: item.y, items: [] };
           rows.push(row);
         }
         row.items.push(item);
       });
-      const pageLines = rows
-        .sort((a, b) => b.y - a.y)
-        .map((row) => {
-          const items = row.items.sort((a, b) => a.x - b.x);
-          let line = "";
-          let previousRight = null;
-          items.forEach((item) => {
-            if (previousRight !== null && item.x - previousRight > 18) line += "   ";
-            else if (line && !/\s$/.test(line)) line += " ";
-            line += item.text;
-            previousRight = item.x + item.width;
-          });
-          return line.trim();
-        })
-        .filter(Boolean);
+      rows.sort((a, b) => b.y - a.y);
+
+      const rowStarts = rows
+        .map((row) => Math.min(...row.items.map((item) => item.x)))
+        .filter((x) => Number.isFinite(x))
+        .sort((a, b) => a - b);
+      let columnSplit = null;
+      let largestGap = 0;
+      for (let index = 1; index < rowStarts.length; index += 1) {
+        const gap = rowStarts[index] - rowStarts[index - 1];
+        const split = (rowStarts[index] + rowStarts[index - 1]) / 2;
+        const leftCount = rowStarts.filter((x) => x < split).length;
+        const rightCount = rowStarts.filter((x) => x >= split).length;
+        if (
+          gap > largestGap &&
+          gap > 62 &&
+          split > viewport.width * 0.27 &&
+          split < viewport.width * 0.76 &&
+          leftCount >= 3 &&
+          rightCount >= 3
+        ) {
+          largestGap = gap;
+          columnSplit = split;
+        }
+      }
+
+      const makeLine = (items) => {
+        const sorted = items.sort((a, b) => a.x - b.x);
+        let line = "";
+        let previousRight = null;
+        sorted.forEach((item) => {
+          if (previousRight !== null && item.x - previousRight > 20) line += "  ";
+          else if (line && !/\s$/.test(line)) line += " ";
+          line += item.text;
+          previousRight = item.x + item.width;
+        });
+        return line.trim();
+      };
+
+      let pageLines;
+      if (columnSplit !== null) {
+        const leftLines = [];
+        const rightLines = [];
+        rows.forEach((row) => {
+          const left = row.items.filter((item) => item.x < columnSplit);
+          const right = row.items.filter((item) => item.x >= columnSplit);
+          if (left.length) leftLines.push(makeLine(left));
+          if (right.length) rightLines.push(makeLine(right));
+        });
+        pageLines = [...leftLines, "", ...rightLines].filter((line, index, all) => line || (index > 0 && index < all.length - 1));
+        extractionWarnings.push("This PDF appears to use columns. Columns were read separately; check the order of experience and education entries.");
+      } else {
+        pageLines = rows.map((row) => makeLine(row.items)).filter(Boolean);
+      }
       pages.push(pageLines.join("\n"));
     }
     const text = pages.join("\n\n");
-    return { text, warnings: text.trim() ? [] : ["No selectable text was found. This PDF may contain scanned images only."] };
+    if (text.trim().length < 80) {
+      return { text, warnings: [...extractionWarnings, "Very little selectable text was found. This PDF may be scanned, image-only or protected."] };
+    }
+    return { text, warnings: extractionWarnings };
   }
   if (extension === "docx") {
     const mammoth = await loadScript("https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js", "rb-mammoth", "mammoth");
