@@ -13,6 +13,7 @@ Resume Studio is a browser-first React experience inside the existing Next.js Ap
 - PDF export uses the browser print dialog. Choose **Save as PDF** to create a selectable-text A4 document.
 - Editable JSON backup is available for moving a resume between browsers or devices.
 - PDF and DOCX text extraction run in the browser using PDF.js and Mammoth, loaded on demand from cdnjs only when a user selects a matching file. PDF items are grouped by page coordinates, column boundaries are detected heuristically, and column gaps are retained as field separators.
+- A dedicated GitHub profile URL field is separate from website and LinkedIn. The CV importer recognizes GitHub profile URLs, labeled GitHub fields and GitHub links in LinkedIn website exports, then excludes GitHub links from the portfolio website field.
 - Resume sections accept common heading variants and inline heading/value rows. Experience and education records are grouped around date ranges, roles, employers and institution names. Contact labels and comma-separated skill categories are parsed separately.
 - The import review shows the actual extracted contact, experience, education and skills values, plus an optional raw-text inspection panel to distinguish text-extraction problems from field-mapping problems.
 - Imports are staged for review. The app checks for readable text, recognizable sections, file-type limits and LinkedIn CSV headers before the user confirms replacing a resume. Image-only/scanned PDFs are rejected because OCR is not included.
