@@ -266,7 +266,7 @@ function isLikelyEntryTitle(line, kind) {
   if (/[.!?]$/.test(value) || /@|https?:\/\//i.test(value)) return false;
   if (extractDateRange(value)) return false;
   if (kind === "education") return DEGREE_RE.test(value) || (INSTITUTION_RE.test(value) && value.length < 95);
-  if (kind === "project") return value.length <= 88 && !/^(technologies|tools|responsibilities|highlights|description)\s*:/i.test(value);
+  if (kind === "project") return value.length <= 88 && !/^(technologies|tools|responsibilities|highlights|description|built|developed|created|designed|implemented|used|using)\s*:/i.test(value) && (/\s+\|\s+/.test(value) || /\b(project|platform|application|app|website|system|dashboard|portal|tool|solution|prototype)\b/i.test(value) || !/[,:;]$/.test(value));
   return ROLE_WORD_RE.test(value) || /\s+at\s+/i.test(value) || /\s+\|\s+/.test(value);
 }
 
@@ -299,7 +299,7 @@ function parseEntryBlocks(lines, kind) {
     const withoutDate = date ? line.replace(DATE_RANGE_RE, " ").replace(/[·•]+/g, " ").replace(/\s+/g, " ").replace(/[|]+$/g, "").trim() : line;
     const newTitle = isLikelyEntryTitle(withoutDate, kind);
     if (current.length && date && hasDate()) flush();
-    else if (current.length && newTitle && currentHasTitle() && (hasDate() || currentText().length >= 3)) flush();
+    else if (current.length && newTitle && currentHasTitle() && (hasDate() || currentText().length >= (kind === "project" ? 4 : 2))) flush();
 
     if (date) {
       current.push({ type: "date", start: date.start, end: date.end });
