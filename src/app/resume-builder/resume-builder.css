@@ -916,3 +916,6 @@ body:has(.rb-page.rb-full-editor) a[href*="wa.me"] { display:none !important; }
   .rb-view-actions { width:100%; }
   .rb-view-actions .rb-button { flex:1; padding:9px 8px; font-size:9px; }
 }
+
+.rb-template-folio .rb-resume-main .rb-skills-section,
+.rb-template-folio .rb-resume-main .rb-languages-section { display:none; }
