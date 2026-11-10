@@ -903,3 +903,16 @@ body:has(.rb-page.rb-full-editor) a[href*="wa.me"] { display:none !important; }
   .rb-template-monogram .rb-resume-heading h1 { font-size:23px; }
   .rb-template-grid { padding:27px 22px; border-top-width:6px; }
 }
+
+.rb-full-editor .rb-templates-view {
+  flex:1;
+  min-height:0;
+  overflow:auto;
+  padding:24px 0 30px;
+}
+.rb-view-actions { display:flex; align-items:center; gap:8px; flex:none; }
+@media (max-width:560px) {
+  .rb-full-editor .rb-templates-view { padding:17px 0 24px; }
+  .rb-view-actions { width:100%; }
+  .rb-view-actions .rb-button { flex:1; padding:9px 8px; font-size:9px; }
+}
