@@ -370,26 +370,67 @@ function loadScript(src, id, globalName) {
 
 async function extractDocumentText(file) {
   const extension = file.name.split(".").pop().toLowerCase();
+  if (file.size > 20 * 1024 * 1024) {
+    throw new Error("This file is larger than 20 MB. Export a smaller or text-only version and try again.");
+  }
   if (extension === "pdf") {
     const pdfjs = await loadScript("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js", "rb-pdfjs", "pdfjsLib");
     pdfjs.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
     const documentPdf = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise;
+    if (documentPdf.numPages > 35) {
+      throw new Error("This PDF has more than 35 pages. Split it into smaller files before importing.");
+    }
     const pages = [];
     for (let pageNumber = 1; pageNumber <= documentPdf.numPages; pageNumber += 1) {
       const page = await documentPdf.getPage(pageNumber);
       const content = await page.getTextContent();
-      pages.push(content.items.map((item) => item.str || "").join(" "));
+      const positioned = content.items
+        .filter((item) => typeof item.str === "string" && item.str.trim())
+        .map((item) => ({
+          text: item.str.trim(),
+          x: Number(item.transform?.[4] || 0),
+          y: Number(item.transform?.[5] || 0),
+          width: Number(item.width || 0),
+        }))
+        .sort((a, b) => Math.abs(b.y - a.y) > 2.5 ? b.y - a.y : a.x - b.x);
+      const rows = [];
+      positioned.forEach((item) => {
+        let row = rows.find((candidate) => Math.abs(candidate.y - item.y) <= 2.5);
+        if (!row) {
+          row = { y: item.y, items: [] };
+          rows.push(row);
+        }
+        row.items.push(item);
+      });
+      const pageLines = rows
+        .sort((a, b) => b.y - a.y)
+        .map((row) => {
+          const items = row.items.sort((a, b) => a.x - b.x);
+          let line = "";
+          let previousRight = null;
+          items.forEach((item) => {
+            if (previousRight !== null && item.x - previousRight > 18) line += "   ";
+            else if (line && !/\s$/.test(line)) line += " ";
+            line += item.text;
+            previousRight = item.x + item.width;
+          });
+          return line.trim();
+        })
+        .filter(Boolean);
+      pages.push(pageLines.join("\n"));
     }
-    return pages.join("\n");
+    const text = pages.join("\n\n");
+    return { text, warnings: text.trim() ? [] : ["No selectable text was found. This PDF may contain scanned images only."] };
   }
   if (extension === "docx") {
     const mammoth = await loadScript("https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js", "rb-mammoth", "mammoth");
     const result = await mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() });
-    return result.value || "";
+    const warnings = (result.messages || []).map((message) => message.message).filter(Boolean);
+    return { text: result.value || "", warnings };
   }
-  return file.text();
+  if (extension === "txt") return { text: await file.text(), warnings: [] };
+  throw new Error("Unsupported document type. Choose a text-based PDF, DOCX or TXT file.");
 }
-
 function importLinkedInRows(files, base) {
   const result = { ...base };
   const experience = [...base.experience];
