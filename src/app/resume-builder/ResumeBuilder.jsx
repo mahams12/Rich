@@ -584,7 +584,17 @@ function validateResumeJson(payload, base) {
   }
   const hasResumeFields = ["profile", "experience", "education", "projects", "skills", "languages", "certificates"].some((key) => Object.prototype.hasOwnProperty.call(candidate, key));
   if (!hasResumeFields) throw new Error("This JSON file is not a NovexaHub resume backup.");
-  const resume = safeResume(candidate);
+  const resume = safeResume({
+    ...candidate,
+    id: base.id,
+    profile: candidate.profile || base.profile,
+    experience: Array.isArray(candidate.experience) ? candidate.experience : [],
+    education: Array.isArray(candidate.education) ? candidate.education : [],
+    projects: Array.isArray(candidate.projects) ? candidate.projects : [],
+    skills: Array.isArray(candidate.skills) ? candidate.skills : [],
+    languages: Array.isArray(candidate.languages) ? candidate.languages : [],
+    certificates: Array.isArray(candidate.certificates) ? candidate.certificates : [],
+  });
   const detected = {
     name: Boolean(resume.profile.fullName),
     email: Boolean(resume.profile.email),
