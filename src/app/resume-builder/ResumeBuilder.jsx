@@ -683,6 +683,9 @@ export default function ResumeBuilder() {
   const [showLinkedIn, setShowLinkedIn] = useState(false);
   const [showUploadLinkedIn, setShowUploadLinkedIn] = useState(false);
   const [importText, setImportText] = useState("");
+  const [importDraft, setImportDraft] = useState(null);
+  const [importReport, setImportReport] = useState(null);
+  const [importSource, setImportSource] = useState("");
   const [jobDescription, setJobDescription] = useState("");
   const [keywordDraft, setKeywordDraft] = useState("");
   const [busy, setBusy] = useState(false);
@@ -710,8 +713,16 @@ export default function ResumeBuilder() {
 
   useEffect(() => {
     document.body.classList.add("rb-resume-mode");
-    return () => document.body.classList.remove("rb-resume-mode");
+    return () => {
+      document.body.classList.remove("rb-resume-mode");
+      document.body.classList.remove("rb-full-resume-editor");
+    };
   }, []);
+
+  useEffect(() => {
+    document.body.classList.toggle("rb-full-resume-editor", view === "editor");
+    return () => document.body.classList.remove("rb-full-resume-editor");
+  }, [view]);
 
   useEffect(() => {
     try {
@@ -812,36 +823,97 @@ export default function ResumeBuilder() {
     } else runPrint();
   };
 
+  const openImport = () => {
+    setImportDraft(null);
+    setImportReport(null);
+    setImportSource("");
+    setImportText("");
+    setShowImport(true);
+  };
+
+  const stageImport = (resume, report, source) => {
+    if (!report?.valid) {
+      throw new Error(report?.message || "The selected file did not contain enough recognizable resume information.");
+    }
+    setImportDraft({ ...resume, id: current.id });
+    setImportReport(report);
+    setImportSource(source);
+    setToast("Import parsed. Review the detected fields before applying.");
+  };
+
+  const applyImportDraft = () => {
+    if (!importDraft || !importReport?.valid) return;
+    const ready = safeResume({ ...importDraft, id: current.id });
+    ready.title = ready.profile.fullName ? ready.profile.fullName + " — Resume" : "Imported resume";
+    setResumes((all) => all.map((resume) => resume.id === activeId ? ready : resume));
+    setImportDraft(null);
+    setImportReport(null);
+    setImportSource("");
+    setImportText("");
+    setShowImport(false);
+    setView("editor");
+    setToast("Imported resume applied. Review the highlighted details before exporting.");
+  };
+
   const handleImportFiles = async (event) => {
     const files = Array.from(event.target.files || []);
     if (!files.length) return;
     setBusy(true);
     try {
-      let imported = blankImportResume(current);
-      const csvFiles = [];
-      for (const file of files) {
+      const csvFiles = files.filter((file) => file.name.toLowerCase().endsWith(".csv"));
+      const documentFiles = files.filter((file) => !file.name.toLowerCase().endsWith(".csv"));
+      if (csvFiles.length && documentFiles.length) {
+        throw new Error("Import either one resume document or a group of LinkedIn CSV files at a time. Do not mix both in one selection.");
+      }
+      let imported;
+      let report;
+      let source = files.map((file) => file.name).join(", ");
+      if (csvFiles.length) {
+        const parsedCsv = [];
+        for (const file of csvFiles) {
+          if (file.size > 10 * 1024 * 1024) throw new Error(file.name + " is larger than 10 MB.");
+          const rows = parseCsv(await file.text());
+          if (!rows.length) throw new Error(file.name + " has no readable CSV rows.");
+          parsedCsv.push({ name: file.name, rows });
+        }
+        const result = importLinkedInRows(parsedCsv, blankImportResume(current));
+        imported = result.resume;
+        report = result.report;
+      } else {
+        if (documentFiles.length !== 1) {
+          throw new Error("Choose one resume file at a time. LinkedIn CSV exports can be selected together.");
+        }
+        const file = documentFiles[0];
         const extension = file.name.split(".").pop().toLowerCase();
-        if (extension === "csv") {
-          csvFiles.push({ name: file.name, rows: parseCsv(await file.text()) });
-        } else if (extension === "json") {
+        if (extension === "json") {
           const parsed = JSON.parse(await file.text());
-          imported = safeResume(parsed.resume || parsed.profile || parsed) || imported;
+          const result = validateResumeJson(parsed, blankImportResume(current));
+          imported = result.resume;
+          report = result.report;
         } else if (["pdf", "docx", "txt"].includes(extension)) {
-          const text = await extractDocumentText(file);
-          if (!text.trim()) throw new Error("No selectable text was found. This may be a scanned PDF; use a text-based PDF or paste its text instead.");
-          imported = parseTextIntoResume(text, imported);
+          const extracted = await extractDocumentText(file);
+          if (!extracted.text.trim()) {
+            throw new Error("No selectable text was found. This PDF may be scanned or image-only. Use a text-based PDF, DOCX or paste the text instead.");
+          }
+          const result = parseTextIntoResume(extracted.text, blankImportResume(current));
+          if (!result.report.valid) throw new Error(result.report.message || "Resume details could not be extracted reliably.");
+          imported = result.resume;
+          report = {
+            ...result.report,
+            source: extension.toUpperCase() + " document",
+            importedParts: ["Contact details", "Detected resume sections"],
+            warnings: [...result.report.warnings, ...(extracted.warnings || []).slice(0, 4)],
+          };
         } else {
-          throw new Error("Supported files: PDF, DOCX, TXT, JSON and LinkedIn CSV exports.");
+          throw new Error("Unsupported file type. Use a text-based PDF, DOCX, TXT, NovexaHub JSON backup, or LinkedIn CSV export.");
         }
       }
-      if (csvFiles.length) imported = importLinkedInRows(csvFiles, imported);
       imported.id = current.id;
-      imported.title = imported.title === "My first resume" ? "Imported resume" : imported.title;
-      setResumes((all) => all.map((resume) => resume.id === activeId ? imported : resume));
-      setShowImport(false);
-      setToast("Import complete. Review every section before exporting.");
+      stageImport(imported, report, source);
     } catch (error) {
-      setToast(error.message || "Could not import this file. Try another format.");
+      setToast(error.message || "Import failed. Check the file and try again.");
+      setImportDraft(null);
+      setImportReport(null);
     } finally {
       setBusy(false);
       event.target.value = "";
@@ -850,15 +922,18 @@ export default function ResumeBuilder() {
 
   const importPastedText = () => {
     if (!importText.trim()) { setToast("Paste your resume text first."); return; }
-    const imported = parseTextIntoResume(importText, blankImportResume(current));
-    imported.id = current.id;
-    imported.title = "Imported resume";
-    setResumes((all) => all.map((resume) => resume.id === activeId ? imported : resume));
-    setImportText("");
-    setShowImport(false);
-    setToast("Resume text added. Review and refine the imported details.");
+    try {
+      const result = parseTextIntoResume(importText, blankImportResume(current));
+      if (!result.report.valid) throw new Error(result.report.message || "Could not identify enough resume details in the pasted text.");
+      stageImport(result.resume, {
+        ...result.report,
+        source: "Pasted resume text",
+        importedParts: ["Contact details", "Detected resume sections"],
+      }, "Pasted text");
+    } catch (error) {
+      setToast(error.message || "Could not read the pasted resume text.");
+    }
   };
-
   const handlePhoto = async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -903,7 +978,7 @@ export default function ResumeBuilder() {
   ];
 
   return (
-    <div className="rb-page">
+    <div className={"rb-page" + (view === "editor" ? " rb-full-editor" : "")}>
       <header className="rb-site-header">
         <a className="rb-brand" href="/" aria-label="NovexaHub home">
           <span className="rb-brand-mark">N</span>
@@ -966,7 +1041,7 @@ export default function ResumeBuilder() {
             <div className="rb-app-topbar">
               <div><span className="rb-top-eyebrow">NOVEXAHUB / RESUME STUDIO</span><h2>{view === "dashboard" ? "Your workspace" : view === "resumes" ? "My resumes" : view === "templates" ? "Choose your look" : view === "keywords" ? "Keyword lab" : "Resume editor"}</h2></div>
               <div className="rb-top-actions">
-                <button className="rb-button rb-button-light" onClick={() => setShowImport(true)}><Icon>↑</Icon> Import</button>
+                <button className="rb-button rb-button-light" onClick={openImport}><Icon>↑</Icon> Import</button>
                 <button className="rb-button rb-button-dark" onClick={printResume}><Icon>↓</Icon> Export PDF</button>
               </div>
             </div>
@@ -1072,7 +1147,7 @@ export default function ResumeBuilder() {
 
       {showImport ? <div className="rb-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowImport(false); }}><section className="rb-modal" role="dialog" aria-modal="true" aria-labelledby="rb-import-title"><button className="rb-modal-close" onClick={() => setShowImport(false)} aria-label="Close">×</button><span className="rb-eyebrow rb-eyebrow-dark">BRING YOUR WORK WITH YOU</span><h3 id="rb-import-title">Import a resume</h3><p>Choose a PDF, Word document, text or JSON backup. You can also select LinkedIn CSV files together.</p><label className="rb-dropzone"><span>↑</span><b>{busy ? "Reading your file…" : "Choose files to import"}</b><small>PDF · DOCX · TXT · JSON · CSV</small><input ref={fileRef} type="file" accept=".pdf,.docx,.txt,.json,.csv" multiple onChange={handleImportFiles} disabled={busy} /></label><div className="rb-modal-divider"><span>OR PASTE RESUME TEXT</span></div><textarea className="rb-paste-area" value={importText} onChange={(event) => setImportText(event.target.value)} placeholder="Paste selectable text from your current resume..." /><button className="rb-button rb-button-accent rb-modal-submit" onClick={importPastedText}>Import pasted text →</button><small className="rb-modal-privacy">Files are processed locally in your browser. They are not uploaded to NovexaHub.</small></section></div> : null}
 
-      {showLinkedIn ? <div className="rb-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowLinkedIn(false); }}><section className="rb-modal rb-linkedin-modal" role="dialog" aria-modal="true" aria-labelledby="rb-linkedin-title"><button className="rb-modal-close" onClick={() => setShowLinkedIn(false)} aria-label="Close">×</button><div className="rb-linkedin-mark">in</div><span className="rb-eyebrow rb-eyebrow-dark">LINKEDIN PROFILE IMPORT</span><h3 id="rb-linkedin-title">Bring your profile over.</h3><p>LinkedIn limits which profile fields third-party apps can read. The dependable route today is to request your data archive and import the relevant CSV files here.</p><ol className="rb-linkedin-steps"><li><b>Request your LinkedIn data</b><span>Open LinkedIn Settings and Privacy, then find Get a copy of your data.</span></li><li><b>Choose profile information</b><span>Include Profile, Positions, Education and Skills where available.</span></li><li><b>Import the CSV files</b><span>Return here and select the downloaded CSV files together.</span></li></ol><button className="rb-button rb-button-accent rb-modal-submit" onClick={() => { setShowLinkedIn(false); setShowImport(true); }}>Choose LinkedIn CSV files →</button><a className="rb-external-link" href="https://www.linkedin.com/" target="_blank" rel="noreferrer">Open LinkedIn ↗</a><small className="rb-modal-privacy">Your LinkedIn password is never requested or stored here.</small></section></div> : null}
+      {showLinkedIn ? <div className="rb-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowLinkedIn(false); }}><section className="rb-modal rb-linkedin-modal" role="dialog" aria-modal="true" aria-labelledby="rb-linkedin-title"><button className="rb-modal-close" onClick={() => setShowLinkedIn(false)} aria-label="Close">×</button><div className="rb-linkedin-mark">in</div><span className="rb-eyebrow rb-eyebrow-dark">LINKEDIN PROFILE IMPORT</span><h3 id="rb-linkedin-title">Bring your profile over.</h3><p>LinkedIn limits which profile fields third-party apps can read. The dependable route today is to request your data archive and import the relevant CSV files here.</p><ol className="rb-linkedin-steps"><li><b>Request your LinkedIn data</b><span>Open LinkedIn Settings and Privacy, then find Get a copy of your data.</span></li><li><b>Choose profile information</b><span>Include Profile, Positions, Education and Skills where available.</span></li><li><b>Import the CSV files</b><span>Return here and select the downloaded CSV files together.</span></li></ol><button className="rb-button rb-button-accent rb-modal-submit" onClick={() => { setShowLinkedIn(false); openImport(); }}>Choose LinkedIn CSV files →</button><a className="rb-external-link" href="https://www.linkedin.com/" target="_blank" rel="noreferrer">Open LinkedIn ↗</a><small className="rb-modal-privacy">Your LinkedIn password is never requested or stored here.</small></section></div> : null}
 
       {showUploadLinkedIn ? <div className="rb-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowUploadLinkedIn(false); }}><section className="rb-modal" role="dialog" aria-modal="true" aria-labelledby="rb-linkedin-upload-title"><button className="rb-modal-close" onClick={() => setShowUploadLinkedIn(false)} aria-label="Close">×</button><div className="rb-linkedin-mark">in</div><span className="rb-eyebrow rb-eyebrow-dark">SHARE YOUR RESUME</span><h3 id="rb-linkedin-upload-title">Ready for LinkedIn.</h3><p>LinkedIn does not provide a general-purpose API for third-party apps to upload a member resume to every profile or job application area. Export your PDF, then attach it in LinkedIn where you apply or manage your profile.</p><ol className="rb-linkedin-steps"><li><b>Save your PDF</b><span>Use Download PDF and choose Save as PDF in the browser print window.</span></li><li><b>Open LinkedIn</b><span>Go to Jobs and attach your saved resume when applying, or update the relevant profile section.</span></li><li><b>Keep a tailored version</b><span>Use a separate resume for each role so the content stays relevant.</span></li></ol><button className="rb-button rb-button-accent rb-modal-submit" onClick={() => { setShowUploadLinkedIn(false); printResume(); }}>Download PDF first →</button><a className="rb-external-link" href="https://www.linkedin.com/jobs/" target="_blank" rel="noreferrer">Open LinkedIn Jobs ↗</a><small className="rb-modal-privacy">Your resume is not sent to LinkedIn by this tool. You remain in control of the upload.</small></section></div> : null}
       {toast ? <div className="rb-toast" role="status">{toast}</div> : null}
