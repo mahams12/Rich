@@ -1,0 +1,487 @@
+/* NovexaHub Resume Studio — scoped styles */
+.rb-page {
+  --rb-paper: #f4f0e9;
+  --rb-ink: #202321;
+  --rb-muted: #777b76;
+  --rb-line: #e8e4dc;
+  --rb-accent: #b85c3d;
+  color: var(--rb-ink);
+  background: var(--rb-paper);
+  font-family: var(--font-jakarta), Inter, ui-sans-serif, system-ui, sans-serif;
+  overflow: hidden;
+}
+.rb-page *, .rb-page *::before, .rb-page *::after { box-sizing: border-box; }
+.rb-page button, .rb-page input, .rb-page textarea { font: inherit; }
+.rb-page button { cursor: pointer; }
+.rb-site-header { max-width: 1440px; margin: auto; min-height: 82px; padding: 0 6.2%; display:flex; align-items:center; justify-content:space-between; gap:24px; }
+.rb-brand { display:flex; align-items:center; gap:10px; font-size:18px; line-height:1; font-weight:850; letter-spacing:-.055em; color:#202321; }
+.rb-brand > span:last-child > span { color:var(--rb-accent); }
+.rb-brand small { display:block; margin-top:5px; color:#8c8d87; font-size:8px; font-weight:800; letter-spacing:.19em; }
+.rb-brand-mark { width:32px; height:32px; display:grid; place-items:center; background:var(--rb-accent); color:white; border-radius:10px 10px 10px 3px; font-family:Georgia,serif; font-size:19px; font-weight:700; }
+.rb-public-nav { display:flex; align-items:center; gap:34px; color:#686c66; font-size:12px; font-weight:650; }
+.rb-public-nav a:hover, .rb-footer a:hover { color:var(--rb-accent); }
+.rb-button { border:0; border-radius:9px; padding:12px 17px; display:inline-flex; align-items:center; justify-content:center; gap:10px; font-size:12px; font-weight:800; transition:transform .18s ease, background .18s ease, box-shadow .18s ease; white-space:nowrap; }
+.rb-button:hover { transform:translateY(-2px); }
+.rb-button:focus-visible, .rb-page button:focus-visible, .rb-page a:focus-visible { outline:3px solid rgba(184,92,61,.32); outline-offset:3px; }
+.rb-button-dark { color:#fff; background:#242925; box-shadow:0 5px 12px rgba(25,29,26,.12); }
+.rb-button-dark:hover { background:#101512; }
+.rb-button-accent { color:#fff; background:var(--rb-accent); box-shadow:0 8px 18px rgba(184,92,61,.2); }
+.rb-button-accent:hover { background:#9e482e; }
+.rb-button-light { color:#303531; background:#f0eee8; border:1px solid #e7e2d9; }
+.rb-button-ghost { color:#fff; background:transparent; border:1px solid rgba(255,255,255,.27); }
+.rb-header-cta { padding:11px 16px; }
+.rb-hero { min-height:600px; position:relative; isolation:isolate; overflow:hidden; display:grid; grid-template-columns:1.04fr .96fr; align-items:center; padding:75px max(7.5%, calc((100vw - 1240px)/2)) 78px; background:#1c211e; color:#f8f4ed; }
+.rb-hero::before { content:""; position:absolute; z-index:-1; inset:0; background:radial-gradient(ellipse at 78% 38%,rgba(184,92,61,.27),transparent 34%),radial-gradient(ellipse at 4% 94%,rgba(88,113,91,.22),transparent 39%); }
+.rb-hero-noise { position:absolute; z-index:-1; inset:0; opacity:.12; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.92' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.26'/%3E%3C/svg%3E"); pointer-events:none; }
+.rb-hero-copy { position:relative; z-index:2; max-width:600px; }
+.rb-eyebrow { display:flex; align-items:center; gap:9px; color:#c9bcb0; font-size:9px; font-weight:850; letter-spacing:.18em; }
+.rb-eyebrow-dark { color:#a45b43; }
+.rb-pulse { width:7px; height:7px; border-radius:100%; background:#d68b67; box-shadow:0 0 0 5px rgba(214,139,103,.14); }
+.rb-hero h1 { margin:28px 0 18px; color:#fffaf3; font-size:clamp(44px,5.1vw,72px); font-weight:670; line-height:1.03; letter-spacing:-.065em; }
+.rb-hero h1 em, .rb-section-heading h2 em, .rb-view-intro h3 em, .rb-teaser-copy h2 em, .rb-faq-section h2 em { color:#d68b67; font-family:Georgia,serif; font-weight:400; }
+.rb-hero-copy > p { max-width:520px; color:#b9beb7; font-size:14px; line-height:1.9; }
+.rb-hero-actions { display:flex; gap:12px; margin-top:29px; }
+.rb-hero-actions .rb-button { min-height:48px; padding:0 21px; }
+.rb-trust-row { display:flex; flex-wrap:wrap; gap:18px; margin-top:34px; color:#b9c0b8; font-size:10px; }
+.rb-trust-row span::first-letter { color:#d68b67; }
+.rb-hero-art { position:relative; height:440px; max-width:540px; width:100%; justify-self:end; perspective:900px; }
+.rb-orbit { position:absolute; border:1px solid rgba(236,222,203,.11); border-radius:50%; transform:rotate(-21deg); }
+.rb-orbit-one { width:430px; height:250px; top:80px; left:28px; }
+.rb-orbit-two { width:490px; height:310px; top:47px; left:0; transform:rotate(33deg); }
+.rb-hero-card { position:absolute; width:255px; height:350px; border-radius:10px; padding:24px 21px; box-shadow:0 28px 70px rgba(0,0,0,.3); }
+.rb-card-back { right:6px; top:50px; transform:rotate(8deg); background:#d9ded6; color:#2b3830; opacity:.92; }
+.rb-card-front { top:61px; left:75px; transform:rotate(-5deg); background:#fffdf8; color:#242925; }
+.rb-mock-header { display:flex; justify-content:space-between; align-items:center; }
+.rb-mock-header b { display:block; font-size:18px; letter-spacing:-.05em; }
+.rb-mock-header span { display:block; margin-top:5px; color:#8a8f88; font-size:7px; letter-spacing:.12em; }
+.rb-mock-header i { width:34px; height:34px; border-radius:50%; background:#d9b8a4; }
+.rb-mock-rule { height:3px; margin:16px 0 18px; background:#b85c3d; }
+.rb-mock-section { margin:17px 0 8px; color:#a6593e; font-size:7px; font-weight:900; letter-spacing:.16em; }
+.rb-mock-line, .rb-mock-title, .rb-mock-bold-line { height:4px; margin:7px 0; border-radius:8px; background:#dfe2dc; }
+.rb-mock-title { height:7px; width:66%; background:#a9b2a9; }
+.rb-mock-bold-line { width:72%; height:6px; margin-top:12px; background:#9ba69c; }
+.rb-mock-short { width:53%; }
+.rb-mock-mid { width:78%; }
+.rb-mock-block { height:32px; margin:9px 0; background:repeating-linear-gradient(to bottom,#dfe2dc 0 4px,transparent 4px 9px); }
+.rb-float-pill { position:absolute; z-index:4; padding:10px 14px; color:#fff8f0; border:1px solid rgba(255,255,255,.18); border-radius:30px; background:rgba(33,40,34,.78); backdrop-filter:blur(12px); font-size:10px; font-weight:700; box-shadow:0 12px 25px rgba(0,0,0,.2); }
+.rb-pill-a { top:32px; left:8px; }
+.rb-pill-b { bottom:32px; right:0; }
+.rb-hero-bottom { position:absolute; bottom:22px; left:7.5%; right:7.5%; display:flex; justify-content:space-between; color:#758078; font-size:8px; font-weight:850; letter-spacing:.19em; }
+.rb-value-strip { max-width:1240px; margin:auto; padding:26px 24px; display:grid; grid-template-columns:repeat(3,1fr); border-bottom:1px solid #e6e0d6; }
+.rb-value-strip > div { display:flex; align-items:center; gap:17px; padding:10px 24px; border-right:1px solid #e5dfd5; }
+.rb-value-strip > div:first-child { padding-left:0; }
+.rb-value-strip > div:last-child { border:0; }
+.rb-value-strip b { color:#b85c3d; font-family:Georgia,serif; font-size:24px; font-weight:400; }
+.rb-value-strip strong, .rb-value-strip small { display:block; }
+.rb-value-strip strong { font-size:12px; }
+.rb-value-strip small { margin-top:4px; color:#858780; font-size:10px; }
+.rb-workspace-section { max-width:1440px; margin:auto; padding:92px 5.4% 96px; scroll-margin-top:18px; }
+.rb-section-heading { display:flex; justify-content:space-between; align-items:end; gap:30px; margin:0 auto 30px; }
+.rb-section-heading h2, .rb-teaser-copy h2, .rb-faq-section h2 { margin:12px 0 0; font-size:clamp(28px,3.4vw,43px); letter-spacing:-.055em; line-height:1.12; }
+.rb-section-heading h2 em, .rb-teaser-copy h2 em, .rb-faq-section h2 em { color:#b85c3d; }
+.rb-local-note { color:#858980; font-size:10px; }
+.rb-local-note span { color:#658c71; font-size:14px; margin-right:7px; }
+.rb-app-shell { display:grid; grid-template-columns:220px minmax(0,1fr); min-height:750px; border:1px solid #dedbd3; border-radius:17px; overflow:hidden; background:#faf9f5; box-shadow:0 24px 70px rgba(34,35,30,.09); }
+.rb-sidebar { display:flex; flex-direction:column; min-height:750px; padding:24px 15px 18px; color:#e6e9e3; background:#202622; }
+.rb-sidebar-brand { display:flex; align-items:center; gap:10px; padding:0 5px 30px; color:#f8f7f2; font-size:12px; font-weight:800; }
+.rb-sidebar-brand .rb-brand-mark { width:29px; height:29px; font-size:17px; }
+.rb-sidebar-brand small { display:block; margin-top:4px; color:#7f9184; font-size:7px; letter-spacing:.17em; }
+.rb-workspace-label { margin:0 9px 10px; color:#718076; font-size:8px; font-weight:850; letter-spacing:.17em; }
+.rb-side-nav { display:grid; gap:5px; }
+.rb-side-nav button { display:flex; align-items:center; gap:11px; width:100%; padding:12px 12px; border:0; border-radius:8px; text-align:left; color:#aab3aa; background:transparent; font-size:11px; font-weight:650; }
+.rb-side-nav button span { width:17px; color:#9aa99e; font-size:15px; text-align:center; }
+.rb-side-nav button:hover, .rb-side-nav button.active { color:#fff; background:#343e37; }
+.rb-side-nav button.active span { color:#e09976; }
+.rb-sidebar-bottom { margin-top:auto; }
+.rb-side-tip { margin:0 3px 20px; padding:14px 13px; border:1px solid #354139; border-radius:10px; background:#28322c; }
+.rb-side-tip > span { display:block; margin-bottom:8px; color:#dfa080; font-size:16px; }
+.rb-side-tip b { font-size:10px; }
+.rb-side-tip p { margin:6px 0 0; color:#a8b3a9; font-size:9px; line-height:1.7; }
+.rb-privacy-label { padding:13px 6px 0; border-top:1px solid #354039; color:#96a198; font-size:9px; }
+.rb-privacy-label span { margin-right:7px; color:#78ad85; }
+.rb-main-panel { min-width:0; padding:0 27px 30px; }
+.rb-app-topbar { display:flex; justify-content:space-between; align-items:center; gap:18px; min-height:85px; border-bottom:1px solid #e9e5dd; }
+.rb-top-eyebrow { color:#989a92; font-size:7px; font-weight:850; letter-spacing:.18em; }
+.rb-app-topbar h2 { margin:5px 0 0; font-size:19px; letter-spacing:-.04em; }
+.rb-top-actions { display:flex; gap:8px; }
+.rb-top-actions .rb-button { padding:10px 13px; font-size:10px; }
+.rb-icon { font-size:13px; line-height:1; }
+.rb-welcome-card { position:relative; display:flex; align-items:center; justify-content:space-between; gap:18px; min-height:175px; overflow:hidden; margin:24px 0 28px; padding:26px 30px; border-radius:12px; background:#2c3730; color:#fff; }
+.rb-welcome-card > div:first-child { position:relative; z-index:2; }
+.rb-eyebrow-light { color:#c6ad9d; font-size:8px; }
+.rb-welcome-card h3 { margin:12px 0 7px; font-size:30px; letter-spacing:-.06em; }
+.rb-welcome-card h3 em { color:#e7a281; font-family:Georgia,serif; font-weight:400; }
+.rb-welcome-card p { margin:0; max-width:420px; color:#b4c0b6; font-size:10px; line-height:1.7; }
+.rb-welcome-card .rb-button { position:relative; z-index:2; }
+.rb-welcome-watermark { position:absolute; right:125px; top:-55px; color:rgba(255,255,255,.035); font-family:Georgia,serif; font-size:260px; line-height:1; }
+.rb-dashboard-meta { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.rb-dashboard-meta h3 { margin:0; font-size:14px; }
+.rb-dashboard-meta p { margin:5px 0 0; color:#888c83; font-size:9px; }
+.rb-text-button { border:0; background:transparent; color:#a5553b; font-size:10px; font-weight:800; }
+.rb-text-button:hover { color:#7e3927; }
+.rb-resume-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:13px; }
+.rb-resume-card { min-width:0; overflow:hidden; border:1px solid #e7e3db; border-radius:10px; background:#fffefa; }
+.rb-resume-card-preview { display:flex; justify-content:center; width:100%; height:188px; overflow:hidden; padding:10px 10px 0; border:0; background:#efede7; }
+.rb-resume-card-preview .rb-resume-sheet { flex:none; transform:scale(.19); transform-origin:top center; margin-bottom:-900px; }
+.rb-resume-card-info { display:flex; align-items:center; justify-content:space-between; gap:6px; padding:11px 11px 8px; }
+.rb-resume-card-info strong, .rb-resume-card-info small { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.rb-resume-card-info strong { max-width:155px; font-size:10px; }
+.rb-resume-card-info small { max-width:155px; margin-top:4px; color:#92938c; font-size:8px; }
+.rb-more-button { width:27px; height:27px; border:1px solid #e6e3dc; border-radius:6px; background:#fff; color:#5d625c; }
+.rb-card-actions { display:flex; gap:6px; padding:0 10px 10px; }
+.rb-card-actions button { border:0; padding:6px 8px; border-radius:5px; background:#f3f0e9; color:#5d635d; font-size:8px; font-weight:700; }
+.rb-card-actions button:last-child { color:#a65e4a; background:transparent; }
+.rb-create-card { min-height:255px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; border:1px dashed #d4cfc4; border-radius:10px; background:transparent; color:#555d56; }
+.rb-create-card:hover { border-color:#b85c3d; background:#fbf5ef; }
+.rb-create-card > span { display:grid; place-items:center; width:33px; height:33px; border-radius:50%; background:#eee8df; color:#a8563d; font-size:20px; }
+.rb-create-card strong { font-size:10px; }
+.rb-create-card small { color:#989b92; font-size:8px; }
+.rb-quick-row { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:22px; }
+.rb-quick-row button { display:flex; align-items:center; gap:9px; min-width:0; padding:12px 10px; border:1px solid #e9e5dd; border-radius:8px; background:#fffefa; text-align:left; }
+.rb-quick-row button > span { display:grid; flex:none; place-items:center; width:29px; height:29px; border-radius:8px; color:#a4563d; background:#f4eae1; font-size:12px; font-weight:900; }
+.rb-quick-row button > div { min-width:0; flex:1; }
+.rb-quick-row strong, .rb-quick-row small { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.rb-quick-row strong { font-size:8px; }
+.rb-quick-row small { margin-top:4px; color:#93968e; font-size:7px; }
+.rb-quick-row button > b { color:#ad6248; font-size:13px; }
+.rb-templates-view, .rb-keyword-view { padding:26px 0; }
+.rb-view-intro { display:flex; justify-content:space-between; align-items:end; gap:22px; margin-bottom:25px; }
+.rb-view-intro h3 { margin:10px 0 7px; font-size:25px; letter-spacing:-.05em; }
+.rb-view-intro h3 em { color:#b85c3d; }
+.rb-view-intro p { max-width:560px; margin:0; color:#82877e; font-size:10px; line-height:1.8; }
+.rb-template-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+.rb-template-card { min-width:0; overflow:hidden; padding:0; border:1px solid #e5e1d9; border-radius:10px; background:#fffefa; text-align:left; transition:border .2s ease, transform .2s ease; }
+.rb-template-card:hover { transform:translateY(-3px); border-color:#c58a75; }
+.rb-template-card.selected { border:2px solid #b85c3d; }
+.rb-template-thumb { display:flex; justify-content:center; height:215px; overflow:hidden; padding-top:9px; background:#eeece6; }
+.rb-template-thumb .rb-resume-sheet { flex:none; transform:scale(.19); transform-origin:top center; margin-bottom:-900px; }
+.rb-template-card-copy { position:relative; padding:13px 13px 14px; }
+.rb-template-tag { display:inline-block; margin-bottom:8px; padding:4px 7px; border-radius:4px; color:#94533e; background:#f4e9e1; font-size:7px; font-weight:850; letter-spacing:.05em; text-transform:uppercase; }
+.rb-template-card-copy strong, .rb-template-card-copy small { display:block; }
+.rb-template-card-copy strong { font-size:12px; }
+.rb-template-card-copy small { margin-top:5px; color:#8c9088; font-size:9px; }
+.rb-template-use { display:block; margin-top:13px; color:#a6563c; font-size:9px; font-weight:850; }
+.rb-editor-toolbar { display:flex; justify-content:space-between; align-items:center; gap:15px; padding:14px 0; border-bottom:1px solid #e9e5dd; }
+.rb-title-input { width:min(230px,100%); padding:4px 0; border:0; border-bottom:1px solid transparent; background:transparent; color:#343a35; font-size:12px; font-weight:800; }
+.rb-title-input:focus { outline:none; border-color:#b85c3d; }
+.rb-saved-status { display:block; margin-top:4px; color:#8b9088; font-size:8px; }
+.rb-saved-status i, .rb-live-dot { display:inline-block; width:6px; height:6px; margin-right:5px; border-radius:50%; background:#6d9a78; }
+.rb-editor-toolbar-actions { display:flex; gap:7px; }
+.rb-editor-toolbar-actions .rb-button { padding:9px 11px; font-size:9px; }
+.rb-editor-layout { display:grid; grid-template-columns:minmax(295px,.86fr) minmax(390px,1.14fr); gap:18px; align-items:start; padding-top:17px; }
+.rb-fields-panel { min-width:0; max-height:870px; overflow:auto; padding-right:5px; }
+.rb-editor-progress { padding:10px 12px; border:1px solid #e9e5dc; border-radius:8px; background:#fffefa; }
+.rb-editor-progress > div:first-child { display:flex; justify-content:space-between; gap:8px; font-size:9px; }
+.rb-editor-progress > div:first-child span { color:#9a9b93; font-size:8px; }
+.rb-progress-track { height:4px; overflow:hidden; margin-top:9px; border-radius:8px; background:#eeeae2; }
+.rb-progress-track i { display:block; height:100%; border-radius:8px; background:#b85c3d; transition:width .2s ease; }
+.rb-form-section { margin-top:9px; border:1px solid #e8e4dc; border-radius:8px; background:#fffefa; }
+.rb-form-section > summary { display:flex; align-items:center; gap:10px; padding:12px; cursor:pointer; list-style:none; }
+.rb-form-section > summary::-webkit-details-marker { display:none; }
+.rb-form-icon { display:grid; place-items:center; width:27px; height:27px; flex:none; border-radius:7px; background:#f3ece5; color:#ae5e43; font-size:8px; font-weight:900; }
+.rb-form-section > summary > span:nth-child(2) { flex:1; }
+.rb-form-section > summary b, .rb-form-section > summary small { display:block; }
+.rb-form-section > summary b { font-size:10px; }
+.rb-form-section > summary small { margin-top:3px; color:#92958d; font-size:8px; }
+.rb-form-section > summary > i { color:#878d83; font-size:14px; font-style:normal; transition:transform .2s ease; }
+.rb-form-section[open] > summary > i { transform:rotate(180deg); }
+.rb-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; padding:0 12px 14px; }
+.rb-field { display:flex; flex-direction:column; gap:5px; min-width:0; color:#777d75; font-size:8px; font-weight:750; }
+.rb-field input, .rb-field textarea { width:100%; min-width:0; padding:9px 10px; border:1px solid #e7e3db; border-radius:6px; outline:none; background:#fff; color:#2f3530; font-size:10px; font-weight:500; }
+.rb-field textarea { resize:vertical; line-height:1.6; }
+.rb-field input:focus, .rb-field textarea:focus { border-color:#c17d64; box-shadow:0 0 0 3px rgba(184,92,61,.08); }
+.rb-field-wide { grid-column:1/-1; }
+.rb-date-grid { display:grid; grid-template-columns:1fr 1fr; gap:7px; min-width:0; }
+.rb-repeat-list { padding:0 11px 13px; }
+.rb-repeat-card { margin-top:9px; padding:10px 0 0; border-top:1px solid #eeeae3; }
+.rb-repeat-card:first-child { margin-top:0; border:0; }
+.rb-repeat-card-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:9px; color:#515950; font-size:9px; }
+.rb-repeat-card-head button { border:0; background:transparent; color:#a86654; font-size:8px; }
+.rb-repeat-card .rb-form-grid { padding:0; }
+.rb-add-row { width:100%; padding:9px; border:1px dashed #d9c9bc; border-radius:6px; background:#faf5ef; color:#a4563d; font-size:9px; font-weight:800; }
+.rb-photo-control { grid-column:1/-1; display:flex; justify-content:space-between; align-items:center; gap:12px; color:#777d75; font-size:8px; font-weight:750; }
+.rb-photo-control > div { display:flex; align-items:center; gap:8px; }
+.rb-photo-control img, .rb-photo-empty { width:34px; height:34px; border-radius:50%; object-fit:cover; }
+.rb-photo-empty { display:grid; place-items:center; color:#a4563d; background:#f2e7df; font-size:16px; }
+.rb-photo-control button { padding:6px 8px; border:1px solid #e8e3da; border-radius:5px; background:#fff; color:#4d554d; font-size:8px; }
+.rb-photo-control .rb-remove-photo { color:#a65b47; }
+.rb-editor-bottom-actions { display:flex; gap:8px; padding:13px 0; }
+.rb-editor-bottom-actions .rb-button { flex:1; padding:10px; font-size:9px; }
+.rb-live-preview { position:sticky; top:15px; min-width:0; overflow:hidden; border:1px solid #e6e2d9; border-radius:8px; background:#efede7; }
+.rb-preview-head { display:flex; justify-content:space-between; align-items:center; min-height:40px; padding:0 11px; background:#fffefa; color:#788077; font-size:8px; font-weight:850; letter-spacing:.1em; }
+.rb-live-dot { margin-right:5px; }
+.rb-color-picker { display:flex; align-items:center; gap:7px; }
+.rb-color-picker > span { margin-right:3px; color:#969990; font-size:8px; font-weight:600; letter-spacing:0; }
+.rb-color-picker button { width:13px; height:13px; border:2px solid #fff; border-radius:50%; box-shadow:0 0 0 1px #dedbd2; }
+.rb-color-picker button.active { box-shadow:0 0 0 2px #555b54; }
+.rb-preview-canvas { max-height:770px; overflow:auto; padding:14px; }
+.rb-preview-foot { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:9px 11px; border-top:1px solid #e4e1d9; background:#fffefa; color:#95988f; font-size:7px; }
+.rb-preview-foot button { border:0; background:transparent; color:#a6573d; font-size:8px; font-weight:800; }
+.rb-resume-sheet { width:794px; min-height:1122px; margin:0 auto; padding:58px 59px; background:#fff; color:#232724; box-shadow:0 7px 26px rgba(30,34,30,.12); font-family:Arial,Helvetica,sans-serif; font-size:11px; line-height:1.45; }
+.rb-resume-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:18px; padding-bottom:19px; border-bottom:3px solid var(--resume-accent); }
+.rb-resume-heading h1 { margin:0; color:var(--resume-accent); font-size:29px; line-height:1.15; font-weight:800; letter-spacing:-.04em; text-transform:uppercase; }
+.rb-resume-headline { margin:5px 0 0; color:#606b64; font-size:12px; font-weight:700; }
+.rb-resume-contact { margin-top:10px; color:#5f655f; font-size:9px; line-height:1.8; overflow-wrap:anywhere; }
+.rb-resume-photo { width:66px; height:66px; flex:none; object-fit:cover; border-radius:4px; }
+.rb-resume-section { margin-top:21px; break-inside:avoid; }
+.rb-resume-section h3 { margin:0 0 9px; padding-bottom:5px; border-bottom:1px solid #e6e8e3; color:var(--resume-accent); font-size:12px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; }
+.rb-resume-section p { margin:0; color:#383e39; font-size:10px; line-height:1.62; white-space:pre-line; overflow-wrap:anywhere; }
+.rb-resume-entry { margin-top:11px; break-inside:avoid; }
+.rb-resume-entry:first-child { margin-top:0; }
+.rb-resume-entry-top { display:flex; justify-content:space-between; gap:12px; align-items:baseline; }
+.rb-resume-entry-top strong { color:#292f2b; font-size:10px; }
+.rb-resume-entry-top span { flex:none; color:#69716a; font-size:9px; text-align:right; }
+.rb-resume-subline { margin-top:2px; color:var(--resume-accent); font-size:9px; font-weight:600; overflow-wrap:anywhere; }
+.rb-resume-entry p { margin-top:5px; }
+.rb-resume-skill-list { line-height:1.9 !important; }
+.rb-template-classic { font-family:Georgia,"Times New Roman",serif; }
+.rb-template-classic .rb-resume-heading { border-bottom:1px solid #333; text-align:center; justify-content:center; }
+.rb-template-classic .rb-resume-contact { text-align:center; }
+.rb-template-classic .rb-resume-section h3 { color:#333; border-bottom:1px solid #555; letter-spacing:.13em; }
+.rb-template-minimal { padding:68px 72px; }
+.rb-template-minimal .rb-resume-heading { border-bottom:1px solid #e8e8e8; }
+.rb-template-minimal .rb-resume-heading h1 { color:#202521; font-size:32px; font-weight:650; }
+.rb-template-minimal .rb-resume-section h3 { border:0; color:#242925; font-size:10px; letter-spacing:.16em; }
+.rb-template-executive { display:grid; grid-template-columns:190px 1fr; gap:28px; padding:0; }
+.rb-template-executive .rb-resume-sidebar { padding:52px 22px; background:#263f38; color:#fff; }
+.rb-template-executive .rb-resume-sidebar h2 { margin:18px 0 4px; font-size:19px; line-height:1.2; overflow-wrap:anywhere; }
+.rb-template-executive .rb-sidebar-photo { width:88px; height:88px; border:3px solid rgba(255,255,255,.3); border-radius:50%; }
+.rb-template-executive .rb-sidebar-role { color:#d3b9a8; font-size:10px; }
+.rb-template-executive .rb-sidebar-contact { display:grid; gap:8px; margin-top:22px; color:#e2e8e3; font-size:8px; overflow-wrap:anywhere; }
+.rb-template-executive .rb-sidebar-block { margin-top:24px; }
+.rb-template-executive .rb-sidebar-block h3 { color:#e5a17f; font-size:9px; text-transform:uppercase; letter-spacing:.12em; }
+.rb-template-executive .rb-sidebar-block p { color:#e4eae5; font-size:9px; line-height:1.7; }
+.rb-template-executive .rb-resume-main { padding:52px 28px 52px 0; }
+.rb-template-executive .rb-resume-main > .rb-resume-heading { border:0; padding:0; }
+.rb-template-executive .rb-resume-main > .rb-resume-heading h1, .rb-template-executive .rb-resume-main > .rb-resume-heading .rb-resume-photo { display:none; }
+.rb-template-executive .rb-resume-main .rb-resume-section:first-child { margin-top:0; }
+.rb-template-executive .rb-resume-main .rb-resume-section h3 { color:#263f38; }
+.rb-template-tech .rb-resume-heading h1 { color:#244c91; letter-spacing:-.02em; }
+.rb-template-tech .rb-resume-heading { border-bottom:2px solid #244c91; }
+.rb-template-tech .rb-resume-section h3 { color:#244c91; }
+.rb-template-tech .rb-resume-section:nth-of-type(4) { background:#f4f7fb; padding:10px; }
+.rb-template-compact { padding:43px 49px; font-size:10px; }
+.rb-template-compact .rb-resume-heading h1 { font-size:25px; }
+.rb-template-compact .rb-resume-section { margin-top:14px; }
+.rb-template-compact .rb-resume-section h3 { margin-bottom:6px; font-size:10px; }
+.rb-template-compact .rb-resume-entry { margin-top:7px; }
+.rb-resume-compact { min-height:1122px; }
+.rb-keyword-view { padding-bottom:36px; }
+.rb-keyword-layout { display:grid; grid-template-columns:minmax(240px,.9fr) minmax(0,1.1fr); gap:16px; align-items:start; }
+.rb-job-input-card { padding:16px; border:1px solid #e8e4dc; border-radius:9px; background:#fffefa; }
+.rb-job-input-card > label { color:#91958d; font-size:8px; font-weight:850; letter-spacing:.15em; }
+.rb-job-input-card textarea { display:block; width:100%; min-height:250px; margin-top:10px; padding:12px; resize:vertical; border:1px solid #e6e2d9; border-radius:7px; outline:none; color:#333a34; background:#fff; font-size:10px; line-height:1.7; }
+.rb-job-input-card textarea:focus { border-color:#be816c; box-shadow:0 0 0 3px rgba(184,92,61,.08); }
+.rb-job-input-foot { display:flex; justify-content:space-between; margin-top:8px; color:#999b93; font-size:8px; }
+.rb-job-input-foot button { border:0; background:transparent; color:#a75d43; font-size:8px; font-weight:800; }
+.rb-keyword-privacy { margin-top:14px; padding-top:12px; border-top:1px solid #eeeae3; color:#7c927f; font-size:8px; }
+.rb-keyword-results { display:grid; gap:12px; }
+.rb-results-summary { display:grid; grid-template-columns:repeat(3,1fr); border:1px solid #e8e4dc; border-radius:8px; background:#fffefa; }
+.rb-results-summary > div { padding:13px 9px; border-right:1px solid #eeeae4; text-align:center; }
+.rb-results-summary > div:last-child { border:0; }
+.rb-results-summary b { display:block; color:#34483b; font-size:20px; letter-spacing:-.05em; }
+.rb-results-summary span { display:block; margin-top:4px; color:#858b81; font-size:8px; }
+.rb-keyword-group { padding:14px; border:1px solid #e8e4dc; border-radius:8px; background:#fffefa; }
+.rb-keyword-group-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:11px; }
+.rb-keyword-group-head h4 { margin:0; font-size:10px; }
+.rb-match-label, .rb-missing-label { color:#669177; font-size:7px; font-weight:900; letter-spacing:.11em; }
+.rb-missing-label { color:#b47750; }
+.rb-chip-list { display:flex; flex-wrap:wrap; gap:6px; }
+.rb-keyword-chip { display:inline-flex; align-items:center; gap:6px; padding:6px 8px; border:1px solid #e2e8e1; border-radius:6px; color:#49634d; background:#f1f6f0; font-size:8px; }
+.rb-keyword-chip i { font-style:normal; font-weight:900; }
+.rb-keyword-chip.missing { border-color:#efdfd3; color:#9d6549; background:#faf2ec; }
+.rb-keyword-chip.saved { border-color:#e7e0d5; color:#5b625b; background:#f3f1ea; }
+.rb-empty-copy { margin:0; color:#999b93; font-size:9px; }
+.rb-keyword-note { margin:10px 0 0; color:#92958d; font-size:8px; line-height:1.6; }
+.rb-add-keyword { display:flex; gap:7px; margin-top:12px; }
+.rb-add-keyword input { min-width:0; flex:1; padding:8px 10px; border:1px solid #e6e1d8; border-radius:6px; outline:none; background:#fff; font-size:9px; }
+.rb-add-keyword button { padding:8px 10px; border:0; border-radius:6px; background:#2b3830; color:#fff; font-size:8px; font-weight:800; }
+.rb-ats-coming { display:flex; align-items:flex-start; gap:13px; margin-top:18px; padding:16px; border:1px solid #e7e1d8; border-radius:9px; background:#f7f3ec; }
+.rb-ats-icon { display:grid; place-items:center; width:33px; height:33px; flex:none; border-radius:8px; color:#b25d40; background:#eee1d5; }
+.rb-ats-coming > div:nth-child(2) { flex:1; }
+.rb-ats-coming > div > span { color:#a65c42; font-size:7px; font-weight:900; letter-spacing:.13em; }
+.rb-ats-coming h4 { margin:4px 0; font-size:11px; }
+.rb-ats-coming p { margin:0; color:#81877f; font-size:8px; line-height:1.65; }
+.rb-coming-pill { flex:none; padding:5px 7px; border-radius:5px; color:#9a684e; background:#efe2d6; font-size:7px; font-weight:900; }
+.rb-template-teaser { display:grid; grid-template-columns:.8fr 1.2fr; gap:50px; align-items:center; max-width:1240px; margin:0 auto; padding:68px 24px 86px; border-top:1px solid #e6e0d6; }
+.rb-teaser-copy h2 { margin-top:12px; }
+.rb-teaser-copy h2 em { color:#b85c3d; }
+.rb-teaser-copy p, .rb-faq-section > div:first-child > p { max-width:360px; margin:13px 0 22px; color:#83867d; font-size:11px; line-height:1.8; }
+.rb-teaser-cards { position:relative; display:flex; justify-content:center; align-items:center; gap:12px; min-height:340px; overflow:hidden; }
+.rb-teaser-sheet { width:170px; height:245px; padding:20px 15px; border:1px solid #e0ddd5; background:#fff; box-shadow:0 14px 35px rgba(34,35,30,.11); }
+.rb-teaser-sheet b { display:block; color:#9c553e; font-size:11px; }
+.rb-teaser-sheet i { display:block; height:3px; margin:11px 0; background:#b85c3d; }
+.rb-teaser-sheet label { display:block; margin:13px 0 6px; color:#9c553e; font-size:6px; font-weight:900; letter-spacing:.11em; }
+.rb-teaser-sheet span { display:block; height:4px; margin:6px 0; background:#e5e6e1; }
+.rb-teaser-sheet span:nth-of-type(2) { width:74%; }
+.rb-teaser-one { transform:rotate(-7deg) translateY(7px); }
+.rb-teaser-two { z-index:2; transform:translateY(-12px); }
+.rb-teaser-three { transform:rotate(7deg) translateY(9px); }
+.rb-faq-section { display:grid; grid-template-columns:.72fr 1.28fr; gap:70px; max-width:1160px; margin:0 auto; padding:72px 24px 85px; border-top:1px solid #e6e0d6; }
+.rb-faq-section h2 em { color:#b85c3d; }
+.rb-faq-list details { padding:15px 0; border-bottom:1px solid #e4ded4; }
+.rb-faq-list summary { display:flex; align-items:center; justify-content:space-between; gap:15px; cursor:pointer; color:#343a35; font-size:11px; font-weight:750; list-style:none; }
+.rb-faq-list summary::-webkit-details-marker { display:none; }
+.rb-faq-list summary i { color:#a95c41; font-size:17px; font-style:normal; font-weight:400; }
+.rb-faq-list details[open] summary i { transform:rotate(45deg); }
+.rb-faq-list p { max-width:700px; margin:11px 25px 0 0; color:#80867d; font-size:10px; line-height:1.8; }
+.rb-footer { display:grid; grid-template-columns:1fr auto; align-items:center; gap:14px 25px; padding:24px max(7.5%,calc((100vw - 1240px)/2)); background:#202622; color:#e9eae4; }
+.rb-footer .rb-brand { color:#f5f3ed; }
+.rb-footer > p { color:#a7b0a6; font-size:9px; }
+.rb-footer > div { display:flex; gap:18px; color:#c5cbc2; font-size:9px; }
+.rb-footer > small { grid-column:1/-1; padding-top:12px; border-top:1px solid #39423b; color:#7f8a80; font-size:8px; }
+.rb-modal-backdrop { position:fixed; z-index:1000; inset:0; display:grid; place-items:center; padding:20px; background:rgba(20,25,21,.63); backdrop-filter:blur(6px); }
+.rb-modal { position:relative; width:min(520px,100%); max-height:min(88vh,800px); overflow:auto; padding:29px; border:1px solid #e9e1d7; border-radius:14px; background:#fbfaf6; box-shadow:0 30px 100px rgba(0,0,0,.28); }
+.rb-modal-close { position:absolute; top:15px; right:15px; width:31px; height:31px; border:1px solid #e4ded5; border-radius:50%; background:#fff; color:#596058; font-size:19px; }
+.rb-modal h3 { margin:10px 0 8px; font-size:25px; letter-spacing:-.05em; }
+.rb-modal > p { margin:0 20px 18px 0; color:#858980; font-size:10px; line-height:1.8; }
+.rb-dropzone { display:flex; flex-direction:column; align-items:center; gap:6px; padding:22px; border:1px dashed #cdb9a9; border-radius:9px; background:#f8f2eb; color:#414941; cursor:pointer; }
+.rb-dropzone > span { display:grid; place-items:center; width:34px; height:34px; border-radius:50%; color:#fff; background:#b85c3d; font-size:19px; }
+.rb-dropzone b { font-size:10px; }
+.rb-dropzone small { color:#98988f; font-size:8px; }
+.rb-dropzone input { max-width:210px; margin-top:4px; color:#626960; font-size:8px; }
+.rb-modal-divider { display:flex; align-items:center; gap:10px; margin:19px 0 10px; color:#969990; font-size:7px; font-weight:900; letter-spacing:.13em; }
+.rb-modal-divider::before, .rb-modal-divider::after { content:""; flex:1; height:1px; background:#e9e4db; }
+.rb-paste-area { display:block; width:100%; min-height:110px; padding:10px; border:1px solid #e4dfd6; border-radius:7px; outline:none; background:#fff; color:#363d36; font-size:9px; line-height:1.6; }
+.rb-paste-area:focus { border-color:#be8068; }
+.rb-modal-submit { width:100%; margin-top:12px; }
+.rb-modal-privacy { display:block; margin-top:12px; color:#92968e; font-size:8px; line-height:1.6; text-align:center; }
+.rb-linkedin-mark { display:grid; place-items:center; width:34px; height:34px; margin-bottom:16px; border-radius:7px; color:#fff; background:#2867a4; font-size:17px; font-weight:900; }
+.rb-linkedin-steps { display:grid; gap:12px; margin:0; padding:0 0 0 18px; color:#a45b43; }
+.rb-linkedin-steps li { padding-left:4px; font-size:10px; }
+.rb-linkedin-steps b, .rb-linkedin-steps span { display:block; }
+.rb-linkedin-steps b { color:#343b35; }
+.rb-linkedin-steps span { margin-top:3px; color:#858a82; font-size:9px; line-height:1.6; }
+.rb-external-link { display:block; margin-top:12px; color:#a5573d; font-size:9px; font-weight:800; text-align:center; }
+.rb-toast { position:fixed; z-index:1100; right:24px; bottom:24px; max-width:min(360px,calc(100vw - 32px)); padding:13px 17px; border:1px solid rgba(255,255,255,.1); border-radius:9px; background:#252d28; color:#f8f6ef; box-shadow:0 12px 38px rgba(0,0,0,.22); font-size:10px; line-height:1.5; }
+@media (max-width:1100px) {
+  .rb-hero { padding-left:5%; padding-right:5%; }
+  .rb-hero-art { transform:scale(.88); transform-origin:center right; }
+  .rb-workspace-section { padding-left:3%; padding-right:3%; }
+  .rb-editor-layout { grid-template-columns:minmax(280px,.9fr) minmax(330px,1.1fr); gap:12px; }
+  .rb-main-panel { padding-left:19px; padding-right:19px; }
+  .rb-resume-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .rb-quick-row { grid-template-columns:1fr; }
+}
+@media (max-width:800px) {
+  .rb-site-header { min-height:70px; padding:0 5%; }
+  .rb-public-nav { display:none; }
+  .rb-hero { grid-template-columns:1fr; padding:70px 7% 75px; }
+  .rb-hero-copy { max-width:640px; }
+  .rb-hero-art { width:min(100%,470px); height:340px; margin:28px auto 0; justify-self:center; transform:scale(.82); transform-origin:top center; }
+  .rb-hero-bottom { left:7%; right:7%; }
+  .rb-value-strip { grid-template-columns:1fr; padding:14px 7%; }
+  .rb-value-strip > div, .rb-value-strip > div:first-child { padding:12px 0; border-right:0; border-bottom:1px solid #e5dfd5; }
+  .rb-value-strip > div:last-child { border-bottom:0; }
+  .rb-workspace-section { padding:65px 3% 70px; }
+  .rb-section-heading { align-items:start; flex-direction:column; gap:12px; }
+  .rb-app-shell { grid-template-columns:1fr; }
+  .rb-sidebar { min-height:0; padding:12px 14px; }
+  .rb-sidebar-brand { padding:0 5px 11px; }
+  .rb-sidebar-bottom { display:none; }
+  .rb-workspace-label { display:none; }
+  .rb-side-nav { display:flex; gap:5px; overflow-x:auto; }
+  .rb-side-nav button { width:auto; flex:none; padding:9px 11px; font-size:9px; }
+  .rb-main-panel { padding:0 15px 22px; }
+  .rb-editor-layout { grid-template-columns:1fr; }
+  .rb-fields-panel { max-height:none; overflow:visible; }
+  .rb-live-preview { position:static; }
+  .rb-preview-canvas { max-height:720px; }
+  .rb-template-teaser { grid-template-columns:1fr; gap:25px; padding:55px 7%; }
+  .rb-faq-section { grid-template-columns:1fr; gap:22px; padding:55px 7%; }
+}
+@media (max-width:560px) {
+  .rb-site-header { padding:0 16px; }
+  .rb-brand { font-size:16px; }
+  .rb-hero { min-height:0; padding:56px 20px 64px; }
+  .rb-hero h1 { font-size:43px; }
+  .rb-hero-copy > p { font-size:12px; }
+  .rb-hero-actions { flex-wrap:wrap; }
+  .rb-trust-row { gap:10px 13px; font-size:8px; }
+  .rb-hero-art { height:275px; transform:scale(.68); transform-origin:top center; margin-bottom:-45px; }
+  .rb-hero-bottom { font-size:7px; }
+  .rb-workspace-section { padding:52px 10px 58px; }
+  .rb-section-heading h2 { font-size:30px; }
+  .rb-local-note { font-size:8px; }
+  .rb-app-shell { border-radius:11px; }
+  .rb-sidebar { padding:11px 8px; }
+  .rb-side-nav button { gap:6px; padding:9px 8px; }
+  .rb-side-nav button span { font-size:12px; }
+  .rb-main-panel { padding:0 10px 17px; }
+  .rb-app-topbar { min-height:75px; align-items:flex-start; flex-direction:column; justify-content:center; gap:8px; padding:12px 0; }
+  .rb-app-topbar h2 { font-size:17px; }
+  .rb-top-actions { width:100%; }
+  .rb-top-actions .rb-button { flex:1; padding:9px 7px; }
+  .rb-welcome-card { flex-direction:column; align-items:flex-start; min-height:0; padding:22px 18px; }
+  .rb-welcome-card h3 { font-size:25px; }
+  .rb-welcome-card .rb-button { width:100%; }
+  .rb-welcome-watermark { right:0; font-size:180px; }
+  .rb-resume-grid, .rb-template-grid { grid-template-columns:1fr 1fr; gap:8px; }
+  .rb-resume-card-preview { height:145px; }
+  .rb-resume-card-preview .rb-resume-sheet, .rb-template-thumb .rb-resume-sheet { transform:scale(.14); }
+  .rb-create-card { min-height:205px; }
+  .rb-resume-card-info { padding:9px 7px 6px; }
+  .rb-resume-card-info strong { max-width:105px; font-size:8px; }
+  .rb-resume-card-info small { max-width:105px; font-size:7px; }
+  .rb-card-actions { padding:0 7px 8px; }
+  .rb-card-actions button { padding:6px 5px; font-size:7px; }
+  .rb-quick-row { margin-top:14px; }
+  .rb-quick-row button { padding:9px 8px; }
+  .rb-view-intro { align-items:flex-start; flex-direction:column; }
+  .rb-view-intro h3 { font-size:22px; }
+  .rb-template-thumb { height:155px; }
+  .rb-template-card-copy { padding:9px; }
+  .rb-template-card-copy strong { font-size:10px; }
+  .rb-template-card-copy small { font-size:8px; line-height:1.4; }
+  .rb-template-use { margin-top:9px; font-size:8px; }
+  .rb-editor-toolbar { align-items:flex-start; flex-direction:column; }
+  .rb-editor-toolbar > div:first-child { width:100%; }
+  .rb-title-input { width:100%; }
+  .rb-editor-toolbar-actions { width:100%; }
+  .rb-editor-toolbar-actions .rb-button { flex:1; }
+  .rb-form-grid { grid-template-columns:1fr; }
+  .rb-date-grid { grid-template-columns:1fr 1fr; }
+  .rb-photo-control { align-items:flex-start; flex-direction:column; }
+  .rb-resume-sheet { width:100%; min-height:0; padding:25px 23px; font-size:9px; }
+  .rb-resume-heading h1 { font-size:20px; }
+  .rb-resume-contact { font-size:7px; }
+  .rb-resume-photo { width:48px; height:48px; }
+  .rb-resume-section { margin-top:14px; }
+  .rb-resume-section h3 { font-size:9px; }
+  .rb-resume-section p { font-size:8px; }
+  .rb-resume-entry-top strong { font-size:8px; }
+  .rb-resume-entry-top span, .rb-resume-subline { font-size:7px; }
+  .rb-template-executive { grid-template-columns:125px 1fr; gap:13px; }
+  .rb-template-executive .rb-resume-sidebar { padding:25px 12px; }
+  .rb-template-executive .rb-resume-sidebar h2 { font-size:14px; }
+  .rb-template-executive .rb-sidebar-contact, .rb-template-executive .rb-sidebar-block p { font-size:7px; }
+  .rb-template-executive .rb-resume-main { padding:25px 15px 25px 0; }
+  .rb-keyword-layout { grid-template-columns:1fr; }
+  .rb-job-input-card textarea { min-height:180px; }
+  .rb-ats-coming { flex-wrap:wrap; }
+  .rb-template-teaser { padding:45px 20px 55px; }
+  .rb-teaser-cards { min-height:255px; gap:4px; }
+  .rb-teaser-sheet { width:125px; height:200px; padding:15px 11px; }
+  .rb-teaser-sheet b { font-size:8px; }
+  .rb-faq-section { padding:48px 20px 60px; }
+  .rb-faq-list summary { font-size:10px; }
+  .rb-footer { grid-template-columns:1fr; padding:22px 20px; }
+  .rb-footer > div { flex-wrap:wrap; }
+  .rb-footer > small { grid-column:auto; }
+  .rb-modal { padding:25px 18px; }
+}
+@media print {
+  @page { size:A4; margin:0; }
+  body { background:#fff !important; }
+  body * { visibility:hidden !important; }
+  .rb-resume-sheet, .rb-resume-sheet * { visibility:visible !important; }
+  .rb-resume-sheet { position:absolute !important; left:0 !important; top:0 !important; width:210mm !important; min-height:297mm !important; margin:0 !important; padding:16mm 17mm !important; box-shadow:none !important; print-color-adjust:exact; -webkit-print-color-adjust:exact; }
+  .rb-template-executive { padding:0 !important; grid-template-columns:54mm 1fr !important; gap:7mm !important; }
+  .rb-template-executive .rb-resume-sidebar { padding:16mm 6mm !important; }
+  .rb-template-executive .rb-resume-main { padding:16mm 8mm 16mm 0 !important; }
+  .rb-resume-section, .rb-resume-entry { break-inside:avoid; }
+  .rb-page { overflow:visible !important; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .rb-page *, .rb-page *::before, .rb-page *::after { scroll-behavior:auto !important; animation:none !important; transition:none !important; }
+}
