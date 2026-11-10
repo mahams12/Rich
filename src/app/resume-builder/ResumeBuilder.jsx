@@ -270,7 +270,7 @@ function parseTextIntoResume(source, existing) {
   const header = [...(sections.header || []), ...(sections.contact || [])];
   const explicitName = raw.match(/(?:^|\n)\s*(?:full\s+name|name)\s*[:：-]\s*([^\n]+)/i);
   const emailMatch = raw.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
-  const phoneCandidates = raw.match(/(?:\+\d{1,3}[\s.-]?)?(?:\(?\d{2,4}\)?[\s.-]?)?\d[\d\s().-]{5,}\d/g) || [];
+  const phoneCandidates = raw.match(/(?:\+\d{1,3}[ .-]?)?(?:\(?\d{2,4}\)?[ .-]?)?\d[\d .()-]{5,13}\d/g) || [];
   const phoneMatch = phoneCandidates.find((candidate) => {
     const digits = candidate.replace(/\D/g, "");
     return digits.length >= 8 && digits.length <= 15 && !DATE_RANGE_RE.test(candidate);
