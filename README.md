@@ -27,3 +27,9 @@ Favourites, checkout, orders and admin listings persist in `localStorage` for th
 Next.js App Router, TypeScript, Tailwind CSS v4. Public pages are SEO-ready (metadata, sitemap, robots, JSON-LD). Motion is CSS-first with reduced-motion support.
 
 Update the WhatsApp number in `src/data/site.ts` before launch.
+
+## Resume Studio
+
+A free, browser-first resume builder is available at `/resume-builder`. It includes six original editable templates, a live resume editor, local autosave, PDF/DOCX/TXT/JSON/LinkedIn CSV import, PDF export through the browser print dialog, editable JSON backups and local job-description keyword matching.
+
+No resume content is uploaded or stored on the NovexaHub server in V1. LinkedIn profile import uses member-selected CSV exports; direct LinkedIn API access depends on LinkedIn approval. See [docs/RESUME_STUDIO.md](docs/RESUME_STUDIO.md) for architecture, privacy details, Cloudflare deployment notes and the future serverless roadmap.
