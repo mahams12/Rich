@@ -58,7 +58,7 @@ function starterResume(id) {
     template: "vertical",
     accent: "#920b36",
     design: { ...DEFAULT_RESUME_DESIGN },
-    sectionOrder: ["profile", "experience", "education", "projects", "skills", "certificates", "languages", "interests"],
+    sectionOrder: ["education", "experience", "projects", "profile", "skills", "certificates", "interests", "languages"],
     interests: [],
     profile: {
       fullName: "Jordan Lee",
@@ -1150,7 +1150,7 @@ export default function ResumeBuilder() {
     fresh.title = "Untitled resume";
     fresh.profile = { ...fresh.profile, fullName: "", headline: "", email: "", phone: "", location: "", website: "", linkedin: "", summary: "", photo: "" };
     fresh.design = { ...DEFAULT_RESUME_DESIGN };
-    fresh.sectionOrder = ["profile", "experience", "education", "projects", "skills", "certificates", "languages", "interests"];
+    fresh.sectionOrder = ["education", "experience", "projects", "profile", "skills", "certificates", "interests", "languages"];
     fresh.interests = [];
     fresh.experience = [];
     fresh.education = [];
