@@ -101,7 +101,6 @@ function blankImportResume(existing) {
     accent: existing?.accent || "#920b36",
     design: { ...DEFAULT_RESUME_DESIGN, ...(existing?.design || {}) },
     sectionOrder: [...(existing?.sectionOrder || DEFAULT_RESUME_DESIGN.sectionOrder || [])],
-    interests: [],
     profile: { fullName: "", headline: "", email: "", phone: "", location: "", website: "", linkedin: "", summary: "", photo: "" },
     experience: [],
     education: [],
@@ -207,6 +206,7 @@ const SECTION_PATTERNS = [
   ["projects", /^(selected projects|personal projects|academic projects|projects|portfolio|key projects)$/i],
   ["certificates", /^(certifications|certificates|licenses and certifications|licenses|courses|professional development)$/i],
   ["languages", /^(languages|language skills)$/i],
+  ["interests", /^(hobbies|interests|hobbies and interests|activities|personal interests)$/i],
   ["contact", /^(contact|contact details|contact information|personal details|personal information)$/i],
 ];
 
@@ -469,6 +469,7 @@ function parseTextIntoResume(source, existing) {
     link: "",
   }));
   const languages = (sections.languages || []).join(",").split(/[,;|•·]\s*|\n/).map((item) => item.trim()).filter(Boolean).slice(0, 12);
+  const interests = (sections.interests || []).join(",").split(/[,;|•·]\s*|\n/).map((item) => item.trim()).filter(Boolean).slice(0, 20);
   const profile = {
     ...existing.profile,
     fullName: nameCandidate || existing.profile.fullName || "",
@@ -490,6 +491,7 @@ function parseTextIntoResume(source, existing) {
     skills,
     languages,
     certificates,
+    interests,
   };
   const detected = {
     name: Boolean(profile.fullName),
@@ -502,6 +504,7 @@ function parseTextIntoResume(source, existing) {
     skills: skills.length,
     certificates: certificates.length,
     languages: languages.length,
+    interests: interests.length,
   };
   const sectionTotal = [detected.summary, detected.experience, detected.education, detected.projects, detected.skills, detected.certificates, detected.languages].filter(Boolean).length;
   const identityFound = detected.name || detected.email || detected.phone;
@@ -793,7 +796,7 @@ function validateResumeJson(payload, base) {
   if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) {
     throw new Error("This JSON file does not contain a resume object.");
   }
-  const hasResumeFields = ["profile", "experience", "education", "projects", "skills", "languages", "certificates"].some((key) => Object.prototype.hasOwnProperty.call(candidate, key));
+  const hasResumeFields = ["profile", "experience", "education", "projects", "skills", "languages", "certificates", "interests"].some((key) => Object.prototype.hasOwnProperty.call(candidate, key));
   if (!hasResumeFields) throw new Error("This JSON file is not a NovexaHub resume backup.");
   const resume = safeResume({
     ...candidate,
@@ -805,6 +808,7 @@ function validateResumeJson(payload, base) {
     skills: Array.isArray(candidate.skills) ? candidate.skills : [],
     languages: Array.isArray(candidate.languages) ? candidate.languages : [],
     certificates: Array.isArray(candidate.certificates) ? candidate.certificates : [],
+    interests: Array.isArray(candidate.interests) ? candidate.interests : [],
   });
   const detected = {
     name: Boolean(resume.profile.fullName),
