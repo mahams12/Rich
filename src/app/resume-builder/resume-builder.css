@@ -470,6 +470,8 @@
   .rb-footer > small { grid-column:auto; }
   .rb-modal { padding:25px 18px; }
 }
+body:has(.rb-page) > header, body:has(.rb-page) > footer { display:none !important; }
+body:has(.rb-page) a[href*="wa.me"] { display:none !important; }
 body.rb-resume-mode > header, body.rb-resume-mode > footer { display:none !important; }
 body.rb-resume-mode a[href*="wa.me"] { display:none !important; }
 @media print {
