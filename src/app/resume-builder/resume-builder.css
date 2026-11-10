@@ -252,7 +252,7 @@
 .rb-template-executive .rb-sidebar-block h3 { color:#e5a17f; font-size:9px; text-transform:uppercase; letter-spacing:.12em; }
 .rb-template-executive .rb-sidebar-block p { color:#e4eae5; font-size:9px; line-height:1.7; }
 .rb-template-executive .rb-resume-main { padding:52px 28px 52px 0; }
-.rb-template-executive .rb-resume-main > .rb-resume-heading { border:0; padding:0; }
+.rb-template-executive .rb-resume-main > .rb-resume-heading { display:none; border:0; padding:0; }
 .rb-template-executive .rb-resume-main > .rb-resume-heading h1, .rb-template-executive .rb-resume-main > .rb-resume-heading .rb-resume-photo { display:none; }
 .rb-template-executive .rb-resume-main .rb-resume-section:first-child { margin-top:0; }
 .rb-template-executive .rb-resume-main .rb-resume-section h3 { color:#263f38; }
