@@ -919,3 +919,66 @@ body:has(.rb-page.rb-full-editor) a[href*="wa.me"] { display:none !important; }
 
 .rb-template-folio .rb-resume-main .rb-skills-section,
 .rb-template-folio .rb-resume-main .rb-languages-section { display:none; }
+
+/* Resume import parsing diagnostics: show the actual extracted data, not only counts. */
+.rb-import-contact-preview {
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px 9px;
+  margin-top:10px;
+  padding-top:9px;
+  border-top:1px solid #e4e2d9;
+}
+.rb-import-contact-preview span {
+  color:#626b61;
+  font-size:8px;
+  overflow-wrap:anywhere;
+}
+.rb-import-records {
+  display:grid;
+  gap:7px;
+  margin-top:12px;
+  padding:10px 11px;
+  border:1px solid #e8e4dc;
+  border-radius:7px;
+  background:#fff;
+}
+.rb-import-records > b {
+  color:#465147;
+  font-size:8px;
+  letter-spacing:.04em;
+}
+.rb-import-records > div:not(.rb-import-skill-list) {
+  display:grid;
+  gap:3px;
+  padding-top:7px;
+  border-top:1px solid #f0eee8;
+}
+.rb-import-records strong {
+  color:#343b35;
+  font-size:9px;
+}
+.rb-import-records span {
+  color:#8b8f86;
+  font-size:8px;
+  line-height:1.5;
+  overflow-wrap:anywhere;
+}
+.rb-import-records p {
+  margin:0;
+  color:#727970;
+  font-size:8px;
+  line-height:1.5;
+}
+.rb-import-skill-list {
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+}
+.rb-import-skill-list span {
+  padding:4px 6px;
+  border:1px solid #e2e8e1;
+  border-radius:4px;
+  background:#f3f7f1;
+  color:#4d6851;
+}
