@@ -370,6 +370,11 @@ export default function ResumeBuilder() {
   const missingKeywords = suggestedKeywords.filter((word) => !resumeText.includes(word));
 
   useEffect(() => {
+    document.body.classList.add("rb-resume-mode");
+    return () => document.body.classList.remove("rb-resume-mode");
+  }, []);
+
+  useEffect(() => {
     try {
       const stored = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || "null");
       if (Array.isArray(stored) && stored.length) {
