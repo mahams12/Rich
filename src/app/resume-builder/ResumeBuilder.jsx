@@ -477,7 +477,7 @@ function parseTextIntoResume(source, existing) {
     line !== nameCandidate &&
     line.length >= 3 &&
     line.length <= 90 &&
-    !/@|https?:\/\/|linkedin\.com|\d{5,}/i.test(line) &&
+    !/@|https?:\/\/|linkedin\.com|github\.com|\d{5,}/i.test(line) &&
     !/\b(?:Pakistan|India|United States|United Kingdom|Canada|Australia|UAE|Dubai|Lahore|Karachi|Islamabad|Delhi|Mumbai)\b/i.test(line) &&
     !/^(location|city|address|phone|mobile|email)\s*[:：]/i.test(line) &&
     !DATE_RANGE_RE.test(line)
