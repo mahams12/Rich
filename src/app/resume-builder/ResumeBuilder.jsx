@@ -223,7 +223,12 @@ function parseEntryBlocks(lines, kind) {
   return blocks.map((items) => {
     const dateLine = items.find((line) => DATE_RANGE_RE.test(line));
     const dateText = dateLine ? dateLine.match(DATE_RANGE_RE)?.[0] || "" : "";
-    const content = items.filter((line) => line !== dateLine);
+    const dateParts = dateText.split(/\s*(?:-|–|—|to|until)\s*/i).filter(Boolean);
+    const startDate = dateParts[0] || dateText;
+    const endDate = dateParts[1] || "";
+    const content = items
+      .map((line) => line === dateLine ? line.replace(DATE_RANGE_RE, "").replace(/[|·•–—-]+$/g, "").trim() : line)
+      .filter(Boolean);
     const first = content.shift() || "";
     const parts = first.split(/\s+[|·•]\s+/).filter(Boolean);
     const role = parts[0] || first;
@@ -237,15 +242,15 @@ function parseEntryBlocks(lines, kind) {
         degree: [role, parts[2]].filter(Boolean).join(" — "),
         school: organization,
         location: "",
-        start: dateText,
-        end: "",
+        start: startDate,
+        end: endDate,
         details,
       };
     }
     if (kind === "project") {
       return { name: role, role: organization, link: "", details: [parts.slice(2).join(" · "), details].filter(Boolean).join("\n") };
     }
-    return { role, company: organization, location: "", start: dateText, end: "", details };
+    return { role, company: organization, location: "", start: startDate, end: endDate, details };
   }).filter((item) => Object.values(item).some((value) => String(value || "").trim()));
 }
 
