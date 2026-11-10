@@ -123,17 +123,14 @@ function safeResume(value) {
     ...base,
     ...value,
     template: ({
-      modern: "atelier",
-      classic: "monogram",
       minimal: "swiss",
       executive: "folio",
       tech: "signal",
       compact: "grid",
-    })[value.template] || (["professional", "chrono", "elegant", "circular", "modern", "luxe", "classic", "casual", "horizontal", "vertical", "atelier", "swiss", "folio", "signal", "monogram", "grid"].includes(value.template) ? value.template : "atelier"),
+    })[value.template] || (["professional", "chrono", "elegant", "circular", "modern", "luxe", "classic", "casual", "horizontal", "vertical", "atelier", "swiss", "folio", "signal", "monogram", "grid"].includes(value.template) ? value.template : "vertical"),
     profile: { ...base.profile, ...(value.profile || {}) },
     design: { ...DEFAULT_RESUME_DESIGN, ...(value.design || {}) },
     sectionOrder: Array.isArray(value.sectionOrder) ? value.sectionOrder : base.sectionOrder,
-    interests: Array.isArray(value.interests) ? value.interests : [],
     experience: Array.isArray(value.experience) ? value.experience : base.experience,
     education: Array.isArray(value.education) ? value.education : base.education,
     projects: Array.isArray(value.projects) ? value.projects : base.projects,
@@ -1040,11 +1037,14 @@ export default function ResumeBuilder() {
 
   const current = resumes.find((resume) => resume.id === activeId) || resumes[0];
   const profile = current?.profile || {};
+  const currentDesign = { ...DEFAULT_RESUME_DESIGN, ...(current?.design || {}) };
+  const currentSectionOrder = [...(current?.sectionOrder || ["profile", "experience", "education", "projects", "skills", "certificates", "languages", "interests"])];
   const suggestedKeywords = useMemo(() => extractKeywords(jobDescription), [jobDescription]);
   const resumeText = useMemo(() => {
     if (!current) return "";
     return JSON.stringify({
       profile: current.profile,
+      interests: current.interests,
       experience: current.experience,
       education: current.education,
       projects: current.projects,
@@ -1435,7 +1435,7 @@ export default function ResumeBuilder() {
               <div className="rb-templates-view">
                 <div className="rb-view-intro"><div><span className="rb-eyebrow rb-eyebrow-dark">THE RIGHT FIRST IMPRESSION</span><h3>Find a format that <em>fits your story.</em></h3><p>Each original design uses editable text sections and a consistent document structure. Choose one, then make it yours.</p></div><div className="rb-view-actions"><button className="rb-button rb-button-light" onClick={() => setView("editor")}>← Back to editor</button><button className="rb-button rb-button-accent" onClick={createResume}>＋ Start from scratch</button></div></div>
                 <div className="rb-template-grid">
-                  {TEMPLATE_OPTIONS.map((template) => <button key={template.id} className={"rb-template-card" + (current.template === template.id ? " selected" : "")} onClick={() => { updateCurrent((resume) => ({ ...resume, template: template.id })); setToast(template.name + " template selected."); setView("editor"); }}>
+                  {TEMPLATE_OPTIONS.map((template) => <button key={template.id} className={"rb-template-card" + (current.template === template.id ? " selected" : "")} onClick={() => { updateCurrent((resume) => ({ ...resume, template: template.id, accent: template.color })); setToast(template.name + " template selected. Customize the design while editing."); setShowDesignPanel(true); setView("editor"); }}>
                     <div className={"rb-template-thumb rb-thumb-" + template.id} style={{ "--thumb-accent": template.color }}><ResumePreview resume={{ ...TEMPLATE_PREVIEW, template: template.id, accent: template.color }} compact /></div>
                     <div className="rb-template-card-copy"><span className="rb-template-tag">{template.tag}</span><strong>{template.name}</strong><small>{template.note}</small><span className="rb-template-use">{current.template === template.id ? "Selected ✓" : "Use template →"}</span></div>
                   </button>)}
@@ -1445,7 +1445,43 @@ export default function ResumeBuilder() {
 
             {view === "editor" ? (
               <div className="rb-editor-view">
-                <div className="rb-editor-toolbar"><div className="rb-editor-titlebar"><button className="rb-back-workspace" onClick={() => setView("dashboard")}>← <span>All resumes</span></button><div className="rb-editor-titlegroup"><input className="rb-title-input" aria-label="Resume title" value={current.title || ""} onChange={(event) => updateCurrent((resume) => ({ ...resume, title: event.target.value }))} /><span className="rb-saved-status"><i /> Saved on this device</span></div></div><div className="rb-editor-toolbar-actions"><button className="rb-button rb-button-light" onClick={openImport}>↑ Import</button><button className="rb-button rb-button-light" onClick={() => setView("templates")}>Templates</button><button className="rb-button rb-button-light" onClick={() => setView("keywords")}>Keywords</button><button className="rb-button rb-button-dark" onClick={printResume}>↓ Export PDF</button></div></div>
+                <div className="rb-editor-toolbar"><div className="rb-editor-titlebar"><button className="rb-back-workspace" onClick={() => setView("dashboard")}>← <span>All resumes</span></button><div className="rb-editor-titlegroup"><input className="rb-title-input" aria-label="Resume title" value={current.title || ""} onChange={(event) => updateCurrent((resume) => ({ ...resume, title: event.target.value }))} /><span className="rb-saved-status"><i /> Saved on this device</span></div></div><div className="rb-editor-toolbar-actions"><button className="rb-button rb-button-light" onClick={openImport}>↑ Import</button><button className="rb-button rb-button-light" onClick={() => setView("templates")}>Templates</button><button className={"rb-button " + (showDesignPanel ? "rb-button-accent" : "rb-button-light")} onClick={() => setShowDesignPanel((open) => !open)}>✦ Customize</button><button className="rb-button rb-button-light" onClick={() => setView("keywords")}>Keywords</button><button className="rb-button rb-button-dark" onClick={printResume}>↓ Export PDF</button></div></div>
+                {showDesignPanel ? (
+                  <section className="rb-design-panel">
+                    <div className="rb-design-panel-head">
+                      <div><span className="rb-eyebrow rb-eyebrow-dark">LIVE DESIGN CONTROLS</span><h3>Make this template yours.</h3><p>Every change updates the preview instantly and is saved with this resume.</p></div>
+                      <button className="rb-design-close" onClick={() => setShowDesignPanel(false)} aria-label="Close design controls">×</button>
+                    </div>
+                    <div className="rb-design-controls">
+                      <div className="rb-design-control rb-design-colors">
+                        <label>Color palette</label>
+                        <div className="rb-design-swatches">
+                          {["#920b36", "#303846", "#315eaa", "#85b9b4", "#98402f", "#b9a39a", "#454545", "#71a98b", "#2e6fa5", "#a84f36", "#263f49", "#675044"].map((color) => (
+                            <button key={color} type="button" style={{ background: color }} className={current.accent === color ? "active" : ""} onClick={() => updateCurrent((resume) => ({ ...resume, accent: color }))} aria-label={"Use " + color} />
+                          ))}
+                          <label className="rb-custom-color" title="Choose a custom color"><input type="color" value={current.accent || "#920b36"} onChange={(event) => updateCurrent((resume) => ({ ...resume, accent: event.target.value }))} /><span>＋</span></label>
+                        </div>
+                      </div>
+                      <label className="rb-design-control"><span>Typography</span><select value={currentDesign.font} onChange={(event) => updateDesign("font", event.target.value)}><option value="sans">Modern sans</option><option value="humanist">Friendly sans</option><option value="serif">Editorial serif</option></select></label>
+                      <label className="rb-design-control"><span>Text size</span><select value={currentDesign.textSize} onChange={(event) => updateDesign("textSize", event.target.value)}><option value="small">Compact</option><option value="normal">Regular</option><option value="large">Large</option></select></label>
+                      <label className="rb-design-control"><span>Section spacing</span><select value={currentDesign.spacing} onChange={(event) => updateDesign("spacing", event.target.value)}><option value="compact">Compact</option><option value="comfortable">Comfortable</option><option value="spacious">Spacious</option></select></label>
+                      <label className="rb-design-control"><span>Photo shape</span><select value={currentDesign.photoShape} onChange={(event) => updateDesign("photoShape", event.target.value)}><option value="circle">Circle</option><option value="rounded">Rounded</option><option value="square">Square</option></select></label>
+                      <label className="rb-design-control"><span>Photo placement</span><select value={currentDesign.photoPosition} onChange={(event) => updateDesign("photoPosition", event.target.value)}><option value="sidebar">Sidebar</option><option value="header">Header</option></select></label>
+                      <label className="rb-design-control"><span>Sidebar width</span><select value={currentDesign.sidebarWidth} onChange={(event) => updateDesign("sidebarWidth", event.target.value)}><option value="28">Narrow · 28%</option><option value="32">Balanced · 32%</option><option value="34">Standard · 34%</option><option value="38">Wide · 38%</option></select></label>
+                      <label className="rb-design-control"><span>Section heading style</span><select value={currentDesign.sectionStyle} onChange={(event) => updateDesign("sectionStyle", event.target.value)}><option value="line">Underline</option><option value="block">Color blocks</option><option value="minimal">Minimal</option></select></label>
+                      <label className="rb-design-toggle"><input type="checkbox" checked={currentDesign.showPhoto} onChange={(event) => updateDesign("showPhoto", event.target.checked)} /><span>Show profile photo</span></label>
+                    </div>
+                    <div className="rb-design-order">
+                      <div><b>Section order</b><small>Move sections up or down in the resume preview.</small></div>
+                      <div className="rb-design-order-list">
+                        {currentSectionOrder.map((sectionId, index) => {
+                          const section = SECTION_ORDER_OPTIONS.find((item) => item.id === sectionId);
+                          return section ? <div className="rb-design-order-item" key={sectionId}><span>{String(index + 1).padStart(2, "0")}</span><b>{section.label}</b><div><button type="button" disabled={index === 0} onClick={() => moveSection(sectionId, -1)} aria-label={"Move " + section.label + " up"}>↑</button><button type="button" disabled={index === currentSectionOrder.length - 1} onClick={() => moveSection(sectionId, 1)} aria-label={"Move " + section.label + " down"}>↓</button></div></div> : null;
+                        })}
+                      </div>
+                    </div>
+                  </section>
+                ) : null}
                 <div className="rb-editor-layout">
                   <div className="rb-fields-panel">
                     <div className="rb-editor-progress"><div><b>Resume content</b><span>{[profile.fullName, profile.email, profile.summary].filter(Boolean).length}/3 essentials</span></div><div className="rb-progress-track"><i style={{ width: (Math.max(1, [profile.fullName, profile.email, profile.summary].filter(Boolean).length) / 3 * 100) + "%" }} /></div></div>
@@ -1465,6 +1501,7 @@ export default function ResumeBuilder() {
                     <details className="rb-form-section"><summary><span className="rb-form-icon">04</span><span><b>Projects</b><small>Selected work and portfolio links</small></span><i>⌄</i></summary><div className="rb-repeat-list">{current.projects.map((item, index) => <div className="rb-repeat-card" key={"projects-" + index}><div className="rb-repeat-card-head"><b>Project {index + 1}</b><button onClick={() => removeItem("projects", index)}>Remove</button></div><div className="rb-form-grid"><Field label="Project name" value={item.name} onChange={(value) => updateListItem("projects", index, "name", value)} /><Field label="Your role" value={item.role} onChange={(value) => updateListItem("projects", index, "role", value)} /><Field label="Project link" value={item.link} onChange={(value) => updateListItem("projects", index, "link", value)} /><Field label="What you built / achieved" value={item.details} onChange={(value) => updateListItem("projects", index, "details", value)} multiline /></div></div>)}<button className="rb-add-row" onClick={() => addItem("projects")}>＋ Add project</button></div></details>
                     <details className="rb-form-section"><summary><span className="rb-form-icon">05</span><span><b>Skills and languages</b><small>Tools, strengths and spoken languages</small></span><i>⌄</i></summary><div className="rb-form-grid"><Field label="Skills (separate with commas)" value={current.skills.join(", ")} onChange={(value) => updateCurrent((resume) => ({ ...resume, skills: value.split(",").map((item) => item.trim()).filter(Boolean) }))} multiline placeholder="React, JavaScript, communication..." /><Field label="Languages (separate with commas)" value={current.languages.join(", ")} onChange={(value) => updateCurrent((resume) => ({ ...resume, languages: value.split(",").map((item) => item.trim()).filter(Boolean) }))} /></div></details>
                     <details className="rb-form-section"><summary><span className="rb-form-icon">06</span><span><b>Certifications</b><small>Credentials and courses</small></span><i>⌄</i></summary><div className="rb-repeat-list">{current.certificates.map((item, index) => <div className="rb-repeat-card" key={"certificate-" + index}><div className="rb-repeat-card-head"><b>Certificate {index + 1}</b><button onClick={() => removeItem("certificates", index)}>Remove</button></div><div className="rb-form-grid"><Field label="Certificate" value={item.name} onChange={(value) => updateListItem("certificates", index, "name", value)} /><Field label="Issuer" value={item.issuer} onChange={(value) => updateListItem("certificates", index, "issuer", value)} /><Field label="Date" value={item.date} onChange={(value) => updateListItem("certificates", index, "date", value)} /><Field label="Credential link" value={item.link} onChange={(value) => updateListItem("certificates", index, "link", value)} /></div></div>)}<button className="rb-add-row" onClick={() => addItem("certificates")}>＋ Add certification</button></div></details>
+                    <details className="rb-form-section"><summary><span className="rb-form-icon">07</span><span><b>Hobbies and interests</b><small>Optional personal interests</small></span><i>⌄</i></summary><div className="rb-form-grid"><Field label="Interests (separate with commas)" value={(current.interests || []).join(", ")} onChange={(value) => updateCurrent((resume) => ({ ...resume, interests: value.split(",").map((item) => item.trim()).filter(Boolean) }))} multiline placeholder="Volunteering, reading, sports..." /></div></details>
                     <div className="rb-editor-bottom-actions"><button className="rb-button rb-button-light" onClick={exportBackup}>Export editable backup</button><button className="rb-button rb-button-accent" onClick={printResume}>Download PDF →</button></div>
                   </div>
                   <div className="rb-live-preview"><div className="rb-preview-head"><div><span className="rb-live-dot" /> LIVE PREVIEW</div><div className="rb-color-picker"><span>Accent</span>{["#b85c3d", "#1f4f4a", "#3857a6", "#7553a3", "#263342"].map((color) => <button key={color} style={{ background: color }} className={current.accent === color ? "active" : ""} aria-label={"Use " + color} onClick={() => updateCurrent((resume) => ({ ...resume, accent: color }))} />)}</div></div><div className="rb-preview-canvas"><ResumePreview resume={current} /></div><div className="rb-preview-foot"><span>Text remains selectable in the exported document.</span><button onClick={() => setView("keywords")}>Optimize keywords ↗</button></div></div>
