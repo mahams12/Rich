@@ -167,8 +167,8 @@ const SECTION_PATTERNS = [
 ];
 
 const MONTH_RE = "(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)";
-const DATE_POINT_RE = "(?:(?:" + MONTH_RE + ")\\\\s+)?(?:(?:19|20)\\\\d{2}|present|current|now)";
-const DATE_RANGE_RE = new RegExp(DATE_POINT_RE + "\\\\s*(?:-|–|—|to|until)\\\\s*" + DATE_POINT_RE, "i");
+const DATE_POINT_RE = "(?:(?:" + MONTH_RE + ")\\s+)?(?:(?:19|20)\\d{2}|present|current|now)";
+const DATE_RANGE_RE = new RegExp(DATE_POINT_RE + "\\s*(?:-|–|—|to|until)\\s*" + DATE_POINT_RE, "i");
 
 function normalizeResumeLines(source) {
   return String(source || "")
