@@ -25,6 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/video-editing",
     "/features",
     "/builder",
+    "/resume-builder",
     "/about",
     "/our-team",
     "/reviews",
@@ -37,7 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ].map((path) => ({
     url: `${site.url}${path}`,
     changeFrequency: "weekly" as const,
-    priority: path === "" ? 1 : path === "/blogs" ? 0.9 : 0.8,
+    priority: path === "" ? 1 : path === "/resume-builder" ? 0.95 : path === "/blogs" ? 0.9 : 0.8,
   }));
 
   // Match the published catalogue used by portfolio and project detail routes.
