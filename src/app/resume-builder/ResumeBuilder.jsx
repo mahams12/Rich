@@ -383,7 +383,11 @@ export default function ResumeBuilder() {
   const current = resumes.find((resume) => resume.id === activeId) || resumes[0];
   const profile = current?.profile || {};
   const suggestedKeywords = useMemo(() => extractKeywords(jobDescription), [jobDescription]);
-  const resumeText = useMemo(() => JSON.stringify(current || {}).toLowerCase(), [current]);
+  const resumeText = useMemo(() => {
+    if (!current) return "";
+    const { keywords, title, id, template, accent, ...resumeContent } = current;
+    return JSON.stringify(resumeContent).toLowerCase();
+  }, [current]);
   const matchedKeywords = suggestedKeywords.filter((word) => resumeText.includes(word));
   const missingKeywords = suggestedKeywords.filter((word) => !resumeText.includes(word));
 
