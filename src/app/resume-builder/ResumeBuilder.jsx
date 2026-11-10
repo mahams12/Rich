@@ -6,6 +6,16 @@ import "./resume-builder.css";
 const STORAGE_KEY = "novexahub-resume-studio-v1";
 
 const TEMPLATE_OPTIONS = [
+  { id: "professional", name: "Professional", note: "Polished charcoal header with a portrait panel", tag: "Corporate", color: "#303846" },
+  { id: "chrono", name: "Chrono", note: "A clean chronological career timeline", tag: "Timeline", color: "#315eaa" },
+  { id: "elegant", name: "Elegant", note: "Soft teal banner with a dark skills rail", tag: "Elegant", color: "#85b9b4" },
+  { id: "circular", name: "Circular", note: "Rounded blue profile header and airy content", tag: "Creative", color: "#315f96" },
+  { id: "modern", name: "Modern", note: "Warm rust sidebar with strong section labels", tag: "Popular", color: "#98402f" },
+  { id: "luxe", name: "Luxe", note: "Editorial whitespace and understated taupe", tag: "Premium", color: "#b9a39a" },
+  { id: "classic", name: "Classic", note: "Straightforward black-and-white structure", tag: "ATS-friendly", color: "#454545" },
+  { id: "casual", name: "Casual", note: "Fresh green profile column and soft details", tag: "Friendly", color: "#71a98b" },
+  { id: "horizontal", name: "Horizontal", note: "Blue top banner with balanced two-column feel", tag: "Clean", color: "#2e6fa5" },
+  { id: "vertical", name: "Vertical Timeline", note: "Burgundy sidebar and a connected career timeline", tag: "Reference style", color: "#920b36" },
   { id: "atelier", name: "Atelier", note: "Warm editorial design with confident type", tag: "Editorial", color: "#a84f36" },
   { id: "swiss", name: "Swiss Grid", note: "Precise alignment and quiet hierarchy", tag: "Structured", color: "#d04b32" },
   { id: "folio", name: "Folio", note: "A refined side rail for a fuller profile", tag: "Profile-led", color: "#263f49" },
@@ -13,6 +23,28 @@ const TEMPLATE_OPTIONS = [
   { id: "monogram", name: "Monogram", note: "Elegant typography with a classic rhythm", tag: "Timeless", color: "#675044" },
   { id: "grid", name: "Gridline", note: "Compact, information-dense and composed", tag: "Compact", color: "#3d5148" },
 ];
+
+const SECTION_ORDER_OPTIONS = [
+  { id: "profile", label: "Profile" },
+  { id: "experience", label: "Experience" },
+  { id: "education", label: "Education" },
+  { id: "projects", label: "Projects" },
+  { id: "skills", label: "Skills" },
+  { id: "certificates", label: "Certifications" },
+  { id: "languages", label: "Languages" },
+  { id: "interests", label: "Interests" },
+];
+
+const DEFAULT_RESUME_DESIGN = {
+  font: "sans",
+  textSize: "normal",
+  spacing: "comfortable",
+  photoShape: "circle",
+  showPhoto: true,
+  photoPosition: "header",
+  sectionStyle: "line",
+  sidebarWidth: "34",
+};
 
 const emptyExperience = { role: "", company: "", location: "", start: "", end: "", details: "" };
 const emptyEducation = { degree: "", school: "", location: "", start: "", end: "", details: "" };
@@ -24,7 +56,10 @@ function starterResume(id) {
     id: id || "starter",
     title: "My first resume",
     template: "atelier",
-    accent: "#b85c3d",
+    accent: "#920b36",
+    design: { ...DEFAULT_RESUME_DESIGN },
+    sectionOrder: ["profile", "experience", "education", "projects", "skills", "certificates", "languages", "interests"],
+    interests: [],
     profile: {
       fullName: "Jordan Lee",
       headline: "Software Engineer",
@@ -61,8 +96,11 @@ function blankImportResume(existing) {
   return {
     ...base,
     title: "Imported resume",
-    template: existing?.template || "modern",
-    accent: existing?.accent || "#b85c3d",
+    template: existing?.template || "vertical",
+    accent: existing?.accent || "#920b36",
+    design: { ...DEFAULT_RESUME_DESIGN, ...(existing?.design || {}) },
+    sectionOrder: [...(existing?.sectionOrder || DEFAULT_RESUME_DESIGN.sectionOrder || [])],
+    interests: [],
     profile: { fullName: "", headline: "", email: "", phone: "", location: "", website: "", linkedin: "", summary: "", photo: "" },
     experience: [],
     education: [],
@@ -91,6 +129,9 @@ function safeResume(value) {
       compact: "grid",
     })[value.template] || (["atelier", "swiss", "folio", "signal", "monogram", "grid"].includes(value.template) ? value.template : "atelier"),
     profile: { ...base.profile, ...(value.profile || {}) },
+    design: { ...DEFAULT_RESUME_DESIGN, ...(value.design || {}) },
+    sectionOrder: Array.isArray(value.sectionOrder) ? value.sectionOrder : base.sectionOrder,
+    interests: Array.isArray(value.interests) ? value.interests : [],
     experience: Array.isArray(value.experience) ? value.experience : base.experience,
     education: Array.isArray(value.education) ? value.education : base.education,
     projects: Array.isArray(value.projects) ? value.projects : base.projects,
