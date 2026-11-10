@@ -17,6 +17,7 @@ import { cn } from "@/lib/cn";
 const nav = [
   { href: "/portfolio", label: "Portfolio" },
   { href: "/blogs", label: "Blog" },
+  { href: "/resume-builder", label: "Resume Builder" },
   { href: "/services", label: "Services" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
