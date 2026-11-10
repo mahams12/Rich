@@ -160,107 +160,184 @@ function getValue(record, candidates) {
 
 const SECTION_PATTERNS = [
   ["summary", /^(professional summary|summary|profile|career profile|objective|career objective|about me|professional profile)$/i],
-  ["experience", /^(professional experience|work experience|employment history|work history|experience|employment)$/i],
-  ["education", /^(education|academic background|education and training|qualifications)$/i],
-  ["skills", /^(technical skills|core skills|key skills|skills|competencies|expertise)$/i],
-  ["projects", /^(selected projects|personal projects|academic projects|projects|portfolio)$/i],
-  ["certificates", /^(certifications|certificates|licenses and certifications|licenses|courses)$/i],
+  ["experience", /^(professional experience|work experience|employment history|work history|experience|employment|career history|work experience and internships)$/i],
+  ["education", /^(education|academic background|education and training|qualifications|academic qualifications)$/i],
+  ["skills", /^(technical skills|core skills|key skills|skills|competencies|expertise|technical expertise)$/i],
+  ["projects", /^(selected projects|personal projects|academic projects|projects|portfolio|key projects)$/i],
+  ["certificates", /^(certifications|certificates|licenses and certifications|licenses|courses|professional development)$/i],
   ["languages", /^(languages|language skills)$/i],
   ["contact", /^(contact|contact details|contact information|personal details|personal information)$/i],
 ];
 
 const MONTH_RE = "(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)";
-const DATE_POINT_RE = "(?:(?:" + MONTH_RE + ")\\s+)?(?:(?:19|20)\\d{2}|present|current|now)";
-const DATE_RANGE_RE = new RegExp(DATE_POINT_RE + "\\s*(?:-|–|—|to|until)\\s*" + DATE_POINT_RE, "i");
+const DATE_POINT_RE = "(?:" + MONTH_RE + "\\s+(?:19|20)\\d{2}|(?:0?[1-9]|1[0-2])[/.](?:19|20)?\\d{2}|(?:19|20)\\d{2}|present|current|now)";
+const DATE_RANGE_RE = new RegExp("(" + DATE_POINT_RE + ")\\s*(?:-|–|—|to|until|through)\\s*(" + DATE_POINT_RE + ")", "i");
+
+const ROLE_WORD_RE = /\b(engineer|developer|designer|manager|analyst|consultant|intern|specialist|coordinator|director|lead|architect|officer|teacher|accountant|technician|administrator|founder|owner|associate|executive|researcher|scientist|product|sales|marketing|support|nurse|doctor|lawyer|editor|operator|supervisor| strategist|representative|assistant|producer|writer|recruiter|trainer|auditor|planner|advisor|adviser)\b/i;
+const ACTION_START_RE = /^(built|developed|created|designed|led|managed|worked|responsible|using|used|improved|increased|reduced|delivered|collaborated|implemented|supported|coordinated|maintained|launched|achieved|conducted|provided|performed|assisted|analyzed|analysed|contributed|automated|deployed|integrated|optimized|optimised|organized|organised|executed|streamlined|oversaw|spearheaded|successfully|results-driven|detail-oriented)\b/i;
+const DEGREE_RE = /\b(b\.?\s?sc|bachelor|master|m\.?\s?sc|mba|ph\.?\s?d|doctorate|diploma|associate|matric|intermediate|fsc|a-level|o-level|bs\b|ms\b|bba\b|m\.?phil|certification)\b/i;
+const INSTITUTION_RE = /\b(university|college|school|institute|academy|polytechnic)\b/i;
 
 function normalizeResumeLines(source) {
   return String(source || "")
     .replace(/\u0000/g, " ")
+    .replace(/\u00ad/g, "")
     .replace(/\u00a0/g, " ")
+    .replace(/\uFB01/g, "fi")
+    .replace(/\uFB02/g, "fl")
+    .replace(/\f/g, "\n")
     .replace(/\r/g, "\n")
     .split("\n")
     .map((line) => line.replace(/\s+/g, " ").replace(/^[•●▪◦‣*·\-–—]\s*/, "").trim())
     .filter((line) => line && !/^(page\s+)?\d+\s*(of\s+\d+)?$/i.test(line));
 }
 
+function normalizeSectionHeading(line) {
+  return String(line || "")
+    .replace(/^\s*(?:\d+(?:\.\d+)*[.)]?\s*)/, "")
+    .replace(/^[#•▪◦*-]+\s*/, "")
+    .replace(/[:：|–—-]+$/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function splitResumeSections(lines) {
   const sections = { header: [] };
   let current = "header";
-  let sectionCount = 0;
   const headingLines = [];
   lines.forEach((line) => {
-    const normalized = line.replace(/[:：]\s*$/, "").trim();
+    const normalized = normalizeSectionHeading(line);
     const match = SECTION_PATTERNS.find(([, pattern]) => pattern.test(normalized));
     if (match) {
       current = match[0];
       if (!sections[current]) sections[current] = [];
-      sectionCount += 1;
       headingLines.push(normalized);
     } else {
       if (!sections[current]) sections[current] = [];
       sections[current].push(line);
     }
   });
-  return { sections, sectionCount, headingLines };
+  return { sections, headingLines };
+}
+
+function extractDateRange(line) {
+  const match = String(line || "").match(DATE_RANGE_RE);
+  if (!match) return null;
+  return { start: match[1].trim(), end: match[2].trim(), text: match[0] };
+}
+
+function isLikelyEntryTitle(line, kind) {
+  const value = String(line || "").replace(/^[•●▪◦‣*·]\s*/, "").trim();
+  if (value.length < 3 || value.length > 115 || ACTION_START_RE.test(value)) return false;
+  if (/[.!?]$/.test(value) || /@|https?:\/\//i.test(value)) return false;
+  if (extractDateRange(value)) return false;
+  if (kind === "education") return DEGREE_RE.test(value) || (INSTITUTION_RE.test(value) && value.length < 95);
+  if (kind === "project") return value.length <= 88 && !/^(technologies|tools|responsibilities|highlights|description)\s*:/i.test(value);
+  return ROLE_WORD_RE.test(value) || /\s+at\s+/i.test(value) || /\s+\|\s+/.test(value);
+}
+
+function splitRoleAndOrganization(value) {
+  const text = String(value || "").trim();
+  const pipeParts = text.split(/\s+[|·•]\s+/).map((part) => part.trim()).filter(Boolean);
+  if (pipeParts.length >= 2) return { title: pipeParts[0], organization: pipeParts[1], extras: pipeParts.slice(2) };
+  const atMatch = text.match(/^(.+?)\s+at\s+(.+)$/i);
+  if (atMatch) return { title: atMatch[1].trim(), organization: atMatch[2].trim(), extras: [] };
+  return { title: text, organization: "", extras: [] };
 }
 
 function parseEntryBlocks(lines, kind) {
-  const clean = lines.filter(Boolean);
+  const clean = (lines || []).map((line) => String(line || "").trim()).filter(Boolean);
   if (!clean.length) return [];
-  const blocks = [];
-  let block = [];
-  clean.forEach((line) => {
-    const isDateLine = DATE_RANGE_RE.test(line) || /^(19|20)\d{2}\s*[-–—]\s*(present|current|now)$/i.test(line);
-    if (isDateLine) {
-      block.push(line);
-      blocks.push(block);
-      block = [];
-      return;
-    }
-    if (block.length >= 4 && !/^[•●▪◦‣*·]/.test(line) && line.length < 85 && !/[.!?]$/.test(line)) {
-      blocks.push(block);
-      block = [];
-    }
-    block.push(line);
-  });
-  if (block.length) blocks.push(block);
+  const groups = [];
+  let current = [];
+  const hasDate = () => current.some((item) => item && typeof item === "object" && item.type === "date");
+  const currentText = () => current.filter((item) => typeof item === "string");
+  const currentHasTitle = () => currentText().some((line) => isLikelyEntryTitle(line, kind));
+  const flush = () => {
+    if (current.length) groups.push(current);
+    current = [];
+  };
 
-  return blocks.map((items) => {
-    const dateLine = items.find((line) => DATE_RANGE_RE.test(line));
-    const dateText = dateLine ? dateLine.match(DATE_RANGE_RE)?.[0] || "" : "";
-    const dateParts = dateText.split(/\s*(?:-|–|—|to|until)\s*/i).filter(Boolean);
-    const startDate = dateParts[0] || dateText;
-    const endDate = dateParts[1] || "";
-    const content = items
-      .map((line) => line === dateLine ? line.replace(DATE_RANGE_RE, "").replace(/[|·•–—-]+$/g, "").trim() : line)
-      .filter(Boolean);
-    const first = content.shift() || "";
-    const parts = first.split(/\s+[|·•]\s+/).filter(Boolean);
-    const role = parts[0] || first;
-    let organization = parts[1] || "";
-    if (!organization && content.length && content[0].length < 86 && !/[.!?]$/.test(content[0]) && !/^(built|developed|created|led|managed|designed|worked|responsible|using|used|improved|increased|reduced|delivered|collaborated|implemented)\b/i.test(content[0])) {
-      organization = content.shift() || "";
+  clean.forEach((line) => {
+    const date = extractDateRange(line);
+    const withoutDate = date ? line.replace(DATE_RANGE_RE, " ").replace(/[|·•–—-]+/g, " ").replace(/\s+/g, " ").trim() : line;
+    const newTitle = isLikelyEntryTitle(withoutDate, kind);
+    if (current.length && date && hasDate()) flush();
+    else if (current.length && newTitle && currentHasTitle() && (hasDate() || currentText().length >= 3)) flush();
+
+    if (date) {
+      current.push({ type: "date", start: date.start, end: date.end });
+      if (withoutDate) current.push(withoutDate);
+    } else {
+      current.push(line);
     }
-    const details = content.join("\n").replace(/^[•●▪◦‣*·]\s*/gm, "").trim();
+  });
+  flush();
+
+  return groups.map((group) => {
+    const date = group.find((item) => item && typeof item === "object" && item.type === "date");
+    const content = group.filter((item) => typeof item === "string")
+      .map((line) => line.replace(/^[•●▪◦‣*·]\s*/, "").trim())
+      .filter(Boolean);
+    const headerCandidates = content.filter((line) =>
+      line.length <= 115 &&
+      !ACTION_START_RE.test(line) &&
+      !/[.!?]$/.test(line) &&
+      !/^https?:\/\//i.test(line)
+    );
+    let titleLine = headerCandidates.find((line) => isLikelyEntryTitle(line, kind)) || headerCandidates[0] || content[0] || "";
+    const split = splitRoleAndOrganization(titleLine);
+    let organization = split.organization;
+    const remaining = content.filter((line) => line !== titleLine && !split.extras.includes(line));
+    const organizationIndex = remaining.findIndex((line) =>
+      line.length <= 95 &&
+      !ACTION_START_RE.test(line) &&
+      !/[.!?]$/.test(line) &&
+      !/^(remote|hybrid|on[- ]site|full[- ]time|part[- ]time)$/i.test(line) &&
+      !/^https?:\/\//i.test(line)
+    );
+    if (!organization && organizationIndex >= 0 && kind !== "project") {
+      const candidate = remaining[organizationIndex];
+      if (kind === "education" || !isLikelyEntryTitle(candidate, kind)) {
+        organization = candidate;
+        remaining.splice(organizationIndex, 1);
+      }
+    }
+    const details = remaining.join("\n").replace(/^[•●▪◦‣*·]\s*/gm, "").trim();
+
     if (kind === "education") {
+      const degreeLine = content.find((line) => DEGREE_RE.test(line)) || titleLine;
+      const schoolLine = content.find((line) => INSTITUTION_RE.test(line) && line !== degreeLine) || organization;
       return {
-        degree: [role, parts[2]].filter(Boolean).join(" — "),
-        school: organization,
+        degree: degreeLine,
+        school: schoolLine || "",
         location: "",
-        start: startDate,
-        end: endDate,
-        details,
+        start: date?.start || "",
+        end: date?.end || "",
+        details: content.filter((line) => line !== degreeLine && line !== schoolLine).join("\n").trim(),
       };
     }
     if (kind === "project") {
-      return { name: role, role: organization, link: "", details: [parts.slice(2).join(" · "), details].filter(Boolean).join("\n") };
+      return {
+        name: titleLine,
+        role: organization,
+        link: content.find((line) => /https?:\/\/|github\.com|gitlab\.com/i.test(line)) || "",
+        details,
+      };
     }
-    return { role, company: organization, location: "", start: startDate, end: endDate, details };
-  }).filter((item) => kind === "education"
-    ? Boolean(item.degree || item.school || item.details)
-    : kind === "project"
-      ? Boolean(item.name || item.details || item.link)
-      : Boolean(item.role || item.company || item.details));
+    return {
+      role: split.title || titleLine,
+      company: organization,
+      location: "",
+      start: date?.start || "",
+      end: date?.end || "",
+      details,
+    };
+  }).filter((item) => {
+    if (kind === "education") return Boolean(item.degree || item.school);
+    if (kind === "project") return Boolean(item.name || item.details);
+    return Boolean(item.role || item.company || item.details);
+  });
 }
 
 function parseTextIntoResume(source, existing) {
