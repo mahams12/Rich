@@ -41,7 +41,7 @@ const DEFAULT_RESUME_DESIGN = {
   spacing: "comfortable",
   photoShape: "circle",
   showPhoto: true,
-  photoPosition: "header",
+  photoPosition: "sidebar",
   sectionStyle: "line",
   sidebarWidth: "34",
 };
@@ -55,7 +55,7 @@ function starterResume(id) {
   return {
     id: id || "starter",
     title: "My first resume",
-    template: "atelier",
+    template: "vertical",
     accent: "#920b36",
     design: { ...DEFAULT_RESUME_DESIGN },
     sectionOrder: ["profile", "experience", "education", "projects", "skills", "certificates", "languages", "interests"],
@@ -854,6 +854,7 @@ function ResumePreview({ resume, compact }) {
   const showPhoto = design.showPhoto && Boolean(profile.photo);
   const photoPosition = design.photoPosition || (sidebarTemplates ? "sidebar" : "header");
   const photoClass = "rb-resume-photo rb-photo-" + (design.photoShape || "circle");
+  const avatarText = String(profile.fullName || "Your Name").split(/\s+/).map((part) => part[0]).filter(Boolean).slice(0, 2).join("").toUpperCase();
   const contactItems = [profile.email, profile.phone, profile.location, profile.website, profile.linkedin].filter(Boolean);
 
   const sectionNodes = {
@@ -940,7 +941,7 @@ function ResumePreview({ resume, compact }) {
 
   const header = (
     <header className={"rb-resume-heading" + (template === "professional" ? " rb-professional-header" : "")}>
-      {showPhoto && (!sidebarTemplates || photoPosition === "header") ? <img className={photoClass} src={profile.photo} alt="" /> : null}
+      {showPhoto && (!sidebarTemplates || photoPosition === "header") ? <img className={photoClass} src={profile.photo} alt="" /> : compact && template === "professional" ? <div className={"rb-resume-photo-placeholder " + (design.photoShape || "circle")}>{avatarText}</div> : null}
       <div className="rb-resume-heading-copy">
         <h1>{profile.fullName || "Your Name"}</h1>
         {profile.headline ? <p className="rb-resume-headline">{profile.headline}</p> : null}
@@ -954,7 +955,7 @@ function ResumePreview({ resume, compact }) {
 
   const sidebar = (
     <aside className={"rb-resume-sidebar" + (template === "vertical" ? " rb-vertical-sidebar" : "")}>
-      {showPhoto && sidebarTemplates && photoPosition === "sidebar" ? <img className={photoClass + " rb-sidebar-photo"} src={profile.photo} alt="" /> : null}
+      {showPhoto && sidebarTemplates && photoPosition === "sidebar" ? <img className={photoClass + " rb-sidebar-photo"} src={profile.photo} alt="" /> : compact && sidebarTemplates && photoPosition === "sidebar" ? <div className={"rb-resume-photo-placeholder rb-sidebar-photo " + (design.photoShape || "circle")}>{avatarText}</div> : null}
       {sidebarIdentity ? <>
         <h2>{profile.fullName || "Your Name"}</h2>
         {profile.headline ? <p className="rb-sidebar-role">{profile.headline}</p> : null}
