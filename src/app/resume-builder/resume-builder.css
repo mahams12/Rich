@@ -1780,3 +1780,57 @@ body:has(.rb-page.rb-full-editor) a[href*="wa.me"] { display:none !important; }
   .rb-template-professional .rb-professional-aside { grid-template-columns:1fr 1fr; padding:15px 0 0; border-top:1px solid #e0e2e5; border-left:0; }
   .rb-template-professional .rb-professional-aside > section:first-child { grid-column:1/-1; }
 }
+
+
+/* Custom palette is the source of truth for every template's main visual accent. */
+.rb-template-professional .rb-resume-heading { background:var(--resume-accent,#303846); }
+.rb-template-chrono { border-left-color:var(--resume-accent,#315eaa); }
+.rb-template-chrono .rb-resume-heading h1,
+.rb-template-chrono .rb-resume-section h3,
+.rb-template-chrono .rb-resume-entry-top span { color:var(--resume-accent,#315eaa); }
+.rb-template-chrono .rb-resume-entry { border-left-color:color-mix(in srgb,var(--resume-accent) 28%,white); }
+.rb-template-chrono .rb-resume-entry::before { background:var(--resume-accent); box-shadow:0 0 0 1px var(--resume-accent); }
+.rb-template-elegant { border-top-color:var(--resume-accent,#85b9b4); }
+.rb-template-elegant .rb-resume-sidebar h2,
+.rb-template-elegant .rb-sidebar-role,
+.rb-template-elegant .rb-sidebar-block h3 { color:color-mix(in srgb,var(--resume-accent) 54%,white); }
+.rb-template-elegant .rb-resume-main .rb-resume-section h3 { color:var(--resume-accent); }
+.rb-template-circular .rb-resume-sidebar { background:var(--resume-accent,#315f96); }
+.rb-template-circular .rb-resume-main .rb-resume-section h3,
+.rb-template-circular .rb-resume-sidebar .rb-sidebar-block h3 { color:var(--resume-accent); }
+.rb-template-modern .rb-resume-sidebar { background:var(--resume-accent,#98402f); }
+.rb-template-modern .rb-resume-main .rb-resume-section h3 { color:var(--resume-accent); }
+.rb-template-luxe .rb-resume-heading h1,
+.rb-template-luxe .rb-resume-section h3,
+.rb-template-luxe .rb-resume-subline { color:var(--resume-accent,#9e8176); }
+.rb-template-classic .rb-resume-section h3 { background:var(--resume-accent,#777); }
+.rb-template-casual .rb-resume-sidebar { background:var(--resume-accent,#71a98b); }
+.rb-template-casual .rb-resume-main .rb-resume-section h3 { color:var(--resume-accent); }
+.rb-template-horizontal { border-top-color:var(--resume-accent,#2e6fa5); }
+.rb-template-horizontal .rb-resume-heading { background:color-mix(in srgb,var(--resume-accent) 12%,white); }
+.rb-template-horizontal .rb-resume-heading h1,
+.rb-template-horizontal .rb-resume-section h3 { color:var(--resume-accent); }
+.rb-template-vertical .rb-resume-sidebar { background:var(--resume-accent,#920b36); }
+.rb-template-vertical .rb-resume-main .rb-resume-section { border-left-color:var(--resume-accent); }
+.rb-template-vertical .rb-resume-main .rb-resume-section::before { background:var(--resume-accent); }
+.rb-template-vertical .rb-resume-main .rb-resume-section h3,
+.rb-template-vertical .rb-resume-heading .rb-resume-headline { color:var(--resume-accent); }
+.rb-template-atelier { border-top-color:var(--resume-accent); }
+.rb-template-atelier::before { background:var(--resume-accent); }
+.rb-template-atelier .rb-resume-heading h1,
+.rb-template-atelier .rb-resume-headline,
+.rb-template-atelier .rb-resume-section h3 { color:var(--resume-accent); }
+.rb-template-swiss .rb-resume-headline,
+.rb-template-swiss .rb-resume-section h3 { color:var(--resume-accent); }
+.rb-template-folio .rb-resume-sidebar { background:color-mix(in srgb,var(--resume-accent) 70%,#263f49); }
+.rb-template-folio .rb-resume-main .rb-resume-section h3 { color:var(--resume-accent); }
+.rb-template-signal { border-top-color:var(--resume-accent); }
+.rb-template-signal .rb-resume-heading { background:color-mix(in srgb,var(--resume-accent) 62%,#18263c); }
+.rb-template-signal .rb-resume-section h3,
+.rb-template-signal .rb-resume-subline { color:var(--resume-accent); }
+.rb-template-monogram .rb-resume-heading h1,
+.rb-template-monogram .rb-resume-section h3,
+.rb-template-monogram .rb-resume-subline { color:var(--resume-accent); }
+.rb-template-gridline { border-top-color:var(--resume-accent); }
+.rb-template-gridline .rb-resume-section h3 { color:var(--resume-accent); background:color-mix(in srgb,var(--resume-accent) 12%,white); }
+.rb-template-gridline .rb-resume-subline { color:var(--resume-accent); }
