@@ -6,12 +6,12 @@ import "./resume-builder.css";
 const STORAGE_KEY = "novexahub-resume-studio-v1";
 
 const TEMPLATE_OPTIONS = [
-  { id: "modern", name: "Modern", note: "A crisp, confident layout", tag: "Popular", color: "#b85c3d" },
-  { id: "classic", name: "Classic", note: "Traditional and recruiter-friendly", tag: "ATS-first", color: "#334155" },
-  { id: "minimal", name: "Minimal", note: "Quiet typography, lots of space", tag: "Clean", color: "#64748b" },
-  { id: "executive", name: "Executive", note: "Strong profile with a side rail", tag: "Senior roles", color: "#1f4f4a" },
-  { id: "tech", name: "Tech Focus", note: "Projects and technical skills first", tag: "Technology", color: "#3857a6" },
-  { id: "compact", name: "Compact", note: "More detail without visual clutter", tag: "One-page", color: "#7553a3" },
+  { id: "atelier", name: "Atelier", note: "Warm editorial design with confident type", tag: "Editorial", color: "#a84f36" },
+  { id: "swiss", name: "Swiss Grid", note: "Precise alignment and quiet hierarchy", tag: "Structured", color: "#d04b32" },
+  { id: "folio", name: "Folio", note: "A refined side rail for a fuller profile", tag: "Profile-led", color: "#263f49" },
+  { id: "signal", name: "Signal", note: "High-contrast design for digital roles", tag: "Technology", color: "#2457a6" },
+  { id: "monogram", name: "Monogram", note: "Elegant typography with a classic rhythm", tag: "Timeless", color: "#675044" },
+  { id: "grid", name: "Gridline", note: "Compact, information-dense and composed", tag: "Compact", color: "#3d5148" },
 ];
 
 const emptyExperience = { role: "", company: "", location: "", start: "", end: "", details: "" };
@@ -23,7 +23,7 @@ function starterResume(id) {
   return {
     id: id || "starter",
     title: "My first resume",
-    template: "modern",
+    template: "atelier",
     accent: "#b85c3d",
     profile: {
       fullName: "Jordan Lee",
@@ -80,6 +80,14 @@ function safeResume(value) {
   return {
     ...base,
     ...value,
+    template: ({
+      modern: "atelier",
+      classic: "monogram",
+      minimal: "swiss",
+      executive: "folio",
+      tech: "signal",
+      compact: "grid",
+    })[value.template] || (["atelier", "swiss", "folio", "signal", "monogram", "grid"].includes(value.template) ? value.template : "atelier"),
     profile: { ...base.profile, ...(value.profile || {}) },
     experience: Array.isArray(value.experience) ? value.experience : base.experience,
     education: Array.isArray(value.education) ? value.education : base.education,
@@ -283,7 +291,7 @@ function ResumeSection({ title, children }) {
 function ResumePreview({ resume, compact }) {
   const profile = resume.profile || {};
   const template = resume.template || "modern";
-  const hasSidebar = template === "executive";
+  const hasSidebar = template === "folio";
   const main = (
     <>
       <header className="rb-resume-heading">
