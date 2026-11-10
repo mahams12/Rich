@@ -296,7 +296,7 @@ function parseEntryBlocks(lines, kind) {
 
   clean.forEach((line) => {
     const date = extractDateRange(line);
-    const withoutDate = date ? line.replace(DATE_RANGE_RE, " ").replace(/[·•]+/g, " ").replace(/\s+/g, " ").trim() : line;
+    const withoutDate = date ? line.replace(DATE_RANGE_RE, " ").replace(/[·•]+/g, " ").replace(/\s+/g, " ").replace(/[|]+$/g, "").trim() : line;
     const newTitle = isLikelyEntryTitle(withoutDate, kind);
     if (current.length && date && hasDate()) flush();
     else if (current.length && newTitle && currentHasTitle() && (hasDate() || currentText().length >= 3)) flush();
