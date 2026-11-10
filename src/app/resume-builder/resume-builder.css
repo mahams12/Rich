@@ -1545,3 +1545,150 @@ body:has(.rb-page.rb-full-editor) a[href*="wa.me"] { display:none !important; }
 .rb-template-professional .rb-template-thumb,
 .rb-template-card:has(.rb-template-vertical) { background:#e6e8eb; }
 .rb-template-use { font-size:8px; }
+
+
+/* Photo placement variants and monogram placeholders in the gallery. */
+.rb-resume-photo-placeholder {
+  display:grid;
+  flex:none;
+  place-items:center;
+  width:72px;
+  height:72px;
+  border:2px solid rgba(255,255,255,.75);
+  border-radius:50%;
+  color:#fff;
+  background:var(--resume-accent,#920b36);
+  font-family:Arial,sans-serif;
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:-.06em;
+}
+.rb-resume-photo-placeholder.square { border-radius:2px; }
+.rb-resume-photo-placeholder.rounded { border-radius:10px; }
+.rb-resume-sidebar-photo-header {
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  min-height:88px;
+  padding:12px 0;
+}
+.rb-resume-sidebar-photo-header .rb-resume-photo { width:74px; height:74px; object-fit:cover; }
+.rb-resume-sidebar-photo-header .rb-resume-photo-placeholder { width:74px; height:74px; }
+
+/* Professional has an inset portrait even without a user-uploaded photo. */
+.rb-template-professional .rb-resume-photo-placeholder {
+  width:112px;
+  height:112px;
+  border:4px solid rgba(255,255,255,.85);
+  background:#556072;
+  color:#fff;
+  font-size:30px;
+}
+.rb-template-vertical .rb-resume-photo-placeholder.rb-sidebar-photo {
+  width:100%;
+  max-width:150px;
+  height:auto;
+  aspect-ratio:1;
+  margin:0 auto 30px;
+  border-radius:3px !important;
+  background:#6d1735;
+}
+.rb-template-elegant .rb-resume-photo-placeholder.rb-sidebar-photo,
+.rb-template-modern .rb-resume-photo-placeholder.rb-sidebar-photo,
+.rb-template-casual .rb-resume-photo-placeholder.rb-sidebar-photo,
+.rb-template-circular .rb-resume-photo-placeholder.rb-sidebar-photo,
+.rb-template-folio .rb-resume-photo-placeholder.rb-sidebar-photo {
+  width:92px;
+  height:92px;
+  margin:0 0 20px;
+  border:3px solid rgba(255,255,255,.8);
+  background:rgba(255,255,255,.16);
+  font-size:24px;
+}
+
+/* Print dimensions for all split-column layouts. */
+@media print {
+  .rb-template-vertical,
+  .rb-template-elegant,
+  .rb-template-circular,
+  .rb-template-modern,
+  .rb-template-casual,
+  .rb-template-folio {
+    grid-template-columns:34% 1fr !important;
+    padding:0 !important;
+    gap:0 !important;
+  }
+  .rb-template-vertical .rb-resume-sidebar,
+  .rb-template-elegant .rb-resume-sidebar,
+  .rb-template-circular .rb-resume-sidebar,
+  .rb-template-modern .rb-resume-sidebar,
+  .rb-template-casual .rb-resume-sidebar,
+  .rb-template-folio .rb-resume-sidebar { padding:12mm 6mm !important; }
+  .rb-template-vertical .rb-resume-main,
+  .rb-template-elegant .rb-resume-main,
+  .rb-template-circular .rb-resume-main,
+  .rb-template-modern .rb-resume-main,
+  .rb-template-casual .rb-resume-main,
+  .rb-template-folio .rb-resume-main { padding:12mm 8mm !important; }
+  .rb-template-professional .rb-resume-heading { margin:0 -17mm 8mm !important; padding:10mm 17mm !important; }
+  .rb-template-horizontal .rb-resume-heading { margin:0 -17mm 8mm !important; padding:10mm 17mm !important; }
+}
+
+/* Tablet and phone: gallery and design controls collapse without clipping. */
+@media (max-width:1100px) {
+  .rb-template-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .rb-design-controls { grid-template-columns:repeat(4,minmax(100px,1fr)); }
+  .rb-design-colors { grid-column:span 2; }
+}
+@media (max-width:800px) {
+  .rb-template-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .rb-design-panel { max-height:none; overflow:visible; }
+  .rb-design-controls { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .rb-design-colors { grid-column:span 3; }
+  .rb-design-order { grid-template-columns:1fr; }
+  .rb-design-order-list { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .rb-full-editor .rb-design-panel { margin-top:9px; }
+}
+@media (max-width:560px) {
+  .rb-template-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .rb-design-panel { padding:12px; }
+  .rb-design-controls { grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+  .rb-design-colors { grid-column:span 2; }
+  .rb-design-order-list { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .rb-template-professional { padding:0 23px 28px; }
+  .rb-template-professional .rb-resume-heading { margin:0 -23px 18px; padding:22px 23px; gap:12px; min-height:0; }
+  .rb-template-professional .rb-resume-heading h1 { font-size:19px; }
+  .rb-template-professional .rb-resume-heading .rb-resume-photo,
+  .rb-template-professional .rb-resume-photo-placeholder { width:62px; height:62px; font-size:17px; }
+  .rb-template-chrono { padding:28px 23px; border-left-width:6px; }
+  .rb-template-elegant,
+  .rb-template-circular,
+  .rb-template-modern,
+  .rb-template-casual,
+  .rb-template-folio,
+  .rb-template-vertical { grid-template-columns:34% 1fr; }
+  .rb-template-elegant .rb-resume-sidebar,
+  .rb-template-circular .rb-resume-sidebar,
+  .rb-template-modern .rb-resume-sidebar,
+  .rb-template-casual .rb-resume-sidebar,
+  .rb-template-folio .rb-resume-sidebar { padding:25px 11px; }
+  .rb-template-elegant .rb-resume-main,
+  .rb-template-circular .rb-resume-main,
+  .rb-template-modern .rb-resume-main,
+  .rb-template-casual .rb-resume-main,
+  .rb-template-folio .rb-resume-main { padding:25px 14px; }
+  .rb-template-vertical .rb-resume-sidebar { padding:24px 10px; }
+  .rb-template-vertical .rb-resume-main { padding:25px 14px; }
+  .rb-template-vertical .rb-resume-heading h1 { font-size:17px; }
+  .rb-template-vertical .rb-sidebar-contact,
+  .rb-template-vertical .rb-sidebar-block li { font-size:6.5px; }
+  .rb-template-vertical .rb-sidebar-block h3 { font-size:8px; }
+  .rb-template-vertical .rb-resume-section { padding-left:10px; }
+  .rb-template-vertical .rb-resume-section h3 { font-size:8px; }
+  .rb-template-horizontal { padding:0 23px 28px; }
+  .rb-template-horizontal .rb-resume-heading { margin:0 -23px 18px; padding:23px; }
+  .rb-template-horizontal .rb-resume-main { grid-template-columns:1fr; }
+  .rb-template-luxe { padding:30px 23px; }
+  .rb-template-luxe .rb-resume-heading h1 { font-size:21px; }
+  .rb-template-classic { padding:27px 22px; }
+}
