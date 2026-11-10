@@ -592,9 +592,9 @@ function validateResumeJson(payload, base) {
     },
   };
 }
-function ResumeSection({ title, children }) {
+function ResumeSection({ title, children, className = "" }) {
   return (
-    <section className="rb-resume-section">
+    <section className={"rb-resume-section " + className}>
       <h3>{title}</h3>
       {children}
     </section>
@@ -645,11 +645,11 @@ function ResumePreview({ resume, compact }) {
           </div>
         ))}
       </ResumeSection> : null}
-      {resume.skills?.filter(Boolean).length ? <ResumeSection title="Skills"><div className="rb-resume-skill-list">{resume.skills.filter(Boolean).map((skill, index) => <span key={skill + "-" + index}>{skill}</span>)}</div></ResumeSection> : null}
+      {resume.skills?.filter(Boolean).length ? <ResumeSection title="Skills" className="rb-skills-section"><div className="rb-resume-skill-list">{resume.skills.filter(Boolean).map((skill, index) => <span key={skill + "-" + index}>{skill}</span>)}</div></ResumeSection> : null}
       {resume.certificates?.some((item) => item.name) ? <ResumeSection title="Certifications">
         {resume.certificates.filter((item) => item.name).map((item, index) => <div className="rb-resume-entry" key={"cert-" + index}><div className="rb-resume-entry-top"><strong>{item.name}</strong><span>{item.date}</span></div><div className="rb-resume-subline">{item.issuer}</div></div>)}
       </ResumeSection> : null}
-      {resume.languages?.filter(Boolean).length ? <ResumeSection title="Languages"><p>{resume.languages.filter(Boolean).join("  ·  ")}</p></ResumeSection> : null}
+      {resume.languages?.filter(Boolean).length ? <ResumeSection title="Languages" className="rb-languages-section"><p>{resume.languages.filter(Boolean).join("  ·  ")}</p></ResumeSection> : null}
     </>
   );
   const side = (
