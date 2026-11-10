@@ -268,9 +268,14 @@ function parseTextIntoResume(source, existing) {
   const { sections, headingLines } = splitResumeSections(lines);
   const header = sections.header || [];
   const emailMatch = raw.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
-  const phoneMatch = raw.match(/(?:\+\d{1,3}[\s.-]?)?(?:\(?\d{2,4}\)?[\s.-]?)?[\d\s().-]{7,}/);
+  const phoneCandidates = raw.match(/(?:\+\d{1,3}[\s.-]?)?(?:\(?\d{2,4}\)?[\s.-]?)?\d[\d\s().-]{5,}\d/g) || [];
+  const phoneMatch = phoneCandidates.find((candidate) => {
+    const digits = candidate.replace(/\D/g, "");
+    return digits.length >= 8 && digits.length <= 15 && !DATE_RANGE_RE.test(candidate);
+  });
   const linkedinMatch = raw.match(/(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[A-Z0-9-_%]+/i);
-  const websiteMatch = raw.match(/(?:https?:\/\/)?(?:www\.)?[A-Z0-9-]+\.(?:com|net|org|io|dev|co|me|app)(?:\/[^\s]*)?/i);
+  const websiteSource = emailMatch ? raw.replace(emailMatch[0], " ") : raw;
+  const websiteMatch = websiteSource.match(/(?:https?:\/\/)?(?:www\.)?[A-Z0-9-]+\.(?:com|net|org|io|dev|co|me|app)(?:\/[^\s]*)?/i);
   const nameCandidate = header.find((line) =>
     line.length >= 3 &&
     line.length <= 58 &&
