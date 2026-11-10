@@ -1,12 +1,12 @@
 # NovexaHub Resume Studio
 
-Public route: \`/resume-builder\`
+Public route: `/resume-builder`
 
 ## V1 architecture
 
 Resume Studio is a browser-first React experience inside the existing Next.js App Router application. It intentionally has no resume API, account system, database or file-storage dependency in V1.
 
-- Resume drafts and settings are stored in \`localStorage\` under \`novexahub-resume-studio-v1\`.
+- Resume drafts and settings are stored in `localStorage` under `novexahub-resume-studio-v1`.
 - PDF export uses the browser print dialog. Choose **Save as PDF** to create a selectable-text A4 document.
 - Editable JSON backup is available for moving a resume between browsers or devices.
 - PDF and DOCX text extraction run in the browser using PDF.js and Mammoth, loaded on demand from cdnjs only when a user selects a matching file.
@@ -30,9 +30,9 @@ Official references:
 
 The route includes:
 - Page-specific title, description, canonical URL, keywords, Open Graph and Twitter metadata.
-- \`SoftwareApplication\` and FAQPage JSON-LD.
+- `SoftwareApplication` and FAQPage JSON-LD.
 - A human-readable feature explanation and FAQ content.
-- Inclusion in \`src/app/sitemap.ts\`.
+- Inclusion in `src/app/sitemap.ts`.
 - Accessible labels, semantic sections, keyboard focus styles and reduced-motion support.
 
 SEO implementation improves crawlability and topical relevance but cannot guarantee a particular search position. Performance, usefulness, competition, backlinks and ongoing content quality also affect rankings.
@@ -41,14 +41,14 @@ SEO implementation improves crawlability and topical relevance but cannot guaran
 
 The route uses the repository's existing Next.js + OpenNext Cloudflare Workers build. No new build dependency or environment variable is required for V1.
 
-\`\`\`bash
+```bash
 npm install
 npm run dev
 npm run build
 npm run preview
-\`\`\`
+```
 
-The existing GitHub-to-Cloudflare production pipeline deploys commits on the configured production branch. Once deployed, the route is available at \`https://<your-domain>/resume-builder\`.
+The existing GitHub-to-Cloudflare production pipeline deploys commits on the configured production branch. Once deployed, the route is available at `https://<your-domain>/resume-builder`.
 
 ## Planned serverless evolution (not enabled in V1)
 
@@ -56,10 +56,10 @@ Do not enable these endpoints until the corresponding product capability and pri
 
 | Capability | Planned Worker endpoint | Notes |
 |---|---|---|
-| LinkedIn OAuth | \`/api/v1/integrations/linkedin/start\` and \`/callback\` | Requires an approved LinkedIn product and scopes. Keep client secrets and access tokens in Worker Secrets; use a short-lived, single-use OAuth state. |
-| Cloud resume sync | \`/api/v1/resumes\` | Add sign-in and Cloudflare D1 only when users need multi-device sync. Encrypt sensitive fields where appropriate and provide deletion/export controls. |
-| Advanced document parsing | \`/api/v1/resumes/parse\` | Prefer client-side parsing; use short-lived object storage only if large-document server parsing becomes necessary. |
-| Keyword analysis | \`/api/v1/keywords/analyze\` | V1 is deterministic and local. A future AI-assisted endpoint must be opt-in and must not add invented experience or skills. |
-| ATS readiness | \`/api/v1/ats/score\` | Show the criteria and limitations. Never present a heuristic as an employer's real ATS score or promise selection. |
+| LinkedIn OAuth | `/api/v1/integrations/linkedin/start` and `/callback` | Requires an approved LinkedIn product and scopes. Keep client secrets and access tokens in Worker Secrets; use a short-lived, single-use OAuth state. |
+| Cloud resume sync | `/api/v1/resumes` | Add sign-in and Cloudflare D1 only when users need multi-device sync. Encrypt sensitive fields where appropriate and provide deletion/export controls. |
+| Advanced document parsing | `/api/v1/resumes/parse` | Prefer client-side parsing; use short-lived object storage only if large-document server parsing becomes necessary. |
+| Keyword analysis | `/api/v1/keywords/analyze` | V1 is deterministic and local. A future AI-assisted endpoint must be opt-in and must not add invented experience or skills. |
+| ATS readiness | `/api/v1/ats/score` | Show the criteria and limitations. Never present a heuristic as an employer's real ATS score or promise selection. |
 
 Keep the resume data model independent of the view/template. Templates should render the same canonical resume object so new designs do not require separate storage schemas.
