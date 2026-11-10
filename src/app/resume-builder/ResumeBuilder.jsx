@@ -385,8 +385,15 @@ export default function ResumeBuilder() {
   const suggestedKeywords = useMemo(() => extractKeywords(jobDescription), [jobDescription]);
   const resumeText = useMemo(() => {
     if (!current) return "";
-    const { keywords, title, id, template, accent, ...resumeContent } = current;
-    return JSON.stringify(resumeContent).toLowerCase();
+    return JSON.stringify({
+      profile: current.profile,
+      experience: current.experience,
+      education: current.education,
+      projects: current.projects,
+      skills: current.skills,
+      languages: current.languages,
+      certificates: current.certificates,
+    }).toLowerCase();
   }, [current]);
   const matchedKeywords = suggestedKeywords.filter((word) => resumeText.includes(word));
   const missingKeywords = suggestedKeywords.filter((word) => !resumeText.includes(word));
