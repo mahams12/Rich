@@ -166,6 +166,7 @@ const SECTION_PATTERNS = [
   ["projects", /^(selected projects|personal projects|academic projects|projects|portfolio)$/i],
   ["certificates", /^(certifications|certificates|licenses and certifications|licenses|courses)$/i],
   ["languages", /^(languages|language skills)$/i],
+  ["contact", /^(contact|contact details|contact information|personal details|personal information)$/i],
 ];
 
 const MONTH_RE = "(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)";
@@ -266,7 +267,8 @@ function parseTextIntoResume(source, existing) {
   const raw = String(source || "").replace(/\u0000/g, " ").trim();
   const lines = normalizeResumeLines(raw);
   const { sections, headingLines } = splitResumeSections(lines);
-  const header = sections.header || [];
+  const header = [...(sections.header || []), ...(sections.contact || [])];
+  const explicitName = raw.match(/(?:^|\n)\s*(?:full\s+name|name)\s*[:：-]\s*([^\n]+)/i);
   const emailMatch = raw.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
   const phoneCandidates = raw.match(/(?:\+\d{1,3}[\s.-]?)?(?:\(?\d{2,4}\)?[\s.-]?)?\d[\d\s().-]{5,}\d/g) || [];
   const phoneMatch = phoneCandidates.find((candidate) => {
@@ -276,11 +278,11 @@ function parseTextIntoResume(source, existing) {
   const linkedinMatch = raw.match(/(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[A-Z0-9-_%]+/i);
   const websiteSource = raw.replace(emailMatch?.[0] || "", " ").replace(linkedinMatch?.[0] || "", " ");
   const websiteMatch = websiteSource.match(/(?:https?:\/\/)?(?:www\.)?[A-Z0-9-]+\.(?:com|net|org|io|dev|co|me|app)(?:\/[^\s]*)?/i);
-  const nameCandidate = header.find((line) =>
+  const nameCandidate = (explicitName?.[1] || "").trim() || header.find((line) =>
     line.length >= 3 &&
     line.length <= 58 &&
     !/@|https?:\/\/|linkedin\.com|\d{5,}/i.test(line) &&
-    !/^(resume|curriculum vitae|curriculum vit[aá]e|cv|profile|personal details)$/i.test(line) &&
+    !/^(resume|curriculum vitae|curriculum vit[aá]e|cv|profile|personal details|contact|contact details|contact information|personal information)$/i.test(line) &&
     !DATE_RANGE_RE.test(line)
   ) || "";
   const headlineCandidate = header.find((line) =>
