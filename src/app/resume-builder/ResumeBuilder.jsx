@@ -458,12 +458,19 @@ function parseProjectEntries(lines) {
   let current = null;
   let alsoBuilt = false;
   let alsoBuiltBuffer = "";
+  let skipLighthouseMetrics = false;
+
   const flush = () => {
     if (current && (current.name || current.details.length)) {
-      projects.push({ name: current.name, role: current.role, link: current.link, details: current.details.join("\n").trim() });
+      const name = String(current.name || "").trim();
+      const details = current.details.join("\n").trim();
+      if (name && !/^lighthouse averages?\b/i.test(name)) {
+        projects.push({ name, role: current.role || "", link: current.link || "", details });
+      }
     }
     current = null;
   };
+
   const flushAlsoBuilt = () => {
     if (!alsoBuiltBuffer.trim()) return;
     splitOutsideParentheses(alsoBuiltBuffer, /[,;]+/).forEach((entry) => {
@@ -471,7 +478,7 @@ function parseProjectEntries(lines) {
       if (!value) return;
       const status = value.match(/^(.*?)(\s*\((?:contributed|in development|under development)[^)]*\))$/i);
       const name = (status ? status[1] : value).trim();
-      if (!name) return;
+      if (!name || /^lighthouse averages?\b/i.test(name)) return;
       projects.push({
         name,
         role: "",
@@ -483,25 +490,69 @@ function parseProjectEntries(lines) {
     alsoBuilt = false;
   };
 
+  const appendDetailsAndLinks = (line) => {
+    if (!current || !line) return;
+    const urls = line.match(/https?:\/\/[^\s|]+|(?:www\.)?github\.com\/[^\s|]+|(?:www\.)?gitlab\.com\/[^\s|]+/ig) || [];
+    if (urls.length) {
+      current.link = [current.link, ...urls].filter(Boolean).join(" | ");
+      const withoutUrls = line
+        .replace(/https?:\/\/[^\s|]+|(?:www\.)?github\.com\/[^\s|]+|(?:www\.)?gitlab\.com\/[^\s|]+/ig, "")
+        .replace(/\s*\|\s*/g, " ")
+        .trim();
+      if (withoutUrls) current.details.push(withoutUrls);
+    } else {
+      current.details.push(line);
+    }
+  };
+
+  const isProjectName = (value) => {
+    const name = String(value || "").trim();
+    const words = name.split(/\s+/).filter(Boolean).length;
+    if (name.length < 2 || name.length > 90 || words > 9) return false;
+    if (/^(?:lighthouse|performance|accessibility|best practices|seo|also built)\b/i.test(name)) return false;
+    if (/^(?:built|developed|created|designed|implemented|used|using|collaborated|delivered|designed and developed)\b/i.test(name)) return false;
+    if (/@|https?:\/\/|[.!?]$/.test(name)) return false;
+    return true;
+  };
+
   clean.forEach((rawLine) => {
     const line = rawLine.replace(/^[•●▪◦‣*·]\s*/, "").trim();
-    const alsoBuiltHeading = line.match(/^also built\s*:?[ \t]*(.*)$/i);
+    if (!line) return;
+
+    const alsoBuiltHeading = line.match(/^also\s+built\s*:?[ \t]*(.*)$/i);
     if (alsoBuiltHeading) {
       flush();
       flushAlsoBuilt();
+      skipLighthouseMetrics = false;
       alsoBuilt = true;
       alsoBuiltBuffer = alsoBuiltHeading[1].trim();
       return;
     }
 
+    // Lighthouse/SEO score summaries are metrics, not portfolio projects.
+    if (/^lighthouse\s+averages?\b/i.test(line)) {
+      flush();
+      skipLighthouseMetrics = true;
+      return;
+    }
+    if (skipLighthouseMetrics) return;
+
+    // "Also built" is a terminal comma-separated list. Collect every wrapped
+    // line until the end of this already-isolated Projects section.
     if (alsoBuilt) {
-      // The "Also built" list may wrap across PDF/DOCX lines. Keep collecting
-      // until a real project heading starts, then split the combined list.
-      if (!isLikelyEntryTitle(line, "project")) {
-        alsoBuiltBuffer = [alsoBuiltBuffer, line].filter(Boolean).join(" ");
-        return;
-      }
-      flushAlsoBuilt();
+      alsoBuiltBuffer = [alsoBuiltBuffer, line].filter(Boolean).join(" ");
+      return;
+    }
+
+    // Many CVs place the project name and its description on one bullet:
+    // "SafeApp: Flutter secure messaging app ...". Treat the short prefix as
+    // the project name and retain the complete text after the colon.
+    const inline = line.match(/^([^:：]{2,90})\s*[:：]\s*(.+)$/);
+    if (inline && isProjectName(inline[1])) {
+      flush();
+      current = { name: inline[1].trim(), role: "", link: "", details: [] };
+      appendDetailsAndLinks(inline[2].trim());
+      return;
     }
 
     const stackParts = line.split(/\s*—\s*/);
@@ -516,18 +567,21 @@ function parseProjectEntries(lines) {
       };
       return;
     }
-    if (!current) return;
 
-    const urls = line.match(/https?:\/\/[^\s|]+|(?:www\.)?github\.com\/[^\s|]+|(?:www\.)?gitlab\.com\/[^\s|]+/ig) || [];
-    if (urls.length) {
-      current.link = urls.join(" | ");
-      const withoutUrls = line.replace(/https?:\/\/[^\s|]+|(?:www\.)?github\.com\/[^\s|]+|(?:www\.)?gitlab\.com\/[^\s|]+/ig, "").replace(/\s*\|\s*/g, " ").trim();
-      if (withoutUrls) current.details.push(withoutUrls);
-    } else current.details.push(line);
+    if (current) appendDetailsAndLinks(line);
   });
+
   flush();
   flushAlsoBuilt();
-  return projects.slice(0, 20);
+
+  // De-duplicate accidental repeated headings while preserving source order.
+  const seen = new Set();
+  return projects.filter((project) => {
+    const key = project.name.toLowerCase().replace(/\s+/g, " ").trim();
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).slice(0, 30);
 }
 
 function extractGithubProfileUrl(source) {
