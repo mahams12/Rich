@@ -59,7 +59,7 @@ function starterResume(id) {
     template: "vertical",
     accent: "#920b36",
     design: { ...DEFAULT_RESUME_DESIGN },
-    sectionOrder: ["education", "experience", "projects", "profile", "skills", "certificates", "interests", "languages"],
+    sectionOrder: ["education", "experience", "projects", "profile", "skills", "certificates", "interests", "languages", "achievements"],
     interests: [],
     profile: {
       fullName: "Jordan Lee",
@@ -672,6 +672,77 @@ function loadScript(src, id, globalName) {
   });
 }
 
+async function pdfImageObjectToDataUrl(image) {
+  if (!image) return "";
+  const width = Number(image.width || image.bitmap?.width || 0);
+  const height = Number(image.height || image.bitmap?.height || 0);
+  if (!width || !height || width * height < 10000) return "";
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext("2d", { willReadFrequently: true });
+  if (!context) return "";
+  const drawable = image.bitmap || image;
+  if (
+    (typeof ImageBitmap !== "undefined" && drawable instanceof ImageBitmap) ||
+    (typeof HTMLImageElement !== "undefined" && drawable instanceof HTMLImageElement) ||
+    (typeof HTMLCanvasElement !== "undefined" && drawable instanceof HTMLCanvasElement)
+  ) {
+    context.drawImage(drawable, 0, 0, width, height);
+    return canvas.toDataURL("image/jpeg", 0.88);
+  }
+  const data = image.data || image.bytes;
+  if (!data || typeof data.length !== "number") return "";
+  const rgba = new Uint8ClampedArray(width * height * 4);
+  if (data.length === width * height * 4) rgba.set(data);
+  else if (data.length === width * height * 3) {
+    for (let source = 0, target = 0; source < data.length; source += 3, target += 4) {
+      rgba[target] = data[source]; rgba[target + 1] = data[source + 1]; rgba[target + 2] = data[source + 2]; rgba[target + 3] = 255;
+    }
+  } else if (data.length === width * height) {
+    for (let source = 0, target = 0; source < data.length; source += 1, target += 4) {
+      rgba[target] = data[source]; rgba[target + 1] = data[source]; rgba[target + 2] = data[source]; rgba[target + 3] = 255;
+    }
+  } else return "";
+  context.putImageData(new ImageData(rgba, width, height), 0, 0);
+  return canvas.toDataURL("image/jpeg", 0.88);
+}
+
+async function extractPdfEmbeddedPhoto(documentPdf, pdfjs) {
+  const imageOps = new Set([
+    pdfjs.OPS.paintImageXObject,
+    pdfjs.OPS.paintJpegXObject,
+    pdfjs.OPS.paintInlineImageXObject,
+  ].filter((value) => value !== undefined));
+  const candidates = [];
+  for (let pageNumber = 1; pageNumber <= documentPdf.numPages; pageNumber += 1) {
+    const page = await documentPdf.getPage(pageNumber);
+    const operations = await page.getOperatorList();
+    const seen = new Set();
+    for (let index = 0; index < operations.fnArray.length; index += 1) {
+      if (!imageOps.has(operations.fnArray[index])) continue;
+      const objectId = operations.argsArray[index]?.[0];
+      if (typeof objectId !== "string" || seen.has(objectId)) continue;
+      seen.add(objectId);
+      try {
+        const image = await new Promise((resolve) => {
+          if (page.objs.has(objectId)) resolve(page.objs.get(objectId));
+          else page.objs.get(objectId, resolve);
+        });
+        const dataUrl = await pdfImageObjectToDataUrl(image);
+        if (!dataUrl) continue;
+        const width = Number(image.width || image.bitmap?.width || 0);
+        const height = Number(image.height || image.bitmap?.height || 0);
+        const ratio = width / Math.max(1, height);
+        const score = width * height - Math.abs(1 - ratio) * width * height * 0.25;
+        candidates.push({ dataUrl, score });
+      } catch (_) { /* Some PDF image masks are not standalone photographs. */ }
+    }
+  }
+  candidates.sort((a, b) => b.score - a.score);
+  return candidates[0]?.dataUrl || "";
+}
+
 async function extractDocumentText(file) {
   const extension = file.name.split(".").pop().toLowerCase();
   if (file.size > 20 * 1024 * 1024) {
@@ -686,6 +757,9 @@ async function extractDocumentText(file) {
     }
     const pages = [];
     const extractionWarnings = [];
+    let photoDataUrl = "";
+    try { photoDataUrl = await extractPdfEmbeddedPhoto(documentPdf, pdfjs); }
+    catch (_) { extractionWarnings.push("An embedded photo could not be extracted automatically. You can still add it in Profile photo."); }
     for (let pageNumber = 1; pageNumber <= documentPdf.numPages; pageNumber += 1) {
       const page = await documentPdf.getPage(pageNumber);
       const viewport = page.getViewport({ scale: 1 });
@@ -775,13 +849,25 @@ async function extractDocumentText(file) {
     if (text.trim().length < 80) {
       return { text, warnings: [...extractionWarnings, "Very little selectable text was found. This PDF may be scanned, image-only or protected."] };
     }
-    return { text, warnings: extractionWarnings };
+    return { text, warnings: extractionWarnings, photoDataUrl };
   }
   if (extension === "docx") {
     const mammoth = await loadScript("https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js", "rb-mammoth", "mammoth");
-    const result = await mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() });
+    const arrayBuffer = await file.arrayBuffer();
+    const result = await mammoth.extractRawText({ arrayBuffer });
+    let photoDataUrl = "";
+    try {
+      if (mammoth.images?.imgElement) {
+        const html = await mammoth.convertToHtml({ arrayBuffer }, {
+          convertImage: mammoth.images.imgElement((image) => image.read("base64").then((base64) => ({
+            src: "data:" + image.contentType + ";base64," + base64,
+          }))),
+        });
+        photoDataUrl = html.value.match(/<img[^>]+src=["'](data:image\/[^"']+)["']/i)?.[1] || "";
+      }
+    } catch (_) { /* Keep text import available if the document's image cannot be decoded. */ }
     const warnings = (result.messages || []).map((message) => message.message).filter(Boolean);
-    return { text: result.value || "", warnings };
+    return { text: result.value || "", warnings, photoDataUrl };
   }
   if (extension === "txt") return { text: await file.text(), warnings: [] };
   throw new Error("Unsupported document type. Choose a text-based PDF, DOCX or TXT file.");
@@ -1058,9 +1144,14 @@ function ResumePreview({ resume, compact }) {
         <p>{resume.interests.filter(Boolean).join("  ·  ")}</p>
       </ResumeSection>
     ) : null,
+    achievements: resume.achievements?.filter(Boolean).length ? (
+      <ResumeSection key="achievements" sectionId="achievements" title="Achievements" className="rb-achievements-section">
+        <ul>{resume.achievements.filter(Boolean).map((item, index) => <li key={"achievement-" + index}>{item}</li>)}</ul>
+      </ResumeSection>
+    ) : null,
   };
 
-  const defaultOrder = ["profile", "experience", "education", "projects", "skills", "certificates", "languages", "interests"];
+  const defaultOrder = ["profile", "experience", "education", "projects", "skills", "certificates", "languages", "interests", "achievements"];
   const requestedOrder = Array.isArray(resume.sectionOrder) && resume.sectionOrder.length
     ? resume.sectionOrder
     : (template === "vertical" ? ["education", "experience", "projects", "profile", "skills", "certificates", "interests", "languages"] : defaultOrder);
@@ -1311,6 +1402,7 @@ export default function ResumeBuilder() {
     fresh.design = { ...DEFAULT_RESUME_DESIGN };
     fresh.sectionOrder = ["education", "experience", "projects", "profile", "skills", "certificates", "interests", "languages"];
     fresh.interests = [];
+    fresh.achievements = [];
     fresh.experience = [];
     fresh.education = [];
     fresh.projects = [];
@@ -1436,10 +1528,11 @@ export default function ResumeBuilder() {
           const result = parseTextIntoResume(extracted.text, blankImportResume(current));
           if (!result.report.valid) throw new Error(result.report.message || "Resume details could not be extracted reliably.");
           imported = result.resume;
+          if (extracted.photoDataUrl) imported.profile.photo = extracted.photoDataUrl;
           report = {
             ...result.report,
             source: extension.toUpperCase() + " document",
-            importedParts: ["Contact details", "Detected resume sections"],
+            importedParts: ["Contact details", "Detected resume sections", ...(extracted.photoDataUrl ? ["Profile photo"] : [])],
             warnings: [...result.report.warnings, ...(extracted.warnings || []).slice(0, 4)],
           };
         } else {
@@ -1682,6 +1775,7 @@ export default function ResumeBuilder() {
                     <details className="rb-form-section"><summary><span className="rb-form-icon">05</span><span><b>Skills and languages</b><small>Tools, strengths and spoken languages</small></span><i>⌄</i></summary><div className="rb-form-grid"><Field label="Skills (separate with commas)" value={current.skills.join(", ")} onChange={(value) => updateCurrent((resume) => ({ ...resume, skills: value.split(",").map((item) => item.trim()).filter(Boolean) }))} multiline placeholder="React, JavaScript, communication..." /><Field label="Languages (separate with commas)" value={current.languages.join(", ")} onChange={(value) => updateCurrent((resume) => ({ ...resume, languages: value.split(",").map((item) => item.trim()).filter(Boolean) }))} /></div></details>
                     <details className="rb-form-section"><summary><span className="rb-form-icon">06</span><span><b>Certifications</b><small>Credentials and courses</small></span><i>⌄</i></summary><div className="rb-repeat-list">{current.certificates.map((item, index) => <div className="rb-repeat-card" key={"certificate-" + index}><div className="rb-repeat-card-head"><b>Certificate {index + 1}</b><button onClick={() => removeItem("certificates", index)}>Remove</button></div><div className="rb-form-grid"><Field label="Certificate" value={item.name} onChange={(value) => updateListItem("certificates", index, "name", value)} /><Field label="Issuer" value={item.issuer} onChange={(value) => updateListItem("certificates", index, "issuer", value)} /><Field label="Date" value={item.date} onChange={(value) => updateListItem("certificates", index, "date", value)} /><Field label="Credential link" value={item.link} onChange={(value) => updateListItem("certificates", index, "link", value)} /></div></div>)}<button className="rb-add-row" onClick={() => addItem("certificates")}>＋ Add certification</button></div></details>
                     <details className="rb-form-section"><summary><span className="rb-form-icon">07</span><span><b>Hobbies and interests</b><small>Optional personal interests</small></span><i>⌄</i></summary><div className="rb-form-grid"><Field label="Interests (separate with commas)" value={(current.interests || []).join(", ")} onChange={(value) => updateCurrent((resume) => ({ ...resume, interests: value.split(",").map((item) => item.trim()).filter(Boolean) }))} multiline placeholder="Volunteering, reading, sports..." /></div></details>
+                    <details className="rb-form-section"><summary><span className="rb-form-icon">08</span><span><b>Achievements</b><small>Measurable results and recognition</small></span><i>⌄</i></summary><div className="rb-form-grid"><Field label="Achievements (one per line)" value={(current.achievements || []).join("\n")} onChange={(value) => updateCurrent((resume) => ({ ...resume, achievements: value.split("\n").map((item) => item.trim()).filter(Boolean) }))} multiline placeholder="Improved Lighthouse performance scores across production websites..." /></div></details>
                     <div className="rb-editor-bottom-actions"><button className="rb-button rb-button-light" onClick={exportBackup}>Export editable backup</button><button className="rb-button rb-button-accent" onClick={printResume}>Download PDF →</button></div>
                   </div>
                   <div className="rb-live-preview">
