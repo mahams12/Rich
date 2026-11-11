@@ -32,7 +32,14 @@ const fallbackCovers: Record<string, string> = {
 
 function CoverImage({ post, index }: { post: BlogPost; index: number }) {
   const [failed, setFailed] = useState(false);
-  const cover = post.cover || fallbackCovers[post.slug];
+  const normalizedTitle = post.title.toLowerCase();
+  const titleCover =
+    normalizedTitle.includes("how to improve your business with a website")
+      ? "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=82"
+      : normalizedTitle.includes("ai automation for small businesses")
+        ? "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1200&q=82"
+        : undefined;
+  const cover = post.cover || fallbackCovers[post.slug] || titleCover;
   const className = "absolute inset-0 h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.025]";
   if (!cover) return null;
   // data:/blob: sources can't go through the image optimizer.
