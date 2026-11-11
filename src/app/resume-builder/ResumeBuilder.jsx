@@ -487,7 +487,7 @@ function parseProjectEntries(lines) {
       return;
     }
 
-    const stackParts = line.split(/\s+—\s+/);
+    const stackParts = line.split(/\s*—\s*/);
     const possibleTitle = stackParts[0].trim();
     if (isLikelyEntryTitle(possibleTitle, "project")) {
       flush();
