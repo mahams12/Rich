@@ -39,11 +39,10 @@ function renderInlineLinks(value: string) {
 
 function PostCover({ src, alt, className, sizes }: { src: string; alt: string; className: string; sizes: string }) {
   const [failed, setFailed] = useState(false);
-  if (failed || src.startsWith("/") || src.startsWith("data:") || src.startsWith("blob:")) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img src={failed ? "/blogs-cover-fallback.svg" : src} alt={alt} loading="lazy" className={className} onError={() => setFailed(true)} />
-    );
+  if (failed) return null;
+  if (src.startsWith("/") || src.startsWith("data:") || src.startsWith("blob:")) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={src} alt={alt} loading="lazy" className={className} onError={() => setFailed(true)} />;
   }
   return <Image src={src} alt={alt} fill sizes={sizes} className={className} onError={() => setFailed(true)} />;
 }
