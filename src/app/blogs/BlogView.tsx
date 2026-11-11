@@ -39,7 +39,8 @@ function CoverImage({ post, index }: { post: BlogPost; index: number }) {
       : normalizedTitle.includes("ai automation for small businesses")
         ? "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1200&q=82"
         : undefined;
-  const cover = post.cover || fallbackCovers[post.slug] || titleCover;
+  // Prefer the verified article-specific cover over stale/invalid URLs saved in older blog records.
+  const cover = titleCover || fallbackCovers[post.slug] || post.cover;
   const className = "absolute inset-0 h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.025]";
   if (!cover) return null;
   // data:/blob: sources can't go through the image optimizer.
