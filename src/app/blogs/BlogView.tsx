@@ -26,6 +26,8 @@ const fallbackCovers: Record<string, string> = {
   "ai-automation-software-projects-for-growing-businesses": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1200&q=82",
   "what-is-novexahub-digital-studio-explained": "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=82",
   "business-website-checklist-2026": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=82",
+  "how-to-improve-your-business-with-a-website": "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=82",
+  "ai-automation-for-small-businesses-in-2026-practical-ways-to-save-time-and-grow-faster": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1200&q=82",
 };
 
 function CoverImage({ post, index }: { post: BlogPost; index: number }) {
