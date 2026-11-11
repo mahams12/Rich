@@ -457,25 +457,21 @@ function parseProjectEntries(lines) {
   const projects = [];
   let current = null;
   let alsoBuilt = false;
+  let alsoBuiltBuffer = "";
   const flush = () => {
     if (current && (current.name || current.details.length)) {
       projects.push({ name: current.name, role: current.role, link: current.link, details: current.details.join("\n").trim() });
     }
     current = null;
   };
-  const addAlsoBuiltEntries = (source) => {
-    const entries = splitOutsideParentheses(source, /[,;]+/);
-    entries.forEach((entry) => {
+  const flushAlsoBuilt = () => {
+    if (!alsoBuiltBuffer.trim()) return;
+    splitOutsideParentheses(alsoBuiltBuffer, /[,;]+/).forEach((entry) => {
       const value = entry.trim().replace(/[.]$/, "");
       if (!value) return;
       const status = value.match(/^(.*?)(\s*\((?:contributed|in development|under development)[^)]*\))$/i);
       const name = (status ? status[1] : value).trim();
       if (!name) return;
-      const previous = projects[projects.length - 1];
-      if (!status && /^(?:contributed|in development|under development)\b/i.test(name) && previous) {
-        previous.details = [previous.details, name].filter(Boolean).join(" ").trim();
-        return;
-      }
       projects.push({
         name,
         role: "",
@@ -483,6 +479,8 @@ function parseProjectEntries(lines) {
         details: status ? status[2].replace(/^\s*\(/, "").replace(/\)$/, "") : "",
       });
     });
+    alsoBuiltBuffer = "";
+    alsoBuilt = false;
   };
 
   clean.forEach((rawLine) => {
@@ -490,15 +488,20 @@ function parseProjectEntries(lines) {
     const alsoBuiltHeading = line.match(/^also built\s*:?[ \t]*(.*)$/i);
     if (alsoBuiltHeading) {
       flush();
-      const inlineEntries = alsoBuiltHeading[1].trim();
-      if (inlineEntries) addAlsoBuiltEntries(inlineEntries);
-      else alsoBuilt = true;
+      flushAlsoBuilt();
+      alsoBuilt = true;
+      alsoBuiltBuffer = alsoBuiltHeading[1].trim();
       return;
     }
+
     if (alsoBuilt) {
-      addAlsoBuiltEntries(line);
-      alsoBuilt = false;
-      return;
+      // The "Also built" list may wrap across PDF/DOCX lines. Keep collecting
+      // until a real project heading starts, then split the combined list.
+      if (!isLikelyEntryTitle(line, "project")) {
+        alsoBuiltBuffer = [alsoBuiltBuffer, line].filter(Boolean).join(" ");
+        return;
+      }
+      flushAlsoBuilt();
     }
 
     const stackParts = line.split(/\s*—\s*/);
@@ -523,6 +526,7 @@ function parseProjectEntries(lines) {
     } else current.details.push(line);
   });
   flush();
+  flushAlsoBuilt();
   return projects.slice(0, 20);
 }
 
