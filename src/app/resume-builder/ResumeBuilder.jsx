@@ -724,18 +724,31 @@ async function extractPdfEmbeddedPhoto(documentPdf, pdfjs) {
   const candidates = [];
   for (let pageNumber = 1; pageNumber <= documentPdf.numPages; pageNumber += 1) {
     const page = await documentPdf.getPage(pageNumber);
+    // Render once so PDF.js decodes image objects before we inspect its object store.
+    const renderViewport = page.getViewport({ scale: 0.25 });
+    const renderCanvas = document.createElement("canvas");
+    renderCanvas.width = Math.max(1, Math.ceil(renderViewport.width));
+    renderCanvas.height = Math.max(1, Math.ceil(renderViewport.height));
+    const renderContext = renderCanvas.getContext("2d");
+    if (renderContext) {
+      try { await page.render({ canvasContext: renderContext, viewport: renderViewport }).promise; }
+      catch (_) { /* Text import should continue even if this page cannot be rasterized. */ }
+    }
     const operations = await page.getOperatorList();
     const seen = new Set();
     for (let index = 0; index < operations.fnArray.length; index += 1) {
       if (!imageOps.has(operations.fnArray[index])) continue;
-      const objectId = operations.argsArray[index]?.[0];
-      if (typeof objectId !== "string" || seen.has(objectId)) continue;
-      seen.add(objectId);
+      const imageArgument = operations.argsArray[index]?.[0];
+      const objectId = typeof imageArgument === "string" ? imageArgument : null;
+      if (objectId && seen.has(objectId)) continue;
+      if (objectId) seen.add(objectId);
       try {
-        const image = await new Promise((resolve) => {
-          if (page.objs.has(objectId)) resolve(page.objs.get(objectId));
-          else page.objs.get(objectId, resolve);
-        });
+        const image = objectId
+          ? await new Promise((resolve) => {
+              if (page.objs.has(objectId)) resolve(page.objs.get(objectId));
+              else page.objs.get(objectId, resolve);
+            })
+          : imageArgument;
         const dataUrl = await pdfImageObjectToDataUrl(image);
         if (!dataUrl) continue;
         const width = Number(image.width || image.bitmap?.width || 0);
