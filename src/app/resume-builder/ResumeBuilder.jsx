@@ -1077,6 +1077,8 @@ export default function ResumeBuilder() {
   const [showLinkedIn, setShowLinkedIn] = useState(false);
   const [showUploadLinkedIn, setShowUploadLinkedIn] = useState(false);
   const [showDesignPanel, setShowDesignPanel] = useState(false);
+  const [showPreviewTemplates, setShowPreviewTemplates] = useState(false);
+  const previewTemplateStripRef = useRef(null);
   const [importText, setImportText] = useState("");
   const [importDraft, setImportDraft] = useState(null);
   const [importReport, setImportReport] = useState(null);
@@ -1163,6 +1165,26 @@ export default function ResumeBuilder() {
     [order[index], order[target]] = [order[target], order[index]];
     return { ...resume, sectionOrder: order };
   });
+
+  const applyTemplate = (templateId) => {
+    const template = TEMPLATE_OPTIONS.find((item) => item.id === templateId);
+    if (!template) return;
+    const sideTemplate = ["elegant", "circular", "modern", "casual", "vertical", "folio"].includes(template.id);
+    updateCurrent((resume) => ({
+      ...resume,
+      template: template.id,
+      accent: template.color,
+      design: {
+        ...DEFAULT_RESUME_DESIGN,
+        ...(resume.design || {}),
+        photoPosition: sideTemplate ? "sidebar" : "header",
+      },
+      sectionOrder: template.id === "vertical"
+        ? ["education", "experience", "projects", "profile", "skills", "certificates", "interests", "languages"]
+        : resume.sectionOrder,
+    }));
+    setToast(template.name + " applied to your live resume.");
+  };
 
   const updateListItem = (section, index, key, value) => updateCurrent((resume) => ({
     ...resume,
@@ -1489,7 +1511,7 @@ export default function ResumeBuilder() {
               <div className="rb-templates-view">
                 <div className="rb-view-intro"><div><span className="rb-eyebrow rb-eyebrow-dark">THE RIGHT FIRST IMPRESSION</span><h3>Find a format that <em>fits your story.</em></h3><p>Each original design uses editable text sections and a consistent document structure. Choose one, then make it yours.</p></div><div className="rb-view-actions"><button className="rb-button rb-button-light" onClick={() => setView("editor")}>← Back to editor</button><button className="rb-button rb-button-accent" onClick={createResume}>＋ Start from scratch</button></div></div>
                 <div className="rb-template-gallery-grid">
-                  {TEMPLATE_OPTIONS.map((template) => <button key={template.id} className={"rb-template-card" + (current.template === template.id ? " selected" : "")} onClick={() => { const sideTemplate = ["elegant", "circular", "modern", "casual", "vertical", "folio"].includes(template.id); updateCurrent((resume) => ({ ...resume, template: template.id, accent: template.color, design: { ...DEFAULT_RESUME_DESIGN, ...(resume.design || {}), photoPosition: sideTemplate ? "sidebar" : "header" }, sectionOrder: template.id === "vertical" ? ["education", "experience", "projects", "profile", "skills", "certificates", "interests", "languages"] : resume.sectionOrder })); setToast(template.name + " template selected. Customize the design while editing."); setShowDesignPanel(true); setView("editor"); }}>
+                  {TEMPLATE_OPTIONS.map((template) => <button key={template.id} className={"rb-template-card" + (current.template === template.id ? " selected" : "")} onClick={() => { applyTemplate(template.id); setShowDesignPanel(true); setView("editor"); }}>
                     <div className={"rb-template-thumb rb-thumb-" + template.id} style={{ "--thumb-accent": template.color }}><ResumePreview resume={{ ...TEMPLATE_PREVIEW, template: template.id, accent: template.color }} compact /></div>
                     <div className="rb-template-card-copy"><span className="rb-template-tag">{template.tag}</span><strong>{template.name}</strong><small>{template.note}</small><span className="rb-template-use">{current.template === template.id ? "Selected ✓" : "Use template →"}</span></div>
                   </button>)}
@@ -1559,7 +1581,69 @@ export default function ResumeBuilder() {
                     <details className="rb-form-section"><summary><span className="rb-form-icon">07</span><span><b>Hobbies and interests</b><small>Optional personal interests</small></span><i>⌄</i></summary><div className="rb-form-grid"><Field label="Interests (separate with commas)" value={(current.interests || []).join(", ")} onChange={(value) => updateCurrent((resume) => ({ ...resume, interests: value.split(",").map((item) => item.trim()).filter(Boolean) }))} multiline placeholder="Volunteering, reading, sports..." /></div></details>
                     <div className="rb-editor-bottom-actions"><button className="rb-button rb-button-light" onClick={exportBackup}>Export editable backup</button><button className="rb-button rb-button-accent" onClick={printResume}>Download PDF →</button></div>
                   </div>
-                  <div className="rb-live-preview"><div className="rb-preview-head"><div><span className="rb-live-dot" /> LIVE PREVIEW</div><div className="rb-color-picker"><span>Accent</span>{["#b85c3d", "#1f4f4a", "#3857a6", "#7553a3", "#263342"].map((color) => <button key={color} style={{ background: color }} className={current.accent === color ? "active" : ""} aria-label={"Use " + color} onClick={() => updateCurrent((resume) => ({ ...resume, accent: color }))} />)}</div></div><div className="rb-preview-canvas"><ResumePreview resume={current} /></div><div className="rb-preview-foot"><span>Text remains selectable in the exported document.</span><button onClick={() => setView("keywords")}>Optimize keywords ↗</button></div></div>
+                  <div className="rb-live-preview">
+                    <div className="rb-preview-head">
+                      <div><span className="rb-live-dot" /> LIVE PREVIEW</div>
+                      <div className="rb-preview-head-actions">
+                        <button
+                          type="button"
+                          className={"rb-preview-template-trigger" + (showPreviewTemplates ? " active" : "")}
+                          onClick={() => setShowPreviewTemplates((open) => !open)}
+                          aria-expanded={showPreviewTemplates}
+                          aria-label="Change resume template in live preview"
+                        >
+                          <span aria-hidden="true">▤</span> Templates <b>{TEMPLATE_OPTIONS.find((item) => item.id === current.template)?.name || "Selected"}</b>
+                          <span className="rb-preview-template-chevron">{showPreviewTemplates ? "⌄" : "⌃"}</span>
+                        </button>
+                        <div className="rb-color-picker"><span>Accent</span>{["#b85c3d", "#1f4f4a", "#3857a6", "#7553a3", "#263342"].map((color) => <button key={color} style={{ background: color }} className={current.accent === color ? "active" : ""} aria-label={"Use " + color} onClick={() => updateCurrent((resume) => ({ ...resume, accent: color }))} />)}</div>
+                      </div>
+                    </div>
+                    <div className={"rb-preview-canvas" + (showPreviewTemplates ? " has-template-dock" : "")}>
+                      <ResumePreview resume={current} />
+                    </div>
+                    {showPreviewTemplates ? (
+                      <section className="rb-preview-template-dock" aria-label="Choose a resume template">
+                        <div className="rb-preview-template-dock-head">
+                          <div><span>DESIGN LIBRARY</span><strong>{TEMPLATE_OPTIONS.length} templates · Select to apply instantly</strong></div>
+                          <button type="button" onClick={() => setShowPreviewTemplates(false)} aria-label="Close template selector">×</button>
+                        </div>
+                        <div className="rb-preview-template-strip" ref={previewTemplateStripRef}>
+                          {TEMPLATE_OPTIONS.map((template) => {
+                            const sideTemplate = ["elegant", "circular", "modern", "casual", "vertical", "folio"].includes(template.id);
+                            const previewResume = {
+                              ...current,
+                              template: template.id,
+                              accent: template.color,
+                              design: {
+                                ...DEFAULT_RESUME_DESIGN,
+                                ...(current.design || {}),
+                                photoPosition: sideTemplate ? "sidebar" : "header",
+                              },
+                              sectionOrder: template.id === "vertical"
+                                ? ["education", "experience", "projects", "profile", "skills", "certificates", "interests", "languages"]
+                                : current.sectionOrder,
+                            };
+                            const selected = current.template === template.id;
+                            return (
+                              <button
+                                type="button"
+                                key={template.id}
+                                className={"rb-preview-template-card" + (selected ? " selected" : "")}
+                                onClick={() => applyTemplate(template.id)}
+                                aria-pressed={selected}
+                                title={"Apply " + template.name + " template"}
+                              >
+                                <div className="rb-preview-template-thumb"><ResumePreview resume={previewResume} compact /></div>
+                                <span className="rb-preview-template-card-name">{template.name}</span>
+                                <small>{selected ? "✓ Applied" : template.tag}</small>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </section>
+                    ) : null}
+                    <div className="rb-preview-foot"><span>Text remains selectable in the exported document.</span><button onClick={() => setView("keywords")}>Optimize keywords ↗</button></div>
+                  </div>
                 </div>
               </div>
             ) : null}
