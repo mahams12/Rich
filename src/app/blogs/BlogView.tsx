@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useApp } from "@/components/providers/AppProvider";
@@ -56,15 +55,17 @@ function CoverImage({ post, index }: { post: BlogPost; index: number }) {
     // eslint-disable-next-line @next/next/no-img-element
     return <img src={cover} alt={`${post.title} article cover`} loading="lazy" className={className} />;
   }
+  // Blog covers use their original HTTPS URL directly. This deliberately
+  // bypasses the custom /api/img optimizer proxy, which can return 502 on
+  // Cloudflare when its self-reference image-optimizer request fails.
   return (
-    <Image
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
       src={cover}
       alt={`${post.title} article cover`}
-      fill
-      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-      {...(index === 0
-        ? { preload: true, fetchPriority: "high" as const }
-        : { loading: index < 3 ? ("eager" as const) : ("lazy" as const), fetchPriority: index < 2 ? ("high" as const) : ("auto" as const) })}
+      loading={index < 3 ? "eager" : "lazy"}
+      fetchPriority={index < 2 ? "high" : "auto"}
+      decoding="async"
       className={className}
       onError={() => setFailed(true)}
     />
