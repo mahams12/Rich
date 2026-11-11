@@ -627,7 +627,7 @@ function parseTextIntoResume(source, existing) {
     interests: interests.length,
     achievements: achievements.length,
   };
-  const sectionTotal = [detected.summary, detected.experience, detected.education, detected.projects, detected.skills, detected.certificates, detected.languages, detected.interests].filter(Boolean).length;
+  const sectionTotal = [detected.summary, detected.experience, detected.education, detected.projects, detected.skills, detected.certificates, detected.languages, detected.interests, detected.achievements].filter(Boolean).length;
   const identityFound = detected.name || detected.email || detected.phone || detected.github;
   const contentFound = sectionTotal > 0;
   const warnings = [];
