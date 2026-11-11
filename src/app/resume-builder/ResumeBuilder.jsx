@@ -336,7 +336,7 @@ function isLikelyEntryTitle(line, kind) {
     const words = value.split(/\s+/).filter(Boolean).length;
     if (words > 9 || /[,;:]$/.test(value)) return false;
     if (/^(?:built|developed|created|designed|implemented|used|using|mobile app live|flutter\/firebase app|saas that|live real estate website|ai-tools marketplace with)\b/i.test(value)) return false;
-    if (/\b(?:that publishes|live on google play|with ai mood|with admin|end-to-end|meta review pending|contributed; in development)\b/i.test(value)) return false;
+    if (/\b(?:that publishes|live on google play|with ai mood|with admin|end-to-end|meta review pending|contributed; in development|github|google play|app store|tmdb apis?|spotify apis?|youtube apis?)\b/i.test(value)) return false;
     return value.length <= 100 && !/^https?:\/\//i.test(value);
   }
   return ROLE_WORD_RE.test(value) || /\s+at\s+/i.test(value) || /\s+\|\s+/.test(value);
