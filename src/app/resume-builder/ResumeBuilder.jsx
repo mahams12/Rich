@@ -1117,7 +1117,9 @@ export default function ResumeBuilder() {
     const strip = previewTemplateStripRef.current;
     const selected = strip.querySelector(".rb-preview-template-card.selected");
     if (!selected) return;
-    const left = selected.offsetLeft - (strip.clientWidth - selected.clientWidth) / 2;
+    const stripBounds = strip.getBoundingClientRect();
+    const selectedLeft = selected.getBoundingClientRect().left - stripBounds.left + strip.scrollLeft;
+    const left = selectedLeft - (strip.clientWidth - selected.clientWidth) / 2;
     strip.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
   }, [showPreviewTemplates, current?.template]);
 
