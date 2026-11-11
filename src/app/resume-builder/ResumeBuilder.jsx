@@ -463,26 +463,40 @@ function parseProjectEntries(lines) {
     }
     current = null;
   };
+  const addAlsoBuiltEntries = (source) => {
+    const entries = splitOutsideParentheses(source, /[,;]+/);
+    entries.forEach((entry) => {
+      const value = entry.trim().replace(/[.]$/, "");
+      if (!value) return;
+      const status = value.match(/^(.*?)(\s*\((?:contributed|in development|under development)[^)]*\))$/i);
+      const name = (status ? status[1] : value).trim();
+      if (!name) return;
+      const previous = projects[projects.length - 1];
+      if (!status && /^(?:contributed|in development|under development)\b/i.test(name) && previous) {
+        previous.details = [previous.details, name].filter(Boolean).join(" ").trim();
+        return;
+      }
+      projects.push({
+        name,
+        role: "",
+        link: "",
+        details: status ? status[2].replace(/^\s*\(/, "").replace(/\)$/, "") : "",
+      });
+    });
+  };
 
   clean.forEach((rawLine) => {
     const line = rawLine.replace(/^[•●▪◦‣*·]\s*/, "").trim();
-    if (/^also built\s*:?$/i.test(line)) {
+    const alsoBuiltHeading = line.match(/^also built\s*:?[ \t]*(.*)$/i);
+    if (alsoBuiltHeading) {
       flush();
-      alsoBuilt = true;
+      const inlineEntries = alsoBuiltHeading[1].trim();
+      if (inlineEntries) addAlsoBuiltEntries(inlineEntries);
+      else alsoBuilt = true;
       return;
     }
     if (alsoBuilt) {
-      splitOutsideParentheses(line, /[,;]+/).forEach((entry) => {
-        const value = entry.trim().replace(/[.]$/, "");
-        if (!value) return;
-        const status = value.match(/^(.*?)(\s*\((?:contributed|in development|under development)[^)]*\))$/i);
-        projects.push({
-          name: (status ? status[1] : value).trim(),
-          role: "",
-          link: "",
-          details: status ? status[2].replace(/^\s*\(/, "").replace(/\)$/, "") : "",
-        });
-      });
+      addAlsoBuiltEntries(line);
       alsoBuilt = false;
       return;
     }
