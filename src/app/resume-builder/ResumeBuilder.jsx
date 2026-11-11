@@ -1113,6 +1113,15 @@ export default function ResumeBuilder() {
   const missingKeywords = suggestedKeywords.filter((word) => !resumeText.includes(word));
 
   useEffect(() => {
+    if (!showPreviewTemplates || !previewTemplateStripRef.current) return;
+    const strip = previewTemplateStripRef.current;
+    const selected = strip.querySelector(".rb-preview-template-card.selected");
+    if (!selected) return;
+    const left = selected.offsetLeft - (strip.clientWidth - selected.clientWidth) / 2;
+    strip.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
+  }, [showPreviewTemplates, current?.template]);
+
+  useEffect(() => {
     document.body.classList.add("rb-resume-mode");
     return () => {
       document.body.classList.remove("rb-resume-mode");
@@ -1628,6 +1637,7 @@ export default function ResumeBuilder() {
                               <button
                                 type="button"
                                 key={template.id}
+                                data-template-id={template.id}
                                 className={"rb-preview-template-card" + (selected ? " selected" : "")}
                                 onClick={() => applyTemplate(template.id)}
                                 aria-pressed={selected}
