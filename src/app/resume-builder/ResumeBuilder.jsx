@@ -33,6 +33,7 @@ const SECTION_ORDER_OPTIONS = [
   { id: "certificates", label: "Certifications" },
   { id: "languages", label: "Languages" },
   { id: "interests", label: "Interests" },
+  { id: "achievements", label: "Achievements" },
 ];
 
 const DEFAULT_RESUME_DESIGN = {
@@ -84,6 +85,7 @@ function starterResume(id) {
     skills: ["JavaScript", "React", "Node.js", "REST APIs", "PostgreSQL", "Git", "UI Engineering"],
     languages: ["English — Native"],
     interests: ["Continuous learning", "Volunteering"],
+    achievements: [],
     certificates: [],
     keywords: [],
   };
@@ -110,6 +112,7 @@ function blankImportResume(existing) {
     languages: [],
     certificates: [],
     interests: [],
+    achievements: [],
     keywords: [],
   };
 }
@@ -139,6 +142,7 @@ function safeResume(value) {
     languages: Array.isArray(value.languages) ? value.languages : base.languages,
     certificates: Array.isArray(value.certificates) ? value.certificates : base.certificates,
     interests: Array.isArray(value.interests) ? value.interests : [],
+    achievements: Array.isArray(value.achievements) ? value.achievements : [],
     keywords: Array.isArray(value.keywords) ? value.keywords : [],
   };
 }
@@ -205,7 +209,8 @@ const SECTION_PATTERNS = [
   ["experience", /^(professional experience|work experience|employment history|work history|experience|employment|career history|work experience and internships)$/i],
   ["education", /^(education|academic background|education and training|qualifications|academic qualifications)$/i],
   ["skills", /^(technical skills|core skills|key skills|skills|competencies|core competencies|expertise|technical expertise|skill set|areas of expertise)$/i],
-  ["projects", /^(selected projects|personal projects|academic projects|projects|portfolio|key projects)$/i],
+  ["projects", /^(selected projects|personal projects|academic projects|projects|portfolio|key projects|extracurricular activities|extracurricular|selected work|project experience)$/i],
+  ["achievements", /^(achievements|key achievements|selected achievements|accomplishments|honors and achievements)$/i],
   ["certificates", /^(certifications|certificates|licenses and certifications|licenses|courses|professional development)$/i],
   ["languages", /^(languages|language skills)$/i],
   ["interests", /^(hobbies|interests|hobbies and interests|activities|personal interests)$/i],
@@ -290,17 +295,35 @@ function extractLabeledValue(source, labels) {
   return "";
 }
 
+function splitOutsideParentheses(value, separators = /[,;|•·\u2022]+/) {
+  const source = String(value || "");
+  const output = [];
+  let current = "";
+  let depth = 0;
+  for (let index = 0; index < source.length; index += 1) {
+    const char = source[index];
+    if (char === "(" || char === "[" || char === "{") depth += 1;
+    else if (char === ")" || char === "]" || char === "}") depth = Math.max(0, depth - 1);
+    if (depth === 0 && separators.test(char)) {
+      if (current.trim()) output.push(current.trim());
+      current = "";
+    } else current += char;
+  }
+  if (current.trim()) output.push(current.trim());
+  return output;
+}
+
 function extractSkillItems(lines) {
   const categoryPrefix = /^(?:programming languages?|languages?|frameworks?|libraries|tools?|platforms?|databases?|cloud|technologies|technical skills|soft skills|core competencies|methodologies|other skills?)\s*[:：-]\s*/i;
   const items = [];
   (lines || []).forEach((line) => {
     const value = String(line || "").replace(categoryPrefix, "").trim();
-    value.split(/[,;|•·\u2022]+/).forEach((item) => {
+    splitOutsideParentheses(value).forEach((item) => {
       const clean = item.replace(/^[•●▪◦‣*·\-–—]+\s*/, "").trim();
-      if ((clean.length > 1 || /^(c|r)$/i.test(clean)) && clean.length < 54 && !/^skills?$/i.test(clean)) items.push(clean);
+      if ((clean.length > 1 || /^(c|r)$/i.test(clean)) && clean.length < 72 && !/^skills?$/i.test(clean)) items.push(clean);
     });
   });
-  return Array.from(new Map(items.map((item) => [item.toLowerCase(), item])).values()).slice(0, 50);
+  return Array.from(new Map(items.map((item) => [item.toLowerCase(), item])).values()).slice(0, 60);
 }
 
 function isLikelyEntryTitle(line, kind) {
@@ -309,7 +332,13 @@ function isLikelyEntryTitle(line, kind) {
   if (/[.!?]$/.test(value) || /@|https?:\/\//i.test(value)) return false;
   if (extractDateRange(value)) return false;
   if (kind === "education") return DEGREE_RE.test(value) || (INSTITUTION_RE.test(value) && value.length < 95);
-  if (kind === "project") return value.length <= 88 && !/^(technologies|tools|responsibilities|highlights|description|built|developed|created|designed|implemented|used|using)\s*:/i.test(value) && (/\s+\|\s+/.test(value) || /\b(project|platform|application|app|website|system|dashboard|portal|tool|solution|prototype)\b/i.test(value) || !/[,:;]$/.test(value));
+  if (kind === "project") {
+    const words = value.split(/\s+/).filter(Boolean).length;
+    if (words > 9 || /[,;:]$/.test(value)) return false;
+    if (/^(?:built|developed|created|designed|implemented|used|using|mobile app live|flutter\/firebase app|saas that|live real estate website|ai-tools marketplace with)\b/i.test(value)) return false;
+    if (/\b(?:that publishes|live on google play|with ai mood|with admin|end-to-end|meta review pending|contributed; in development)\b/i.test(value)) return false;
+    return value.length <= 100 && !/^https?:\/\//i.test(value);
+  }
   return ROLE_WORD_RE.test(value) || /\s+at\s+/i.test(value) || /\s+\|\s+/.test(value);
 }
 
@@ -346,7 +375,7 @@ function parseEntryBlocks(lines, kind) {
     const withoutDate = date ? line.replace(DATE_RANGE_RE, " ").replace(/[·•]+/g, " ").replace(/\s+/g, " ").replace(/[|\s]+$/g, "").trim() : line;
     const newTitle = isLikelyEntryTitle(withoutDate, kind);
     if (current.length && date && hasDate()) flush();
-    else if (current.length && newTitle && currentHasTitle() && (hasDate() || currentText().length >= (kind === "project" ? 4 : 2))) flush();
+    else if (current.length && newTitle && currentHasTitle() && currentText().length >= 2) flush();
 
     if (date) {
       current.push({ type: "date", start: date.start, end: date.end });
@@ -423,6 +452,66 @@ function parseEntryBlocks(lines, kind) {
   });
 }
 
+function parseProjectEntries(lines) {
+  const clean = (lines || []).map((line) => String(line || "").trim()).filter(Boolean);
+  const projects = [];
+  let current = null;
+  let alsoBuilt = false;
+  const flush = () => {
+    if (current && (current.name || current.details.length)) {
+      projects.push({ name: current.name, role: current.role, link: current.link, details: current.details.join("\n").trim() });
+    }
+    current = null;
+  };
+
+  clean.forEach((rawLine) => {
+    const line = rawLine.replace(/^[•●▪◦‣*·]\s*/, "").trim();
+    if (/^also built\s*:?$/i.test(line)) {
+      flush();
+      alsoBuilt = true;
+      return;
+    }
+    if (alsoBuilt) {
+      splitOutsideParentheses(line, /[,;]+/).forEach((entry) => {
+        const value = entry.trim().replace(/[.]$/, "");
+        if (!value) return;
+        const status = value.match(/^(.*?)(\s*\((?:contributed|in development|under development)[^)]*\))$/i);
+        projects.push({
+          name: (status ? status[1] : value).trim(),
+          role: "",
+          link: "",
+          details: status ? status[2].replace(/^\s*\(/, "").replace(/\)$/, "") : "",
+        });
+      });
+      alsoBuilt = false;
+      return;
+    }
+
+    const stackParts = line.split(/\s+—\s+/);
+    const possibleTitle = stackParts[0].trim();
+    if (isLikelyEntryTitle(possibleTitle, "project")) {
+      flush();
+      current = {
+        name: possibleTitle,
+        role: stackParts.length > 1 ? stackParts.slice(1).join(" — ").trim() : "",
+        link: "",
+        details: [],
+      };
+      return;
+    }
+    if (!current) return;
+
+    const urls = line.match(/https?:\/\/[^\s|]+|(?:www\.)?github\.com\/[^\s|]+|(?:www\.)?gitlab\.com\/[^\s|]+/ig) || [];
+    if (urls.length) {
+      current.link = urls.join(" | ");
+      const withoutUrls = line.replace(/https?:\/\/[^\s|]+|(?:www\.)?github\.com\/[^\s|]+|(?:www\.)?gitlab\.com\/[^\s|]+/ig, "").replace(/\s*\|\s*/g, " ").trim();
+      if (withoutUrls) current.details.push(withoutUrls);
+    } else current.details.push(line);
+  });
+  flush();
+  return projects.slice(0, 20);
+}
+
 function extractGithubProfileUrl(source) {
   const text = String(source || "");
   const labeled = extractLabeledValue(text, [
@@ -464,7 +553,7 @@ function parseTextIntoResume(source, existing) {
     .replace(emailMatch?.[0] || "", " ")
     .replace(linkedinMatch?.[0] || "", " ")
     .replace(/(?:https?:\/\/)?(?:www\.)?github\.com\/[A-Z0-9-]{1,39}(?:\/[A-Z0-9_.-]+)?/gi, " ");
-  const websiteMatch = websiteSource.match(/(?:https?:\/\/)?(?:www\.)?[A-Z0-9-]+\.(?:com|net|org|io|dev|co|me|app)(?:\/[^\s]*)?/i);
+  const websiteMatch = websiteSource.match(/(?:https?:\/\/)?(?:www\.)?(?:[A-Z0-9-]+\.)+[A-Z]{2,}(?:\/[^\s|]*)?/i);
   const nameCandidate = (explicitName?.[1] || "").trim() || header.find((line) =>
     line.length >= 3 &&
     line.length <= 58 &&
@@ -487,7 +576,7 @@ function parseTextIntoResume(source, existing) {
   const summary = summaryLines.join(" ").replace(/\s+/g, " ").trim();
   const experience = parseEntryBlocks(sections.experience || [], "experience").slice(0, 12);
   const education = parseEntryBlocks(sections.education || [], "education").slice(0, 8);
-  const projects = parseEntryBlocks(sections.projects || [], "project").slice(0, 12);
+  const projects = parseProjectEntries(sections.projects || []);
   const skills = extractSkillItems(sections.skills || []);
   const certificates = (sections.certificates || []).map((line) => line.trim()).filter(Boolean).slice(0, 12).map((line) => ({
     name: line,
@@ -497,6 +586,7 @@ function parseTextIntoResume(source, existing) {
   }));
   const languages = (sections.languages || []).join(",").split(/[,;|•·]\s*|\n/).map((item) => item.trim()).filter(Boolean).slice(0, 12);
   const interests = (sections.interests || []).join(",").split(/[,;|•·]\s*|\n/).map((item) => item.trim()).filter(Boolean).slice(0, 20);
+  const achievements = (sections.achievements || []).join(" ").split(/(?<=[.!?])\s+(?=[A-Z•])/).map((item) => item.trim()).filter(Boolean).slice(0, 12);
   const profile = {
     ...existing.profile,
     fullName: nameCandidate || existing.profile.fullName || "",
@@ -506,7 +596,7 @@ function parseTextIntoResume(source, existing) {
     linkedin: linkedinMatch ? linkedinMatch[0] : "",
     github,
     website: extractLabeledValue(raw, ["portfolio", "website", "personal website"]) || (websiteMatch ? websiteMatch[0] : ""),
-    location: explicitLocation || existing.profile.location || "",
+    location: explicitLocation || header.find((line) => /\b(?:Lahore|Karachi|Islamabad|Rawalpindi|Peshawar|Quetta|Multan|Faisalabad)\b.*\bPakistan\b/i.test(line)) || existing.profile.location || "",
     summary: summary || "",
   };
   const resume = {
@@ -520,6 +610,7 @@ function parseTextIntoResume(source, existing) {
     languages,
     certificates,
     interests,
+    achievements,
   };
   const detected = {
     name: Boolean(profile.fullName),
@@ -534,6 +625,7 @@ function parseTextIntoResume(source, existing) {
     certificates: certificates.length,
     languages: languages.length,
     interests: interests.length,
+    achievements: achievements.length,
   };
   const sectionTotal = [detected.summary, detected.experience, detected.education, detected.projects, detected.skills, detected.certificates, detected.languages, detected.interests].filter(Boolean).length;
   const identityFound = detected.name || detected.email || detected.phone || detected.github;
