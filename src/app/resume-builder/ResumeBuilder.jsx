@@ -566,8 +566,9 @@ function parseTextIntoResume(source, existing) {
     line !== nameCandidate &&
     line.length >= 3 &&
     line.length <= 90 &&
+    ROLE_WORD_RE.test(line) &&
     !/@|https?:\/\/|linkedin\.com|github\.com|\d{5,}/i.test(line) &&
-    !/\b(?:Pakistan|India|United States|United Kingdom|Canada|Australia|UAE|Dubai|Lahore|Karachi|Islamabad|Delhi|Mumbai)\b/i.test(line) &&
+    !/\b(?:Pakistan|India|United States|United Kingdom|Canada|Australia|UAE|Dubai|Lahore|Karachi|Islamabad|Delhi|Mumbai|block|street|road|phase|sector|paragon city)\b/i.test(line) &&
     !/^(location|city|address|phone|mobile|email)\s*[:：]/i.test(line) &&
     !DATE_RANGE_RE.test(line)
   ) || "";
@@ -596,7 +597,13 @@ function parseTextIntoResume(source, existing) {
     linkedin: linkedinMatch ? linkedinMatch[0] : "",
     github,
     website: extractLabeledValue(raw, ["portfolio", "website", "personal website"]) || (websiteMatch ? websiteMatch[0] : ""),
-    location: explicitLocation || header.find((line) => /\b(?:Lahore|Karachi|Islamabad|Rawalpindi|Peshawar|Quetta|Multan|Faisalabad)\b.*\bPakistan\b/i.test(line)) || existing.profile.location || "",
+    location: explicitLocation || (() => {
+      const index = header.findIndex((line) => /\b(?:Lahore|Karachi|Islamabad|Rawalpindi|Peshawar|Quetta|Multan|Faisalabad)\b.*\bPakistan\b/i.test(line));
+      if (index < 0) return existing.profile.location || "";
+      const previous = header[index - 1] || "";
+      const addressPrefix = /\b(?:block|street|road|phase|sector|paragon|town|house|apartment|colony)\b/i.test(previous) ? previous : "";
+      return [addressPrefix, header[index]].filter(Boolean).join(" ");
+    })(),
     summary: summary || "",
   };
   const resume = {
