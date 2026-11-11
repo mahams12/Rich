@@ -5,6 +5,8 @@ import { useMemo, useState } from "react";
 import { useApp } from "@/components/providers/AppProvider";
 import { Button, Section } from "@/components/ui/Button";
 import { getBlogPostsWithFallback } from "@/data/posts";
+import { resolveBlogCover, sizedCover } from "@/lib/blogCovers";
+import { CoverFrame } from "@/components/blog/CoverFrame";
 import type { BlogPost } from "@/types";
 import { rememberBlogNavigation } from "@/lib/blogAnalytics";
 
@@ -17,68 +19,20 @@ function formatDate(value?: string) {
   }
 }
 
-const fallbackCovers: Record<string, string> = {
-  "how-to-choose-a-software-project-partner-novexahub": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1200&q=82",
-  "ready-made-websites-vs-custom-software-projects": "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?auto=format&fit=crop&w=1200&q=82",
-  "mobile-app-and-flutter-software-projects-for-startups": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1200&q=82",
-  "final-year-software-project-ideas-and-studio-support": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=82",
-  "ai-automation-software-projects-for-growing-businesses": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1200&q=82",
-  "what-is-novexahub-digital-studio-explained": "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=82",
-  "business-website-checklist-2026": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=82",
-  "how-to-improve-your-business-with-a-website": "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=82",
-  "ai-automation-for-small-businesses-in-2026-practical-ways-to-save-time-and-grow-faster": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1200&q=82",
-};
-
-function CoverImage({ post, index }: { post: BlogPost; index: number }) {
-  const [failed, setFailed] = useState(false);
-  const normalizedTitle = post.title.toLowerCase();
-  const titleCover =
-    normalizedTitle.includes("how to improve your business with a website")
-      ? "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=82"
-      : normalizedTitle.includes("ai automation for small businesses")
-        ? "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1200&q=82"
-        : undefined;
-  // Prefer the verified article-specific cover over stale/invalid URLs saved in older blog records.
-  const cover = titleCover || fallbackCovers[post.slug] || post.cover;
-  const className = "absolute inset-0 h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.025]";
-  if (!cover) return null;
-  // data:/blob: sources can't go through the image optimizer.
-  if (!failed && (cover.startsWith("data:") || cover.startsWith("blob:"))) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img src={cover} alt={`${post.title} article cover`} loading="lazy" className={className} onError={() => setFailed(true)} />
-    );
-  }
-  // Never replace a missing or broken original with a generic placeholder.
-  if (failed) return null;
-  if (cover.startsWith("/")) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img src={cover} alt={`${post.title} article cover`} loading="lazy" className={className} />;
-  }
-  // Blog covers use their original HTTPS URL directly. This deliberately
-  // bypasses the custom /api/img optimizer proxy, which can return 502 on
-  // Cloudflare when its self-reference image-optimizer request fails.
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={cover}
-      alt={`${post.title} article cover`}
-      loading={index < 3 ? "eager" : "lazy"}
-      fetchPriority={index < 2 ? "high" : "auto"}
-      decoding="async"
-      className={className}
-      onError={() => setFailed(true)}
-    />
-  );
-}
+const cardImgClass =
+  "absolute inset-0 h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.025]";
 
 function PostCard({ post, index }: { post: BlogPost; index: number }) {
   const category = post.tags?.[0] || "Insights";
   return (
     <Link href={`/blogs/${post.slug}`} onClick={() => rememberBlogNavigation(post.slug)} className="group block overflow-hidden rounded-2xl border border-black/[0.09] bg-[#fffcf8] no-underline transition duration-200 hover:-translate-y-1 hover:shadow-[0_16px_34px_rgba(22,17,14,0.08)]">
-      <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#e8e1d7]">
-        <CoverImage post={post} index={index} />
-      </div>
+      <CoverFrame
+        src={sizedCover(resolveBlogCover(post), 640)}
+        alt={`${post.title} article cover`}
+        eager={index < 3}
+        className="relative aspect-[16/9] w-full overflow-hidden"
+        imgClassName={cardImgClass}
+      />
       <div className="p-5">
         <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#a14b30]">
           <span className="max-w-[65%] truncate">{category}</span><span className="text-black/25">/</span><span className="font-medium tracking-normal text-[#6f655d]">{formatDate(post.publishedAt || post.createdAt)}</span>

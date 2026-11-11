@@ -1,13 +1,14 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { recordBlogVisit, rememberBlogNavigation } from "@/lib/blogAnalytics";
 import { useApp } from "@/components/providers/AppProvider";
 import { Badge, Button, Section } from "@/components/ui/Button";
 import { getBlogPostsWithFallback } from "@/data/posts";
+import { resolveBlogCover, sizedCover } from "@/lib/blogCovers";
+import { CoverFrame } from "@/components/blog/CoverFrame";
 import { isStudioAdmin } from "@/lib/admin";
 import type { BlogPost } from "@/types";
 
@@ -35,16 +36,6 @@ function renderInlineLinks(value: string) {
     }
     return part;
   });
-}
-
-function PostCover({ src, alt, className, sizes }: { src: string; alt: string; className: string; sizes: string }) {
-  const [failed, setFailed] = useState(false);
-  if (failed) return null;
-  if (src.startsWith("/") || src.startsWith("data:") || src.startsWith("blob:")) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img src={src} alt={alt} loading="lazy" className={className} onError={() => setFailed(true)} />;
-  }
-  return <Image src={src} alt={alt} fill sizes={sizes} className={className} onError={() => setFailed(true)} />;
 }
 
 export function BlogPostView({ initialPosts }: { initialPosts?: BlogPost[] }) {
@@ -112,11 +103,12 @@ export function BlogPostView({ initialPosts }: { initialPosts?: BlogPost[] }) {
       <p className="mt-4 max-w-3xl text-lg text-[#6d655d]">{post.excerpt}</p>
       <p className="mt-3 text-sm text-muted">By {post.author}</p>
 
-      {post.cover ? (
-        <div className="relative mx-auto mt-7 aspect-[16/9] w-full max-w-3xl overflow-hidden rounded-xl border border-black/10 bg-[#e8e1d7]">
-          <PostCover src={post.cover} alt={post.title} sizes="(max-width: 896px) 100vw, 896px" className="absolute inset-0 h-full w-full object-cover object-center" />
-        </div>
-      ) : null}
+      <CoverFrame
+        src={sizedCover(resolveBlogCover(post), 1400)}
+        alt={post.title}
+        eager
+        className="relative mx-auto mt-7 aspect-[16/9] w-full max-w-3xl overflow-hidden rounded-xl border border-black/10"
+      />
 
       <article className="mx-auto mt-8 max-w-3xl space-y-5 text-[1.05rem] leading-8 text-ink">
         {contentBlocks.map((block, index) => {
@@ -163,9 +155,12 @@ export function BlogPostView({ initialPosts }: { initialPosts?: BlogPost[] }) {
       {post.gallery && post.gallery.length > 1 ? (
         <div className="mx-auto mt-8 grid max-w-3xl gap-3 sm:grid-cols-3">
           {post.gallery.slice(1).map((src) => (
-            <div key={src} className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-black/10 bg-[#e8e1d7]">
-              <PostCover src={src} alt="" sizes="(max-width: 640px) 100vw, 280px" className="absolute inset-0 h-full w-full object-cover object-center" />
-            </div>
+            <CoverFrame
+              key={src}
+              src={sizedCover(src, 640)}
+              alt=""
+              className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-black/10"
+            />
           ))}
         </div>
       ) : null}
@@ -195,9 +190,12 @@ export function BlogPostView({ initialPosts }: { initialPosts?: BlogPost[] }) {
           <div className="grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((item) => (
               <Link key={item.id} href={`/blogs/${item.slug}`} onClick={() => rememberBlogNavigation(item.slug)} className="group block overflow-hidden rounded-2xl border border-black/[0.09] bg-[#fffcf8] no-underline transition hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(22,17,14,0.08)]">
-                <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#e8e1d7]">
-                  <PostCover src={item.cover || "/blogs-cover-fallback.svg"} alt={`${item.title} article cover`} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="absolute inset-0 h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.025]" />
-                </div>
+                <CoverFrame
+                  src={sizedCover(resolveBlogCover(item), 640)}
+                  alt={`${item.title} article cover`}
+                  className="relative aspect-[16/9] w-full overflow-hidden"
+                  imgClassName="absolute inset-0 h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.025]"
+                />
                 <div className="p-4">
                   <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#a14b30]">{item.tags?.[0] || "Insights"}</p>
                   <h3 className="mt-2 line-clamp-2 text-base font-bold leading-snug text-[#211a16] group-hover:text-[#a14b30]">{item.title}</h3>

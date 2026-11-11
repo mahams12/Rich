@@ -119,6 +119,7 @@ const jsonLd = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   preconnect("https://firestore.googleapis.com");
   preconnect("https://firebasestorage.googleapis.com");
+  preconnect("https://images.unsplash.com");
   return (
     <html lang="en" className={`${jakarta.variable} h-full antialiased`} data-scroll-behavior="smooth">
       <body className="flex min-h-full flex-col bg-paper text-ink">
