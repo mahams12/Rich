@@ -30,8 +30,9 @@ const fallbackCovers: Record<string, string> = {
 
 function CoverImage({ post, index }: { post: BlogPost; index: number }) {
   const [failed, setFailed] = useState(false);
-  const cover = post.cover || fallbackCovers[post.slug] || "/blogs-cover-fallback.svg";
+  const cover = post.cover || fallbackCovers[post.slug];
   const className = "absolute inset-0 h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.025]";
+  if (!cover) return null;
   // data:/blob: sources can't go through the image optimizer.
   if (!failed && (cover.startsWith("data:") || cover.startsWith("blob:"))) {
     return (
@@ -39,12 +40,11 @@ function CoverImage({ post, index }: { post: BlogPost; index: number }) {
       <img src={cover} alt={`${post.title} article cover`} loading="lazy" className={className} onError={() => setFailed(true)} />
     );
   }
-  // Local assets (svg fallback) skip the optimizer; broken remotes degrade to it.
-  if (failed || cover.startsWith("/")) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img src="/blogs-cover-fallback.svg" alt={`${post.title} article cover`} loading="lazy" className={className} />
-    );
+  // Never replace a missing or broken original with a generic placeholder.
+  if (failed) return null;
+  if (cover.startsWith("/")) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={cover} alt={`${post.title} article cover`} loading="lazy" className={className} />;
   }
   return (
     <Image
