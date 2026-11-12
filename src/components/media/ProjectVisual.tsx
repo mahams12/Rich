@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 import { cn } from "@/lib/cn";
 import type { VisualKind, VisualMood } from "@/types";
@@ -77,16 +76,16 @@ export function ProjectVisual({
     }
     return (
       <div className={cn("relative overflow-hidden bg-[#2a2420]", className)}>
-        <Image
+        {/* Original uploaded/local image URL; bypass the failing image optimizer proxy. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           key={src}
           src={src}
           alt={`${title} visual preview`}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          {...(preload
-            ? { preload: true, fetchPriority: "high" as const }
-            : { loading: priority ? ("eager" as const) : ("lazy" as const), fetchPriority: priority ? ("high" as const) : ("auto" as const) })}
-          className={cn("h-full w-full", imgFit)}
+          loading={priority || preload ? "eager" : "lazy"}
+          decoding="async"
+          fetchPriority={priority || preload ? "high" : "auto"}
+          className={cn("absolute inset-0 h-full w-full", imgFit)}
           onError={() => markBroken(src)}
         />
         {fit === "cover" ? (

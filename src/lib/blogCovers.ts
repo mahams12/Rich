@@ -3,15 +3,25 @@ import type { BlogPost } from "@/types";
 // Verified article-specific covers. These win over stale/invalid URLs saved in
 // older live blog records (see resolveBlogCover).
 const fallbackCovers: Record<string, string> = {
-  "how-to-choose-a-software-project-partner-novexahub": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1200&q=82",
-  "ready-made-websites-vs-custom-software-projects": "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?auto=format&fit=crop&w=1200&q=82",
-  "mobile-app-and-flutter-software-projects-for-startups": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1200&q=82",
-  "final-year-software-project-ideas-and-studio-support": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=82",
-  "ai-automation-software-projects-for-growing-businesses": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1200&q=82",
-  "what-is-novexahub-digital-studio-explained": "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=82",
-  "business-website-checklist-2026": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=82",
-  "how-to-improve-your-business-with-a-website": "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=82",
-  "ai-automation-for-small-businesses-in-2026-practical-ways-to-save-time-and-grow-faster": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1200&q=82",
+  "how-to-choose-a-software-project-partner-novexahub": "/blog-covers/how-to-choose-a-software-project-partner-novexahub.svg",
+  "ready-made-websites-vs-custom-software-projects": "/blog-covers/ready-made-websites-vs-custom-software-projects.svg",
+  "mobile-app-and-flutter-software-projects-for-startups": "/blog-covers/mobile-app-and-flutter-software-projects-for-startups.svg",
+  "final-year-software-project-ideas-and-studio-support": "/blog-covers/final-year-software-project-ideas-and-studio-support.svg",
+  "ai-automation-software-projects-for-growing-businesses": "/blog-covers/ai-automation-software-projects-for-growing-businesses.svg",
+  "what-is-novexahub-digital-studio-explained": "/blog-covers/what-is-novexahub-digital-studio-explained.svg",
+  "business-website-checklist-2026": "/blog-covers/business-website-checklist-2026.svg",
+  "how-to-plan-software-integrations-before-development": "/blog-covers/how-to-plan-software-integrations-before-development.svg",
+  "ecommerce-product-page-design-practical-buying-guide": "/blog-covers/ecommerce-product-page-design-practical-buying-guide.svg",
+  "shopify-expiring-offline-access-token-migration-2027": "/blog-covers/shopify-expiring-offline-access-token-migration-2027.svg",
+  "website-development-cost-in-pakistan": "/blog-covers/website-development-cost-in-pakistan.svg",
+  "mobile-app-development-cost-pakistan-2026-budget-guide": "/blog-covers/mobile-app-development-cost-pakistan-2026-budget-guide.svg",
+  "ecommerce-platform-selection-2026-international-business-guide": "/blog-covers/ecommerce-platform-selection-2026-international-business-guide.svg",
+  "custom-erp-software-cost-pakistan-2026-guide": "/blog-covers/custom-erp-software-cost-pakistan-2026-guide.svg",
+  "ai-invoice-processing-automation-business-guide": "/blog-covers/ai-invoice-processing-automation-business-guide.svg",
+  "multi-tenant-saas-architecture-guide": "/blog-covers/multi-tenant-saas-architecture-guide.svg",
+  "website-maintenance-checklist-pakistan-businesses": "/blog-covers/website-maintenance-checklist-pakistan-businesses.svg",
+  "custom-web-application-development-guide": "/blog-covers/custom-web-application-development-guide.svg",
+  "ecommerce-payment-integration-pakistan-guide": "/blog-covers/ecommerce-payment-integration-pakistan-guide.svg",
 };
 
 /**
@@ -24,16 +34,11 @@ export function blogCoverSources(post: Pick<BlogPost, "slug" | "title" | "cover"
   src?: string;
   fallbackSrc?: string;
 } {
-  const normalizedTitle = post.title.toLowerCase();
-  const titleCover = normalizedTitle.includes("how to improve your business with a website")
-    ? "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=82"
-    : normalizedTitle.includes("ai automation for small businesses")
-      ? "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1200&q=82"
-      : undefined;
   const stored = post.cover?.trim() || undefined;
-  const mapped = titleCover || fallbackCovers[post.slug];
-  const src = stored || mapped;
-  const fallbackSrc = stored && mapped && mapped !== stored ? mapped : undefined;
+  const isFirebaseUpload = Boolean(stored && /firebasestorage\.googleapis\.com|\.firebasestorage\.app/i.test(stored));
+  const local = fallbackCovers[post.slug];
+  const src = isFirebaseUpload ? stored : local || stored;
+  const fallbackSrc = isFirebaseUpload ? local : undefined;
   return { src, fallbackSrc };
 }
 

@@ -20,40 +20,40 @@ export const serviceCovers = {
 };
 
 const bySlug: Record<string, string> = {
-  "luxestay-hotel-booking": shot("photo-1566073771259-6a8506099945"),
-  "novacart-ecommerce-os": shot("photo-1607082349566-187342175e2f"),
-  "pulsefit-fitness-app": shot("photo-1534438327276-14e5300c3a48"),
-  "ledgerly-finance-dashboard": shot("photo-1460925895917-afdab827c52f"),
-  "whisper-ai-support-agent": shot("photo-1677442136019-21780ecad995"),
-  "aurora-brand-identity": shot("photo-1634942537034-2531766687b1"),
-  "streamline-workflow-automation": shot("photo-1558494949-ef010cbdcc31"),
-  "pocketclinic-telehealth": shot("photo-1576091160399-112ba8d25d1f"),
-  "pixelforge-creative-studio": shot("photo-1618005182384-a83a8bd57fbe"),
-  "authkit-identity-module": shot("photo-1614064641938-3bbee52942c7"),
-  "reels-engine": shot("photo-1611162616475-46b635cb6868"),
-  "checkout-plus-payments": shot("photo-1563013544-824ae1b704d3"),
-  "campuscraf-final-year-kit": shot("photo-1488190211105-23925edfa36e"),
-  "estatevue-property-portal": shot("photo-1560518883-ce09059eeffa"),
-  "glowbar-beauty-shop": shot("photo-1596462502278-27bfdc403348"),
-  "insightops-analytics-saas": shot("photo-1551288049-bebda4e38f71"),
-  "callmesh-in-app-calling": shot("photo-1478737270239-2f02b77fc618"),
-  "storygrid-content-platform": shot("photo-1457369804613-52c61a468e7d"),
-  "framelab-poster-banner-studio": shot("photo-1541701494587-cb58502866ab"),
-  "productform-design-system": shot("photo-1581235720704-06d3acfcb36f"),
-  "cuthouse-video-edit-pack": shot("photo-1492691527719-9d1e07e534b4"),
-  "adlume-campaign-ads": shot("photo-1432888498266-38ffec3eaf0a"),
-  "postpilot-social-system": shot("photo-1611162616305-c69b3c7b4d07"),
-  "biteroute-food-delivery": shot("photo-1504674900247-0877df9cc836"),
-  "tableandthyme-restaurant": shot("photo-1414235077428-338989a2e8c0"),
-  "learnnest-education-platform": shot("photo-14565130808-af0986bc3504"),
-  "cartdrawer-shopping-cart": shot("photo-1472851294608-062f824d29cc"),
-  "pulsechat-live-chat": shot("photo-1577563908411-5077b6dc7624"),
-  "pageforge-frontend-pages": shot("photo-1547658719-da2b51169166"),
-  "thesisforge-assignment-kit": shot("photo-1455390582262-044cdead277a"),
-  "agrisense-fyp-iot": shot("photo-1530836369250-ef72a3f5cda8"),
-  "customcraft-bespoke-build": shot("photo-1517694712202-14dd9538aa97"),
-  "ridegrid-logistics-app": shot("photo-1586528116311-ad8dd3c8310d"),
-  "clinicorn-clinic-website": shot("photo-1666214280557-f1b5022eb634"),
+  "luxestay-hotel-booking": "/project-covers/luxestay-hotel-booking.svg",
+  "novacart-ecommerce-os": "/project-covers/novacart-ecommerce-os.svg",
+  "pulsefit-fitness-app": "/project-covers/pulsefit-fitness-app.svg",
+  "ledgerly-finance-dashboard": "/project-covers/ledgerly-finance-dashboard.svg",
+  "whisper-ai-support-agent": "/project-covers/whisper-ai-support-agent.svg",
+  "aurora-brand-identity": "/project-covers/aurora-brand-identity.svg",
+  "streamline-workflow-automation": "/project-covers/streamline-workflow-automation.svg",
+  "pocketclinic-telehealth": "/project-covers/pocketclinic-telehealth.svg",
+  "pixelforge-creative-studio": "/project-covers/pixelforge-creative-studio.svg",
+  "authkit-identity-module": "/project-covers/authkit-identity-module.svg",
+  "reels-engine": "/project-covers/reels-engine.svg",
+  "checkout-plus-payments": "/project-covers/checkout-plus-payments.svg",
+  "campuscraf-final-year-kit": "/project-covers/campuscraf-final-year-kit.svg",
+  "estatevue-property-portal": "/project-covers/estatevue-property-portal.svg",
+  "glowbar-beauty-shop": "/project-covers/glowbar-beauty-shop.svg",
+  "insightops-analytics-saas": "/project-covers/insightops-analytics-saas.svg",
+  "callmesh-in-app-calling": "/project-covers/callmesh-in-app-calling.svg",
+  "storygrid-content-platform": "/project-covers/storygrid-content-platform.svg",
+  "framelab-poster-banner-studio": "/project-covers/framelab-poster-banner-studio.svg",
+  "productform-design-system": "/project-covers/productform-design-system.svg",
+  "cuthouse-video-edit-pack": "/project-covers/cuthouse-video-edit-pack.svg",
+  "adlume-campaign-ads": "/project-covers/adlume-campaign-ads.svg",
+  "postpilot-social-system": "/project-covers/postpilot-social-system.svg",
+  "biteroute-food-delivery": "/project-covers/biteroute-food-delivery.svg",
+  "tableandthyme-restaurant": "/project-covers/tableandthyme-restaurant.svg",
+  "learnnest-education-platform": "/project-covers/learnnest-education-platform.svg",
+  "cartdrawer-shopping-cart": "/project-covers/cartdrawer-shopping-cart.svg",
+  "pulsechat-live-chat": "/project-covers/pulsechat-live-chat.svg",
+  "pageforge-frontend-pages": "/project-covers/pageforge-frontend-pages.svg",
+  "thesisforge-assignment-kit": "/project-covers/thesisforge-assignment-kit.svg",
+  "agrisense-fyp-iot": "/project-covers/agrisense-fyp-iot.svg",
+  "customcraft-bespoke-build": "/project-covers/customcraft-bespoke-build.svg",
+  "ridegrid-logistics-app": "/project-covers/ridegrid-logistics-app.svg",
+  "clinicorn-clinic-website": "/project-covers/clinicorn-clinic-website.svg",
 };
 
 const byCategory: Record<string, string> = {
@@ -69,7 +69,10 @@ const byCategory: Record<string, string> = {
 
 export function projectCover(project: Project) {
   const firstGallery = project.gallery?.map((item) => item.trim()).find(Boolean);
-  return firstGallery || project.cover || bySlug[project.slug] || byCategory[project.category] || byCategory.websites;
+  const uploaded = [firstGallery, project.cover?.trim()].find((value) =>
+    value && /firebasestorage\.googleapis\.com|\.firebasestorage\.app/i.test(value),
+  );
+  return uploaded || bySlug[project.slug] || firstGallery || project.cover || byCategory[project.category] || byCategory.websites;
 }
 
 /** Uploaded gallery images only (1–4). Falls back to cover/stock when none uploaded. */
