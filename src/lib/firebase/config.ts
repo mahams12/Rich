@@ -1,6 +1,6 @@
 import type { FirebaseOptions } from "firebase/app";
 
-export const firebaseProjectId = "novexa-4876f";
+export const firebaseProjectId = "novexahub-live";
 
 export const primaryAdminEmail = "novexahub.net@gmail.com";
 

@@ -7,7 +7,7 @@ import { recordBlogVisit, rememberBlogNavigation } from "@/lib/blogAnalytics";
 import { useApp } from "@/components/providers/AppProvider";
 import { Badge, Button, Section } from "@/components/ui/Button";
 import { getBlogPostsWithFallback } from "@/data/posts";
-import { resolveBlogCover, sizedCover } from "@/lib/blogCovers";
+import { blogCoverSources, sizedCover } from "@/lib/blogCovers";
 import { CoverFrame } from "@/components/blog/CoverFrame";
 import { isStudioAdmin } from "@/lib/admin";
 import type { BlogPost } from "@/types";
@@ -104,7 +104,8 @@ export function BlogPostView({ initialPosts }: { initialPosts?: BlogPost[] }) {
       <p className="mt-3 text-sm text-muted">By {post.author}</p>
 
       <CoverFrame
-        src={sizedCover(resolveBlogCover(post), 1400)}
+        src={sizedCover(blogCoverSources(post).src, 1400)}
+        fallbackSrc={sizedCover(blogCoverSources(post).fallbackSrc, 1400)}
         alt={post.title}
         eager
         className="relative mx-auto mt-7 aspect-[16/9] w-full max-w-3xl overflow-hidden rounded-xl border border-black/10"
@@ -191,7 +192,8 @@ export function BlogPostView({ initialPosts }: { initialPosts?: BlogPost[] }) {
             {related.map((item) => (
               <Link key={item.id} href={`/blogs/${item.slug}`} onClick={() => rememberBlogNavigation(item.slug)} className="group block overflow-hidden rounded-2xl border border-black/[0.09] bg-[#fffcf8] no-underline transition hover:-translate-y-1 hover:shadow-[0_14px_30px_rgba(22,17,14,0.08)]">
                 <CoverFrame
-                  src={sizedCover(resolveBlogCover(item), 640)}
+                  src={sizedCover(blogCoverSources(item).src, 640)}
+                  fallbackSrc={sizedCover(blogCoverSources(item).fallbackSrc, 640)}
                   alt={`${item.title} article cover`}
                   className="relative aspect-[16/9] w-full overflow-hidden"
                   imgClassName="absolute inset-0 h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.025]"

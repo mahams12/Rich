@@ -74,7 +74,16 @@ async function uploadImage(file: File, folder: string, id: string) {
     const unauthorized =
       message.includes("unauthorized") ||
       message.includes("permission") ||
-      message.includes("Not signed in");
+      message.includes("Not signed in") ||
+      // Storage reads/writes 402 while the project's billing is delinquent,
+      // and 404 while the default bucket isn't provisioned — don't block the
+      // admin; fall back to an inline image below.
+      message.includes("billing") ||
+      message.includes("delinquent") ||
+      message.includes("402") ||
+      message.includes("not-found") ||
+      message.includes("bucket") ||
+      message.includes("does not exist");
     if (!unauthorized) throw error;
     // Fallback when Storage rules/auth block the write — keep admin unblocked.
     return fileToCompressedDataUrl(file);

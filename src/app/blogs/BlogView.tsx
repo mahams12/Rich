@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { useApp } from "@/components/providers/AppProvider";
 import { Button, Section } from "@/components/ui/Button";
 import { getBlogPostsWithFallback } from "@/data/posts";
-import { resolveBlogCover, sizedCover } from "@/lib/blogCovers";
+import { blogCoverSources, sizedCover } from "@/lib/blogCovers";
 import { CoverFrame } from "@/components/blog/CoverFrame";
 import type { BlogPost } from "@/types";
 import { rememberBlogNavigation } from "@/lib/blogAnalytics";
@@ -24,10 +24,12 @@ const cardImgClass =
 
 function PostCard({ post, index }: { post: BlogPost; index: number }) {
   const category = post.tags?.[0] || "Insights";
+  const { src, fallbackSrc } = blogCoverSources(post);
   return (
     <Link href={`/blogs/${post.slug}`} onClick={() => rememberBlogNavigation(post.slug)} className="group block overflow-hidden rounded-2xl border border-black/[0.09] bg-[#fffcf8] no-underline transition duration-200 hover:-translate-y-1 hover:shadow-[0_16px_34px_rgba(22,17,14,0.08)]">
       <CoverFrame
-        src={sizedCover(resolveBlogCover(post), 640)}
+        src={sizedCover(src, 640)}
+        fallbackSrc={sizedCover(fallbackSrc, 640)}
         alt={`${post.title} article cover`}
         eager={index < 3}
         className="relative aspect-[16/9] w-full overflow-hidden"

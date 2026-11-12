@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { isBot, isDataCenterAsn, parseUa, type AnalyticsEvent } from "@/lib/analytics";
 
-const PROJECT = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "novexa-4876f";
+const PROJECT = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "novexahub-live";
 const FS = `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents/analyticsEvents`;
 
 interface CfLike { city?: string; country?: string; asn?: number; [k: string]: unknown }

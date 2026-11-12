@@ -14,15 +14,27 @@ const fallbackCovers: Record<string, string> = {
   "ai-automation-for-small-businesses-in-2026-practical-ways-to-save-time-and-grow-faster": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1200&q=82",
 };
 
-/** Pick the best cover for a post: verified article covers beat stored URLs. */
-export function resolveBlogCover(post: Pick<BlogPost, "slug" | "title" | "cover">): string | undefined {
+/**
+ * Cover candidates for a post, best first. The stored cover (uploaded to
+ * Firebase Storage or an external URL saved on the record) wins; curated
+ * per-slug covers act as the runtime fallback for records whose stored URL
+ * is stale or undeliverable. If nothing exists, both are undefined.
+ */
+export function blogCoverSources(post: Pick<BlogPost, "slug" | "title" | "cover">): {
+  src?: string;
+  fallbackSrc?: string;
+} {
   const normalizedTitle = post.title.toLowerCase();
   const titleCover = normalizedTitle.includes("how to improve your business with a website")
     ? "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=82"
     : normalizedTitle.includes("ai automation for small businesses")
       ? "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=1200&q=82"
       : undefined;
-  return titleCover || fallbackCovers[post.slug] || post.cover || undefined;
+  const stored = post.cover?.trim() || undefined;
+  const mapped = titleCover || fallbackCovers[post.slug];
+  const src = stored || mapped;
+  const fallbackSrc = stored && mapped && mapped !== stored ? mapped : undefined;
+  return { src, fallbackSrc };
 }
 
 /**
