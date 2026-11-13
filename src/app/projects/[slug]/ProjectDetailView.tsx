@@ -213,6 +213,21 @@ export function ProjectDetailView({ initialProjects }: { initialProjects?: Proje
               <span key={tech} className="rounded-full bg-black/[0.03] px-3 py-1 text-xs">{tech}</span>
             ))}
           </div>
+          {project.links?.length ? (
+            <div className="flex flex-wrap gap-2">
+              {project.links.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-full border border-black/10 px-3 py-1 text-xs font-semibold text-[#16110e] transition hover:bg-black/[0.04]"
+                >
+                  {link.label} ↗
+                </a>
+              ))}
+            </div>
+          ) : null}
           <ContactActions title={project.title} extra={extra} stacked />
           <p className="text-xs text-[#6d655d]">
             {project.readyMade ? "Ready-made studio product" : "Custom studio build"} by NovexaHub.

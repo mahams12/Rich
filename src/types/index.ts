@@ -65,6 +65,8 @@ export interface Project {
   cover?: string;
   /** Up to 4 images for the project detail gallery (first also used as portfolio cover). */
   gallery?: string[];
+  /** External references — live site, repo, store listing. */
+  links?: { label: string; href: string }[];
   deleted?: boolean;
   createdAt?: string;
   publishedAt?: string;
