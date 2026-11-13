@@ -104,6 +104,7 @@ export function ProjectDetailView({ initialProjects }: { initialProjects?: Proje
                   mood={project.visual.mood}
                   title={project.title}
                   cover={activeShot}
+                  fit="contain"
                   className="h-full w-full"
                 />
               </TiltCard>
