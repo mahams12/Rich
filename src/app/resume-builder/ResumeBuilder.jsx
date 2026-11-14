@@ -667,7 +667,19 @@ function parseTextIntoResume(source, existing) {
   const summaryLines = (sections.summary || []).slice(0, 9);
   const summary = summaryLines.join(" ").replace(/\s+/g, " ").trim();
   const experience = parseEntryBlocks(sections.experience || [], "experience").slice(0, 12);
-  const education = parseEntryBlocks(sections.education || [], "education").slice(0, 8);
+  // Two-column PDFs sometimes align a work date beside an education row.
+  // If the exact same date range is present in Experience, do not duplicate
+  // it onto an Education record unless it is independently listed there.
+  const experienceDateKeys = new Set((sections.experience || [])
+    .map((line) => extractDateRange(line))
+    .filter(Boolean)
+    .map((date) => date.start.toLowerCase() + "|" + date.end.toLowerCase()));
+  const educationLines = (sections.education || []).map((line) => {
+    const date = extractDateRange(line);
+    if (!date || !experienceDateKeys.has(date.start.toLowerCase() + "|" + date.end.toLowerCase())) return line;
+    return line.replace(DATE_RANGE_RE, " ").replace(/\\s*\\|\\s*/g, " ").replace(/\\s+/g, " ").trim();
+  }).filter(Boolean);
+  const education = parseEntryBlocks(educationLines, "education").slice(0, 8);
   const projects = parseProjectEntries(sections.projects || []);
   const skills = extractSkillItems(sections.skills || []);
   const certificates = (sections.certificates || []).map((line) => line.trim()).filter(Boolean).slice(0, 12).map((line) => ({
