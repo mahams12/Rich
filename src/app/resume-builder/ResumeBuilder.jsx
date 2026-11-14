@@ -208,7 +208,7 @@ const SECTION_PATTERNS = [
   ["summary", /^(professional summary|career summary|summary|profile|career profile|objective|career objective|about me|professional profile)$/i],
   ["experience", /^(professional experience|work experience|employment history|work history|experience|employment|career history|work experience and internships)$/i],
   ["education", /^(education|academic background|education and training|qualifications|academic qualifications)$/i],
-  ["skills", /^(software\\s*(?:&|and)\\s*skills|technical skills|core skills|key skills|skills|competencies|core competencies|expertise|technical expertise|skill set|areas of expertise|technical skills and tools)$/i],
+  ["skills", /^(software\s*(?:&|and)\s*skills|technical skills|core skills|key skills|skills|competencies|core competencies|expertise|technical expertise|skill set|areas of expertise|technical skills and tools)$/i],
   ["projects", /^(selected projects|personal projects|academic projects|projects|portfolio|key projects|extracurricular activities|extracurricular|selected work|project experience)$/i],
   ["achievements", /^(achievements|key achievements|selected achievements|accomplishments|honors and achievements|awards and achievements|awards & achievements)$/i],
   ["certificates", /^(certifications|certificates|licenses and certifications|licenses|courses|professional development)$/i],
@@ -329,11 +329,11 @@ function extractSkillItems(lines) {
 function parseSimpleList(lines, splitInline = false, limit = 30) {
   const output = [];
   (lines || []).forEach((rawLine) => {
-    const line = String(rawLine || "").replace(/^[•●▪◦‣*·\\-–—]+\\s*/, "").trim();
+    const line = String(rawLine || "").replace(/^[•●▪◦‣*·\-–—]+\s*/, "").trim();
     if (!line) return;
     const parts = splitInline ? splitOutsideParentheses(line, /[,;|•·]+/) : [line];
     parts.forEach((part) => {
-      const clean = part.trim().replace(/^[•●▪◦‣*·\\-–—]+\\s*/, "");
+      const clean = part.trim().replace(/^[•●▪◦‣*·\-–—]+\s*/, "");
       if (clean && !output.some((item) => item.toLowerCase() === clean.toLowerCase())) output.push(clean);
     });
   });
@@ -545,12 +545,12 @@ function parseProjectEntries(lines) {
 
     // Lighthouse/SEO score summaries are metrics, not portfolio projects.
     // PDF extraction can detach a score row from its heading.
-    if (/^lighthouse\\s+averages?\\b/i.test(line)) {
+    if (/^lighthouse\s+averages?\b/i.test(line)) {
       flush();
       skipLighthouseMetrics = true;
       return;
     }
-    if (/^(?:performance|accessibility|best\\s+practices|practices|seo)\\s*\\d{1,3}\\b/i.test(line)) {
+    if (/^(?:performance|accessibility|best\s+practices|practices|seo)\s*\d{1,3}\b/i.test(line)) {
       flush();
       return;
     }
