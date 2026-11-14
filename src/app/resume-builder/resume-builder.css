@@ -2161,7 +2161,6 @@ body:has(.rb-page.rb-full-editor) a[href*="wa.me"] { display:none !important; }
   .rb-live-preview .rb-resume-sheet {
     position:relative !important;
     inset:auto !important;
-    display:block;
     width:210mm !important;
     min-width:210mm !important;
     max-width:210mm !important;
