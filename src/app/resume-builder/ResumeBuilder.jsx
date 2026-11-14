@@ -326,6 +326,20 @@ function extractSkillItems(lines) {
   return Array.from(new Map(items.map((item) => [item.toLowerCase(), item])).values()).slice(0, 60);
 }
 
+function parseSimpleList(lines, splitInline = false, limit = 30) {
+  const output = [];
+  (lines || []).forEach((rawLine) => {
+    const line = String(rawLine || "").replace(/^[•●▪◦‣*·\\-–—]+\\s*/, "").trim();
+    if (!line) return;
+    const parts = splitInline ? splitOutsideParentheses(line, /[,;|•·]+/) : [line];
+    parts.forEach((part) => {
+      const clean = part.trim().replace(/^[•●▪◦‣*·\\-–—]+\\s*/, "");
+      if (clean && !output.some((item) => item.toLowerCase() === clean.toLowerCase())) output.push(clean);
+    });
+  });
+  return output.slice(0, limit);
+}
+
 function isLikelyEntryTitle(line, kind) {
   const value = String(line || "").replace(/^[•●▪◦‣*·]\s*/, "").trim();
   if (value.length < 3 || value.length > 115 || ACTION_START_RE.test(value)) return false;
@@ -530,9 +544,14 @@ function parseProjectEntries(lines) {
     }
 
     // Lighthouse/SEO score summaries are metrics, not portfolio projects.
-    if (/^lighthouse\s+averages?\b/i.test(line)) {
+    // PDF extraction can detach a score row from its heading.
+    if (/^lighthouse\\s+averages?\\b/i.test(line)) {
       flush();
       skipLighthouseMetrics = true;
+      return;
+    }
+    if (/^(?:performance|accessibility|best\\s+practices|practices|seo)\\s*\\d{1,3}\\b/i.test(line)) {
+      flush();
       return;
     }
     if (skipLighthouseMetrics) return;
@@ -658,8 +677,8 @@ function parseTextIntoResume(source, existing) {
     link: "",
   }));
   const languages = (sections.languages || []).join(",").split(/[,;|•·]\s*|\n/).map((item) => item.trim()).filter(Boolean).slice(0, 12);
-  const interests = (sections.interests || []).join(",").split(/[,;|•·]\s*|\n/).map((item) => item.trim()).filter(Boolean).slice(0, 20);
-  const achievements = (sections.achievements || []).join(" ").split(/(?<=[.!?])\s+(?=[A-Z•])/).map((item) => item.trim()).filter(Boolean).slice(0, 12);
+  const interests = parseSimpleList(sections.interests || [], true, 30);
+  const achievements = parseSimpleList(sections.achievements || [], false, 30);
   const profile = {
     ...existing.profile,
     fullName: nameCandidate || existing.profile.fullName || "",
@@ -1476,6 +1495,18 @@ export default function ResumeBuilder() {
     ...resume,
     [section]: resume[section].map((item, itemIndex) => itemIndex === index ? { ...item, [key]: value } : item),
   }));
+  const updateSimpleItem = (section, index, value) => updateCurrent((resume) => ({
+    ...resume,
+    [section]: (resume[section] || []).map((item, itemIndex) => itemIndex === index ? value : item),
+  }));
+  const addSimpleItem = (section) => updateCurrent((resume) => ({
+    ...resume,
+    [section]: [...(resume[section] || []), ""],
+  }));
+  const removeSimpleItem = (section, index) => updateCurrent((resume) => ({
+    ...resume,
+    [section]: (resume[section] || []).filter((_, itemIndex) => itemIndex !== index),
+  }));
   const addItem = (section) => {
     const empty = section === "experience" ? emptyExperience : section === "education" ? emptyEducation : section === "projects" ? emptyProject : emptyCertificate;
     updateCurrent((resume) => ({ ...resume, [section]: [...resume[section], { ...empty }] }));
@@ -1866,8 +1897,8 @@ export default function ResumeBuilder() {
                     <details className="rb-form-section"><summary><span className="rb-form-icon">04</span><span><b>Projects</b><small>Selected work and portfolio links</small></span><i>⌄</i></summary><div className="rb-repeat-list">{current.projects.map((item, index) => <div className="rb-repeat-card" key={"projects-" + index}><div className="rb-repeat-card-head"><b>Project {index + 1}</b><button onClick={() => removeItem("projects", index)}>Remove</button></div><div className="rb-form-grid"><Field label="Project name" value={item.name} onChange={(value) => updateListItem("projects", index, "name", value)} /><Field label="Your role" value={item.role} onChange={(value) => updateListItem("projects", index, "role", value)} /><Field label="Project link" value={item.link} onChange={(value) => updateListItem("projects", index, "link", value)} /><Field label="What you built / achieved" value={item.details} onChange={(value) => updateListItem("projects", index, "details", value)} multiline /></div></div>)}<button className="rb-add-row" onClick={() => addItem("projects")}>＋ Add project</button></div></details>
                     <details className="rb-form-section"><summary><span className="rb-form-icon">05</span><span><b>Skills and languages</b><small>Tools, strengths and spoken languages</small></span><i>⌄</i></summary><div className="rb-form-grid"><Field label="Skills (separate with commas)" value={current.skills.join(", ")} onChange={(value) => updateCurrent((resume) => ({ ...resume, skills: value.split(",").map((item) => item.trim()).filter(Boolean) }))} multiline placeholder="React, JavaScript, communication..." /><Field label="Languages (separate with commas)" value={current.languages.join(", ")} onChange={(value) => updateCurrent((resume) => ({ ...resume, languages: value.split(",").map((item) => item.trim()).filter(Boolean) }))} /></div></details>
                     <details className="rb-form-section"><summary><span className="rb-form-icon">06</span><span><b>Certifications</b><small>Credentials and courses</small></span><i>⌄</i></summary><div className="rb-repeat-list">{current.certificates.map((item, index) => <div className="rb-repeat-card" key={"certificate-" + index}><div className="rb-repeat-card-head"><b>Certificate {index + 1}</b><button onClick={() => removeItem("certificates", index)}>Remove</button></div><div className="rb-form-grid"><Field label="Certificate" value={item.name} onChange={(value) => updateListItem("certificates", index, "name", value)} /><Field label="Issuer" value={item.issuer} onChange={(value) => updateListItem("certificates", index, "issuer", value)} /><Field label="Date" value={item.date} onChange={(value) => updateListItem("certificates", index, "date", value)} /><Field label="Credential link" value={item.link} onChange={(value) => updateListItem("certificates", index, "link", value)} /></div></div>)}<button className="rb-add-row" onClick={() => addItem("certificates")}>＋ Add certification</button></div></details>
-                    <details className="rb-form-section"><summary><span className="rb-form-icon">07</span><span><b>Hobbies and interests</b><small>Optional personal interests</small></span><i>⌄</i></summary><div className="rb-form-grid"><Field label="Interests (separate with commas)" value={(current.interests || []).join(", ")} onChange={(value) => updateCurrent((resume) => ({ ...resume, interests: value.split(",").map((item) => item.trim()).filter(Boolean) }))} multiline placeholder="Volunteering, reading, sports..." /></div></details>
-                    <details className="rb-form-section"><summary><span className="rb-form-icon">08</span><span><b>Achievements</b><small>Measurable results and recognition</small></span><i>⌄</i></summary><div className="rb-form-grid"><Field label="Achievements (one per line)" value={(current.achievements || []).join("\n")} onChange={(value) => updateCurrent((resume) => ({ ...resume, achievements: value.split("\n").map((item) => item.trim()).filter(Boolean) }))} multiline placeholder="Improved Lighthouse performance scores across production websites..." /></div></details>
+                    <details className="rb-form-section"><summary><span className="rb-form-icon">07</span><span><b>Hobbies and interests</b><small>Optional personal interests</small></span><i>⌄</i></summary><div className="rb-repeat-list rb-simple-list">{(current.interests || []).map((item, index) => <div className="rb-repeat-card rb-simple-list-row" key={"interest-" + index}><div className="rb-repeat-card-head"><b>Interest {index + 1}</b><button type="button" onClick={() => removeSimpleItem("interests", index)}>Remove</button></div><Field label="Hobby / interest" value={item} onChange={(value) => updateSimpleItem("interests", index, value)} placeholder="e.g. Open-source development" /></div>)}<button type="button" className="rb-add-row" onClick={() => addSimpleItem("interests")}>＋ Add interest</button><small className="rb-field-hint">Each interest is saved as a separate line in the preview and PDF.</small></div></details>
+                    <details className="rb-form-section"><summary><span className="rb-form-icon">08</span><span><b>Achievements</b><small>Measurable results and recognition</small></span><i>⌄</i></summary><div className="rb-repeat-list rb-simple-list">{(current.achievements || []).map((item, index) => <div className="rb-repeat-card rb-simple-list-row" key={"achievement-" + index}><div className="rb-repeat-card-head"><b>Achievement {index + 1}</b><button type="button" onClick={() => removeSimpleItem("achievements", index)}>Remove</button></div><Field label="Achievement details" value={item} onChange={(value) => updateSimpleItem("achievements", index, value)} multiline placeholder="Describe a measurable result or recognition..." /></div>)}<button type="button" className="rb-add-row" onClick={() => addSimpleItem("achievements")}>＋ Add achievement</button><small className="rb-field-hint">Add each achievement separately. Long entries wrap naturally in the document.</small></div></details>
                     <div className="rb-editor-bottom-actions"><button className="rb-button rb-button-light" onClick={exportBackup}>Export editable backup</button><button className="rb-button rb-button-accent" onClick={printResume}>Download PDF →</button></div>
                   </div>
                   <div className="rb-live-preview">
