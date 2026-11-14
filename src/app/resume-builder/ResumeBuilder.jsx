@@ -677,7 +677,7 @@ function parseTextIntoResume(source, existing) {
   const educationLines = (sections.education || []).map((line) => {
     const date = extractDateRange(line);
     if (!date || !experienceDateKeys.has(date.start.toLowerCase() + "|" + date.end.toLowerCase())) return line;
-    return line.replace(DATE_RANGE_RE, " ").replace(/\\s*\\|\\s*/g, " ").replace(/\\s+/g, " ").trim();
+    return line.replace(DATE_RANGE_RE, " ").replace(/\s*\|\s*/g, " ").replace(/\s+/g, " ").trim();
   }).filter(Boolean);
   const education = parseEntryBlocks(educationLines, "education").slice(0, 8);
   const projects = parseProjectEntries(sections.projects || []);
