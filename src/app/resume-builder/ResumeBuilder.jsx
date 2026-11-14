@@ -208,12 +208,12 @@ const SECTION_PATTERNS = [
   ["summary", /^(professional summary|career summary|summary|profile|career profile|objective|career objective|about me|professional profile)$/i],
   ["experience", /^(professional experience|work experience|employment history|work history|experience|employment|career history|work experience and internships)$/i],
   ["education", /^(education|academic background|education and training|qualifications|academic qualifications)$/i],
-  ["skills", /^(technical skills|core skills|key skills|skills|competencies|core competencies|expertise|technical expertise|skill set|areas of expertise)$/i],
+  ["skills", /^(software\\s*(?:&|and)\\s*skills|technical skills|core skills|key skills|skills|competencies|core competencies|expertise|technical expertise|skill set|areas of expertise|technical skills and tools)$/i],
   ["projects", /^(selected projects|personal projects|academic projects|projects|portfolio|key projects|extracurricular activities|extracurricular|selected work|project experience)$/i],
-  ["achievements", /^(achievements|key achievements|selected achievements|accomplishments|honors and achievements)$/i],
+  ["achievements", /^(achievements|key achievements|selected achievements|accomplishments|honors and achievements|awards and achievements|awards & achievements)$/i],
   ["certificates", /^(certifications|certificates|licenses and certifications|licenses|courses|professional development)$/i],
   ["languages", /^(languages|language skills)$/i],
-  ["interests", /^(hobbies|interests|hobbies and interests|activities|personal interests)$/i],
+  ["interests", /^(hobbies|interests|hobbies (?:and|&) interests|activities|personal interests)$/i],
   ["contact", /^(contact|contact details|contact information|personal details|personal information)$/i],
 ];
 
@@ -2012,7 +2012,8 @@ export default function ResumeBuilder() {
           {importDraft.education?.length ? <div className="rb-import-records"><b>Education extracted</b>{importDraft.education.slice(0, 5).map((item, index) => <div key={index}><strong>{item.degree || "Qualification not detected"}</strong><span>{[item.school, item.start, item.end].filter(Boolean).join(" · ")}</span></div>)}</div> : null}
           {importDraft.skills?.length ? <div className="rb-import-records"><b>Skills extracted</b><div className="rb-import-skill-list">{importDraft.skills.slice(0, 28).map((skill, index) => <span key={index}>{skill}</span>)}</div></div> : null}
           {importDraft.projects?.length ? <div className="rb-import-records"><b>Projects extracted</b>{importDraft.projects.slice(0, 16).map((item, index) => <div key={index}><strong>{item.name || "Project name not detected"}</strong>{item.role ? <span>{item.role}</span> : null}{item.link ? <span>{item.link}</span> : null}{item.details ? <p>{item.details.slice(0, 260)}{item.details.length > 260 ? "…" : ""}</p> : null}</div>)}</div> : null}
-          {importDraft.achievements?.length ? <div className="rb-import-records"><b>Achievements extracted</b>{importDraft.achievements.slice(0, 8).map((item, index) => <div key={index}><p>{item}</p></div>)}</div> : null}
+          {importDraft.interests?.length ? <div className="rb-import-records"><b>Hobbies & interests extracted</b>{importDraft.interests.slice(0, 12).map((item, index) => <div key={index}><p>{item}</p></div>)}</div> : null}
+          {importDraft.achievements?.length ? <div className="rb-import-records"><b>Achievements extracted</b>{importDraft.achievements.slice(0, 12).map((item, index) => <div key={index}><p>{item}</p></div>)}</div> : null}
           {importReport.importedParts?.length ? <div className="rb-import-parts"><b>Sections read</b><span>{importReport.importedParts.join(" · ")}</span></div> : null}
           {importReport.warnings?.length ? <div className="rb-import-warnings"><b>Review these items</b><ul>{importReport.warnings.map((warning, index) => <li key={index}>{warning}</li>)}</ul></div> : null}
           {importReport.rawPreview ? <details className="rb-import-raw"><summary>Inspect extracted text</summary><pre>{importReport.rawPreview}</pre></details> : null}
