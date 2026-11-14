@@ -883,8 +883,35 @@ async function extractDocumentText(file) {
           y: Number(item.transform?.[5] || 0),
           width: Number(item.width || 0),
           height: Math.abs(Number(item.transform?.[3] || item.transform?.[0] || 10)),
-        }))
-        .sort((a, b) => (b.y - a.y) || (a.x - b.x));
+        }));
+
+      // PDF.js text extraction does not include hyperlink destinations. Read
+      // link annotations and attach each URL to the visible linked label so
+      // project, GitHub, portfolio and app-store links survive PDF import.
+      try {
+        const annotations = await page.getAnnotations({ intent: "display" });
+        annotations.filter((annotation) => annotation.subtype === "Link" && (annotation.url || annotation.unsafeUrl))
+          .forEach((annotation) => {
+            const url = String(annotation.url || annotation.unsafeUrl || "").trim();
+            const rect = annotation.rect || [];
+            if (!/^https?:\\/\\//i.test(url) || rect.length !== 4) return;
+            const left = Math.min(rect[0], rect[2]);
+            const right = Math.max(rect[0], rect[2]);
+            const bottom = Math.min(rect[1], rect[3]);
+            const top = Math.max(rect[1], rect[3]);
+            const match = positioned
+              .filter((item) => item.x <= right + 3 && item.x + item.width >= left - 3 && item.y >= bottom - 4 && item.y <= top + 4)
+              .sort((a, b) => Math.abs(a.y - (bottom + top) / 2) - Math.abs(b.y - (bottom + top) / 2))[0];
+            if (match) {
+              if (!match.text.includes(url)) match.text += " " + url;
+            } else {
+              positioned.push({ text: url, x: left, y: bottom, width: Math.max(1, right - left), height: Math.max(1, top - bottom) });
+            }
+          });
+      } catch (_) {
+        extractionWarnings.push("Some PDF hyperlink destinations could not be read. Check project and profile links after import.");
+      }
+      positioned.sort((a, b) => (b.y - a.y) || (a.x - b.x));
       const rows = [];
       positioned.forEach((item) => {
         let row = rows.find((candidate) => Math.abs(candidate.y - item.y) <= Math.max(2.2, Math.min(item.height, 14) * 0.22));
