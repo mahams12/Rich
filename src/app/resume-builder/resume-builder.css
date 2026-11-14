@@ -2108,3 +2108,90 @@ body:has(.rb-page.rb-full-editor) a[href*="wa.me"] { display:none !important; }
   line-height:1.55;
   white-space:pre-line;
 }
+
+
+/* Resume Studio fixes: editable list rows and real multi-page A4 print flow. */
+.rb-simple-list { display:grid; gap:10px; }
+.rb-simple-list-row { padding:12px; }
+.rb-field-hint {
+  display:block;
+  margin:0 2px 2px;
+  color:#858b81;
+  font-size:9px;
+  line-height:1.5;
+}
+.rb-simple-list-row .rb-field { min-width:0; }
+
+@media print {
+  @page { size:A4; margin:0; }
+  html, body {
+    width:210mm !important;
+    height:auto !important;
+    min-height:0 !important;
+    overflow:visible !important;
+    background:#fff !important;
+  }
+  body * { visibility:hidden !important; }
+  .rb-live-preview,
+  .rb-live-preview .rb-resume-sheet,
+  .rb-live-preview .rb-resume-sheet * { visibility:visible !important; }
+  .rb-live-preview {
+    position:static !important;
+    display:block !important;
+    width:210mm !important;
+    height:auto !important;
+    max-height:none !important;
+    overflow:visible !important;
+    border:0 !important;
+    border-radius:0 !important;
+    background:#fff !important;
+  }
+  .rb-live-preview .rb-preview-head,
+  .rb-live-preview .rb-preview-foot,
+  .rb-live-preview .rb-preview-template-dock { display:none !important; }
+  .rb-live-preview .rb-preview-canvas {
+    display:block !important;
+    width:210mm !important;
+    height:auto !important;
+    max-height:none !important;
+    overflow:visible !important;
+    padding:0 !important;
+    margin:0 !important;
+  }
+  .rb-live-preview .rb-resume-sheet {
+    position:relative !important;
+    inset:auto !important;
+    display:block;
+    width:210mm !important;
+    min-width:210mm !important;
+    max-width:210mm !important;
+    min-height:0 !important;
+    height:auto !important;
+    max-height:none !important;
+    margin:0 !important;
+    padding:16mm 17mm !important;
+    overflow:visible !important;
+    box-shadow:none !important;
+    transform:none !important;
+    break-after:auto !important;
+    page-break-after:auto !important;
+    print-color-adjust:exact;
+    -webkit-print-color-adjust:exact;
+  }
+  .rb-resume-section {
+    break-inside:auto !important;
+    page-break-inside:auto !important;
+  }
+  .rb-resume-section h3,
+  .rb-resume-entry {
+    break-inside:avoid-page;
+    page-break-inside:avoid;
+  }
+  .rb-resume-section h3 { break-after:avoid-page; page-break-after:avoid; }
+  .rb-resume-entry p,
+  .rb-resume-section li { overflow-wrap:anywhere; }
+  .rb-page { position:static !important; overflow:visible !important; }
+  .rb-resume-card-preview,
+  .rb-template-thumb,
+  .rb-preview-template-thumb { display:none !important; }
+}
