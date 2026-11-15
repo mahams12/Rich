@@ -1,12 +1,10 @@
 import type { BlogPost } from "@/types";
 
-// Verified article-specific covers.
+// Curated local covers take precedence over stale or invalid stored URLs.
+const fallbackCovers: Record<string, string> = {
   "ai-customer-support-automation-guide": "/blog-covers/ai-customer-support-automation-guide.svg",
   "business-website-redesign-pakistan-launch-guide": "/blog-covers/business-website-redesign-pakistan-launch-guide.svg",
   "multi-vendor-marketplace-development-build-guide": "/blog-covers/multi-vendor-marketplace-development-build-guide.svg",
- These win over stale/invalid URLs saved in
-// older live blog records (see resolveBlogCover).
-const fallbackCovers: Record<string, string> = {
   "how-to-choose-a-software-project-partner-novexahub": "/blog-covers/how-to-choose-a-software-project-partner-novexahub.svg",
   "ready-made-websites-vs-custom-software-projects": "/blog-covers/ready-made-websites-vs-custom-software-projects.svg",
   "mobile-app-and-flutter-software-projects-for-startups": "/blog-covers/mobile-app-and-flutter-software-projects-for-startups.svg",
