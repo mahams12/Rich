@@ -299,7 +299,7 @@ export function splitOutsideParentheses(value, separators = /[,;|•·•]+/) {
 }
 
 export function extractSkillItems(lines) {
-  const categoryPrefix = /^(?:programming languages?|languages?|frameworks?|libraries|tools?|platforms?|databases?|cloud|technologies|technical skills|soft skills|core competencies|methodologies|other skills?)\s*[:：-]\s*/i;
+  const categoryPrefix = /^(?:programming languages?|languages?|frameworks?|libraries|tools?|platforms?|databases?|cloud|technologies|technical skills|soft skills|core competencies|methodologies|other skills?|core|back\s*end|front\s*end|full\s*stack|backend & data|frontend & design|data|delivery|devops|mobile|web|general|additional|also|extras?|other|strengths|specialties|specialities)\s*[:：-]\s*/i;
   const items = [];
   (lines || []).forEach((line) => {
     const value = String(line || "").replace(categoryPrefix, "").trim();
@@ -373,8 +373,16 @@ function parseEntryBlocks(lines, kind) {
     const date = extractDateRange(line);
     const withoutDate = date ? line.replace(DATE_RANGE_RE, " ").replace(/[·•]+/g, " ").replace(/\s+/g, " ").replace(/[|\s]+$/g, "").trim() : line;
     const newTitle = isLikelyEntryTitle(withoutDate, kind);
+    // Single-line entries ("BS — University of X", "Role | Company") carry the
+    // same strong-title signal as multi-line headers. When the current group
+    // already has a strong title, a second strong title starts a new entry;
+    // otherwise one-line entries merge and middle records silently vanish.
+    const strongWord = kind === "education" ? DEGREE_RE : ROLE_WORD_RE;
+    const currentTitleText = currentText().find((item) => isLikelyEntryTitle(item, kind)) || "";
+    const startsNewEntry = newTitle && currentHasTitle() &&
+      (currentText().length >= 2 || (strongWord.test(withoutDate) && strongWord.test(currentTitleText)));
     if (current.length && date && hasDate()) flush();
-    else if (current.length && newTitle && currentHasTitle() && currentText().length >= 2) flush();
+    else if (current.length && startsNewEntry) flush();
 
     if (date) {
       current.push({ type: "date", start: date.start, end: date.end });
@@ -420,7 +428,7 @@ function parseEntryBlocks(lines, kind) {
       const degreeLine = content.find((line) => DEGREE_RE.test(line)) || titleLine;
       const schoolLine = content.find((line) => INSTITUTION_RE.test(line) && line !== degreeLine) || organization;
       return {
-        degree: degreeLine,
+        degree: split.organization ? split.title : degreeLine,
         school: schoolLine || "",
         location: "",
         start: date?.start || "",
@@ -476,12 +484,20 @@ function parseProjectEntries(lines) {
       const value = entry.trim().replace(/[.]$/, "");
       if (!value) return;
       const status = value.match(/^(.*?)(\s*\((?:contributed|in development|under development)[^)]*\))$/i);
-      const name = (status ? status[1] : value).trim();
+      const core = (status ? status[1] : value).trim();
+      // "https://novexahub.live/ Novexahub" — the URL is the link, the trailing
+      // label is the project name.
+      const urls = core.match(/https?:\/\/\S+|(?:www\.)?(?:github|gitlab)\.com\/\S+/gi) || [];
+      const name = core
+        .replace(/https?:\/\/\S+|(?:www\.)?(?:github|gitlab)\.com\/\S+/gi, " ")
+        .replace(/\s*[|]\s*/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
       if (!name || /^lighthouse averages?\b/i.test(name)) return;
       projects.push({
         name,
         role: "",
-        link: "",
+        link: urls.join(" | "),
         details: status ? status[2].replace(/^\s*\(/, "").replace(/\)$/, "") : "",
       });
     });
@@ -508,9 +524,9 @@ function parseProjectEntries(lines) {
     const name = String(value || "").trim();
     const words = name.split(/\s+/).filter(Boolean).length;
     if (name.length < 2 || name.length > 90 || words > 9) return false;
-    if (/^(?:lighthouse|performance|accessibility|best practices|seo|also built)\b/i.test(name)) return false;
+    if (/^(?:lighthouse|performance|accessibility|best practices|seo|also built|and|or)\b/i.test(name)) return false;
     if (/^(?:built|developed|created|designed|implemented|used|using|collaborated|delivered|designed and developed)\b/i.test(name)) return false;
-    if (/@|https?:\/\/|[.!?]$/.test(name)) return false;
+    if (/@|https?|www\.|\.com\b|[.!?]$/.test(name)) return false;
     return true;
   };
 
@@ -609,7 +625,8 @@ export function extractGithubProfileUrl(source) {
   return "";
 }
 
-export function parseTextIntoResume(source, existing) {
+export function parseTextIntoResume(source, existing = {}) {
+  const existingProfile = existing.profile || {};
   const raw = String(source || "").replace(/\u0000/g, " ").trim();
   const lines = normalizeResumeLines(raw);
   const { sections, headingLines } = splitResumeSections(lines);
@@ -624,12 +641,17 @@ export function parseTextIntoResume(source, existing) {
     return digits.length >= 8 && digits.length <= 15 && !DATE_RANGE_RE.test(candidate);
   });
   const linkedinMatch = raw.match(/(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[A-Z0-9-_%]+/i);
-  const github = extractGithubProfileUrl(raw);
+  // Prefer a profile URL found in the document header over the first GitHub
+  // mention anywhere — project links later in the file would otherwise win.
+  const github = extractGithubProfileUrl(header.join("\n")) || extractGithubProfileUrl(raw);
   const websiteSource = raw
-    .replace(emailMatch?.[0] || "", " ")
-    .replace(linkedinMatch?.[0] || "", " ")
+    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, " ")
+    .replace(/(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[A-Z0-9-_%]+/gi, " ")
     .replace(/(?:https?:\/\/)?(?:www\.)?github\.com\/[A-Z0-9-]{1,39}(?:\/[A-Z0-9_.-]+)?/gi, " ");
-  const websiteMatch = websiteSource.match(/(?:https?:\/\/)?(?:www\.)?(?:[A-Z0-9-]+\.)+[A-Z]{2,}(?:\/[^\s|]*)?/i);
+  // "React.js"/"Node.js" look like domains to a naive regex. Skip
+  // filename-style TLDs so a headline or skills token never wins the website.
+  const websiteMatch = (websiteSource.match(/(?:https?:\/\/)?(?:www\.)?(?:[A-Z0-9-]+\.)+[A-Z]{2,}(?:\/[^\s|]*)?/gi) || [])
+    .find((value) => !/\.(js|ts|jsx|tsx|py|css|html?|java|json|xml|md|rb|go|php|cs|cpp|sh|txt|ya?ml)$/i.test(value));
   const nameCandidate = (explicitName?.[1] || "").trim() || header.find((line) =>
     line.length >= 3 &&
     line.length <= 58 &&
@@ -677,20 +699,30 @@ export function parseTextIntoResume(source, existing) {
   const interests = parseSimpleList(sections.interests || [], true, 30);
   const achievements = parseSimpleList(sections.achievements || [], false, 30);
   const profile = {
-    ...existing.profile,
-    fullName: nameCandidate || existing.profile.fullName || "",
-    headline: headlineCandidate || existing.profile.headline || "",
+    ...existingProfile,
+    fullName: nameCandidate || existingProfile.fullName || "",
+    headline: headlineCandidate || existingProfile.headline || "",
     email: emailMatch ? emailMatch[0] : "",
     phone: phoneMatch ? phoneMatch.trim() : "",
     linkedin: linkedinMatch ? linkedinMatch[0] : "",
     github,
-    website: extractLabeledValue(raw, ["portfolio", "website", "personal website"]) || (websiteMatch ? websiteMatch[0] : ""),
+    website: extractLabeledValue(raw, ["portfolio", "website", "personal website"]) || websiteMatch || "",
     location: explicitLocation || (() => {
+      const placeRe = /\b(?:Lahore|Karachi|Islamabad|Rawalpindi|Peshawar|Quetta|Multan|Faisalabad|Hyderabad|Sialkot|Gujranwala)\b[^|•·]*\bPakistan\b|\bPakistan\b/i;
       const index = header.findIndex((line) => /\b(?:Lahore|Karachi|Islamabad|Rawalpindi|Peshawar|Quetta|Multan|Faisalabad)\b.*\bPakistan\b/i.test(line));
-      if (index < 0) return existing.profile.location || "";
-      const previous = header[index - 1] || "";
+      if (index < 0) return existingProfile.location || "";
+      const stripContact = (line) => String(line || "")
+        .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, " ")
+        .replace(/https?:\/\/\S+|www\.\S+/gi, " ")
+        .replace(/\+?\d[\d .()/-]{7,}\d/g, " ")
+        .replace(/\s+/g, " ").trim();
+      // Contact lines carry "Lahore, Pakistan | +92… | email" — keep only the
+      // segment that actually names the place.
+      const segments = stripContact(header[index]).split(/\s*[|•·]\s*/).map((part) => part.trim()).filter(Boolean);
+      const place = segments.find((part) => placeRe.test(part)) || segments[0] || "";
+      const previous = stripContact(header[index - 1]);
       const addressPrefix = /\b(?:block|street|road|phase|sector|paragon|town|house|apartment|colony)\b/i.test(previous) ? previous : "";
-      return [addressPrefix, header[index]].filter(Boolean).join(" ");
+      return [addressPrefix, place].filter(Boolean).join(" ").replace(/^[|•·\s]+|[|•·\s]+$/g, "");
     })(),
     summary: summary || "",
   };
@@ -1023,6 +1055,32 @@ export function pdfPageToLines(contentItems, annotations, viewportWidth) {
     });
     return line.trim();
   };
+
+  // A right-side zone that shares nearly every baseline with left content is
+  // not an independent column — it is an aligned field strip (right-aligned
+  // dates, link labels, locations). An independent rail carries its own rows
+  // and usually its own section headings. Date-dominant strips qualify too.
+  // Reading those pages as one column keeps "Role | Company   Apr 2026 –
+  // Present" as a single line instead of detaching the dates into a block.
+  if (columnSplit !== null) {
+    const rightLines = [];
+    let spanningRows = 0;
+    let rightRows = 0;
+    rows.forEach((row) => {
+      const left = row.items.filter((item) => item.x < columnSplit);
+      const right = row.items.filter((item) => item.x >= columnSplit);
+      if (right.length) {
+        rightRows += 1;
+        rightLines.push(makeLine([...right]));
+        if (left.length) spanningRows += 1;
+      }
+    });
+    const dateish = rightLines.filter((text) => extractDateRange(text)).length;
+    const headingish = rightLines.filter((text) => SECTION_PATTERNS.some(([, pattern]) => pattern.test(normalizeSectionHeading(text)))).length;
+    const metaZone = rightLines.length >= 2 && headingish === 0 &&
+      (dateish / rightLines.length >= 0.5 || spanningRows / rightRows >= 0.85);
+    if (metaZone) columnSplit = null;
+  }
 
   let pageLines;
   if (columnSplit !== null) {

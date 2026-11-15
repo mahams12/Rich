@@ -161,6 +161,39 @@ test("two-column PDF → column detection → accurate section mapping", async (
   assert.ok(!resume.skills.includes("SKILLS"));
 });
 
+// Regression: resumes that right-align dates on the same baseline as the
+// role/degree line must not be treated as two columns. The date strip shares
+// rows with titles; splitting it detaches every date from its entry.
+const META_STRIP_PAGE = {
+  blocks: [
+    { text: "Syed Test", x: 50, y: 740, size: 22 },
+    { text: "Full Stack Engineer", x: 50, y: 718 },
+    { text: "Lahore, Pakistan | +92 300 1112223 | syed@example.com", x: 50, y: 700 },
+    { text: "EXPERIENCE", x: 50, y: 660, size: 13 },
+    { text: "Full Stack Engineer | SafeApp", x: 50, y: 640 },
+    { text: "Apr 2026 - Present - Hybrid", x: 430, y: 640 },
+    { text: "Built the admin panel and backend.", x: 50, y: 624 },
+    { text: "Software Intern | PGE", x: 50, y: 600 },
+    { text: "Jun 2025 - Aug 2025 - Lahore", x: 430, y: 600 },
+    { text: "Tested React features.", x: 50, y: 584 },
+    { text: "EDUCATION", x: 50, y: 548, size: 13 },
+    { text: "BS, Software Engineering - University of Lahore", x: 50, y: 528 },
+    { text: "2022 - 2026", x: 430, y: 528 },
+  ],
+};
+
+test("right-aligned date strip keeps dates attached to entries", async () => {
+  const { text, columns } = await extractLines(buildPdf([META_STRIP_PAGE]));
+  const { resume, report } = parseTextIntoResume(text, blankImportResume(null));
+  assert.equal(report.valid, true);
+  assert.equal(resume.profile.fullName, "Syed Test");
+  assert.equal(resume.experience.length, 2);
+  assert.equal(resume.experience[0].start, "Apr 2026");
+  assert.equal(resume.experience[0].end, "Present");
+  assert.equal(resume.experience[1].start, "Jun 2025");
+  assert.match(resume.education[0].start || "2022", /2022/);
+});
+
 test("multi-page PDF concatenates pages with a blank separator", async () => {
   const page2 = { blocks: [{ text: "PROJECTS", x: 50, y: 720, size: 13 }, { text: "Campus Connect", x: 50, y: 700 }, { text: "Built a student community platform.", x: 50, y: 684 }] };
   const { text } = await extractLines(buildPdf([SIMPLE_PAGE, page2]));
