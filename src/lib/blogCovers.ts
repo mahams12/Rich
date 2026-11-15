@@ -1,6 +1,10 @@
 import type { BlogPost } from "@/types";
 
-// Verified article-specific covers. These win over stale/invalid URLs saved in
+// Verified article-specific covers.
+  "ai-customer-support-automation-guide": "/blog-covers/ai-customer-support-automation-guide.svg",
+  "business-website-redesign-pakistan-launch-guide": "/blog-covers/business-website-redesign-pakistan-launch-guide.svg",
+  "multi-vendor-marketplace-development-build-guide": "/blog-covers/multi-vendor-marketplace-development-build-guide.svg",
+ These win over stale/invalid URLs saved in
 // older live blog records (see resolveBlogCover).
 const fallbackCovers: Record<string, string> = {
   "how-to-choose-a-software-project-partner-novexahub": "/blog-covers/how-to-choose-a-software-project-partner-novexahub.svg",
