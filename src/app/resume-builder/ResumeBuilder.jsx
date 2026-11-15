@@ -906,7 +906,7 @@ async function extractDocumentText(file) {
           .forEach((annotation) => {
             const url = String(annotation.url || annotation.unsafeUrl || "").trim();
             const rect = annotation.rect || [];
-            if (!/^https?:\\/\\//i.test(url) || rect.length !== 4) return;
+            if ((!url.startsWith("http://") && !url.startsWith("https://")) || rect.length !== 4) return;
             const left = Math.min(rect[0], rect[2]);
             const right = Math.max(rect[0], rect[2]);
             const bottom = Math.min(rect[1], rect[3]);
