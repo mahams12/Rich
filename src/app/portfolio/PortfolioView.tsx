@@ -26,7 +26,7 @@ export function PortfolioView({ initialProjects }: { initialProjects?: Project[]
       <Badge>Portfolio</Badge>
       <h1 className="display mt-4 max-w-3xl text-4xl sm:text-5xl">Work worth keeping</h1>
       <p className="mt-4 max-w-2xl text-[#6d655d]">
-        Explore NovexaHub's published websites, apps, ecommerce platforms, dashboards and automation projects. Open any project to see its details, features, technologies and customization options.
+        Explore NovexaHub&rsquo;s published websites, apps, ecommerce platforms, dashboards and automation projects. Open any project to see its details, features, technologies and customization options.
       </p>
       <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {loading ? Array.from({ length: 6 }).map((_, index) => (

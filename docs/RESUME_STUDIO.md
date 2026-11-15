@@ -26,6 +26,15 @@ Resume Studio is a browser-first React experience inside the existing Next.js Ap
 
 The app does not upload the user's resume, photo or pasted job description to NovexaHub. Browser storage is device- and browser-specific; users should export a JSON backup before clearing browser data or switching devices.
 
+## Testing
+
+All resume parsing, extraction and normalization helpers live in `src/lib/resume/parser.js` as pure functions so they can be verified in Node without the browser. `src/app/resume-builder/ResumeBuilder.jsx` only wires them to UI state, localStorage, file input and dynamic PDF.js/Mammoth loading.
+
+- `npm test` runs the `node:test` suites in `tests/`:
+  - `tests/resume-parser.test.js` — unit coverage for section headings, date ranges, skills, projects, experience/education grouping, GitHub URL detection, LinkedIn CSV merge, JSON backup validation, print-title sanitization and `pdfPageToLines` row/column reconstruction.
+  - `tests/resume-pdf-pipeline.test.js` — end-to-end `pdfjs-dist` checks against generated PDFs: single-column text resumes, two-column layouts (including name detection when the identity sits at the top of the main column), multi-page documents, image-only PDF rejection and corrupt-file handling.
+  - `tests/resume-print-e2e.test.js` — gated by `PRINT_E2E=1`; prints the live editor to PDF with headless Chrome (`?view=editor` deep link) and re-extracts the text with PDF.js to prove the exported document is a real selectable-text A4 page with no app UI or layout offset.
+
 ## LinkedIn integration boundaries
 
 V1 deliberately avoids collecting a LinkedIn password or pretending that an OAuth connection can read every profile field. LinkedIn's open OIDC permissions provide basic identity fields; additional profile APIs and programs require LinkedIn approval. The reliable import path is the member's own LinkedIn data export, where the user selects the CSV files they want to import.
