@@ -1,6 +1,13 @@
 import path from "node:path";
 import type { NextConfig } from "next";
 
+// Firebase's auth helper is served from the project's firebaseapp domain and
+// proxied under our own domain via rewrites below — that's what makes the
+// Google consent screen read "novexahub.live" instead of
+// "novexahub-live.firebaseapp.com". Must stay in sync with
+// NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN and the OAuth redirect URI in Google Cloud.
+const firebaseAuthOrigin = `https://${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "novexahub-live"}.firebaseapp.com`;
+
 const workerSafeAliases = {
   protobufjs: "protobufjs/minimal",
   // Firestore's browser transport does not use the Node gRPC stack. Keep
@@ -69,19 +76,46 @@ const nextConfig: NextConfig = {
       { source: "/cancellation-policy", destination: "/refund-policy", permanent: true },
     ];
   },
+  async rewrites() {
+    // Self-host the Firebase auth helper (handler / iframe / init.json) so the
+    // custom authDomain works without Firebase Hosting. Google sign-in
+    // navigates to <authDomain>/__/auth/handler — proxying keeps it on-domain.
+    return [
+      { source: "/__/:path*", destination: `${firebaseAuthOrigin}/__/:path*` },
+    ];
+  },
   async headers() {
+    const shared = [
+      { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+    ];
     return [
       {
-        source: "/:path*",
+        // Everything except Firebase's proxied auth helper paths.
+        source: "/((?!__).*)",
         headers: [
           // Allows Google auth windows to communicate with the app.
           { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
-          { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+          ...shared,
           { key: "X-Frame-Options", value: "DENY" },
-          { key: "X-Content-Type-Options", value: "nosniff" },
-          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), browsing-topics=()" },
           { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
+        ],
+      },
+      {
+        // /__/auth/iframe must be frameable — including cross-subdomain
+        // (admin.novexahub.live frames the helper on novexahub.live). XFO can't
+        // express that, so it's omitted and CSP scopes the allowed framers.
+        // COOP is also left untouched so Firebase's own header passes through.
+        source: "/__/:path*",
+        headers: [
+          ...shared,
+          {
+            key: "Content-Security-Policy",
+            value:
+              "frame-ancestors 'self' https://*.novexahub.live http://localhost:* http://*.localhost:*",
+          },
         ],
       },
     ];

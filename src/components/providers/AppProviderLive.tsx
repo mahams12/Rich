@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useRouter } from "next/navigation";
 import { uid } from "@/lib/format";
 import { projects as seedProjects, sortProjectsNewestFirst } from "@/data/projects";
 import { posts as seedPosts, sortPostsNewestFirst } from "@/data/posts";
@@ -107,6 +108,7 @@ function applyShared(shared: SharedState, setters: {
 }
 
 export function AppProviderLive({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   // Always start null so SSR HTML matches the first client paint (avoids hydration errors).
   const [ready, setReady] = useState(false);
   const [user, setUser] = useState<UserAccount | null>(null);
@@ -177,8 +179,9 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
             window.location.pathname.startsWith("/auth/google") ||
             window.location.pathname.startsWith("/register")
           ) {
-            window.location.replace(dest);
-            return;
+            // Client-side nav — the auth subscription below must still attach,
+            // and skipping a reload keeps the resolved profile in memory.
+            router.replace(dest);
           }
         }
 
@@ -223,7 +226,7 @@ export function AppProviderLive({ children }: { children: React.ReactNode }) {
     knownNoticeIds.current = new Set(shared.notices.map((item) => item.id));
     sharedJson.current = JSON.stringify(shared);
     setReady(true);
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (!remote || !user) {

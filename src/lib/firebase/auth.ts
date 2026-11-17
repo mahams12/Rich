@@ -32,7 +32,12 @@ function toAccount(user: User, role: UserAccount["role"], name?: string): UserAc
   };
 }
 
-async function ensureProfile(user: User, name?: string) {
+// Resolved profiles for this page session — skips the Firestore round trip
+// when onAuthStateChanged re-fires right after a login flow already built the
+// account, and on every later restore of the same user.
+const profileCache = new Map<string, UserAccount>();
+
+async function ensureProfile(user: User, name?: string, fresh = false) {
   const email = (user.email || "").toLowerCase();
   const role: UserAccount["role"] = isAdminEmail(email) ? "admin" : "client";
   const displayName = name || user.displayName || email.split("@")[0] || "Client";
@@ -41,9 +46,15 @@ async function ensureProfile(user: User, name?: string) {
   const db = getFirebaseDb();
   if (!db) return fallback;
 
+  if (!fresh && !name) {
+    const cached = profileCache.get(user.uid);
+    if (cached) return { ...cached, emailVerified: user.emailVerified };
+  }
+
   try {
     const ref = doc(db, "users", user.uid);
     const snap = await getDoc(ref);
+    let account: UserAccount;
     if (!snap.exists()) {
       await setDoc(ref, {
         name: displayName,
@@ -53,20 +64,19 @@ async function ensureProfile(user: User, name?: string) {
         readNoticeIds: [],
         createdAt: serverTimestamp(),
       });
+      account = fallback;
     } else {
       const data = snap.data();
-      await setDoc(
-        ref,
-        {
-          name: data.name || displayName,
-          email,
-          role: data.role === "admin" || isAdminEmail(email) ? "admin" : "client",
-        },
-        { merge: true },
-      );
+      const nextRole = data.role === "admin" || isAdminEmail(email) ? "admin" : "client";
+      const nextName = data.name || displayName;
+      // Only pay for the write when something actually changed.
+      if (data.name !== nextName || data.email !== email || data.role !== nextRole) {
+        await setDoc(ref, { name: nextName, email, role: nextRole }, { merge: true });
+      }
+      account = toAccount(user, nextRole, nextName);
     }
-    const latest = (await getDoc(ref)).data();
-    return toAccount(user, latest?.role === "admin" ? "admin" : role, latest?.name || displayName);
+    profileCache.set(user.uid, account);
+    return account;
   } catch {
     return fallback;
   }
@@ -109,7 +119,7 @@ export async function firebaseReloadAuthUser() {
   const auth = getFirebaseAuth();
   if (!auth?.currentUser) return null;
   await reload(auth.currentUser);
-  return ensureProfile(auth.currentUser);
+  return ensureProfile(auth.currentUser, undefined, true);
 }
 
 export async function firebaseRegister(name: string, email: string, password: string) {
@@ -142,9 +152,10 @@ export async function firebaseGoogleLogin(): Promise<UserAccount | { redirecting
   const auth = getFirebaseAuth();
   if (!auth) throw new Error("Firebase is not configured.");
 
-  const pending = await firebaseGoogleRedirectResult();
-  if (pending) return pending;
-
+  // No getRedirectResult() here — the provider already consumed it at startup,
+  // and awaiting anything before signInWithPopup burns the click's transient
+  // user-activation, which gets the popup blocked and forces the slow
+  // full-page redirect path.
   try {
     const cred = await signInWithPopup(auth, googleProvider());
     sessionStorage.removeItem(GOOGLE_REDIRECT_FLAG);
@@ -197,6 +208,7 @@ export async function firebaseGoogleRedirectResult() {
 
 export async function firebaseLogout() {
   const auth = getFirebaseAuth();
+  profileCache.clear();
   if (!auth) return;
   await signOut(auth);
 }

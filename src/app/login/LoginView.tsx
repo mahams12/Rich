@@ -33,9 +33,9 @@ export function LoginView({ mode }: { mode: "login" | "register" }) {
     // Don't wait for ready — leave login as soon as we have a session.
     const dest = destination(user.email, next);
     if (window.location.pathname.startsWith("/login") || window.location.pathname.startsWith("/register")) {
-      window.location.replace(dest);
+      router.replace(dest);
     }
-  }, [user, next]);
+  }, [user, next, router]);
 
   if (user) {
     return (
@@ -106,8 +106,8 @@ export function LoginView({ mode }: { mode: "login" | "register" }) {
       const result = await loginWithGoogle();
       if (result.redirecting) return;
       if (result.account) {
-        // Hard navigate so the home/next page opens immediately.
-        window.location.replace(destination(result.account.email, next));
+        // Client nav — the session is already set, no reload needed.
+        router.replace(destination(result.account.email, next));
         return;
       }
       setBusy(false);

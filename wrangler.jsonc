@@ -27,7 +27,7 @@
   "vars": {
     "NEXTJS_ENV": "production",
     "NEXT_PUBLIC_FIREBASE_API_KEY": "AIzaSyAqo-mx1cFSuz_mkhNbdQ8OlmcZqUY79Yk",
-    "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN": "novexahub-live.firebaseapp.com",
+    "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN": "novexahub.live",
     "NEXT_PUBLIC_FIREBASE_PROJECT_ID": "novexahub-live",
     "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET": "novexahub-live.firebasestorage.app",
     "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID": "385096466335",
