@@ -2,6 +2,7 @@ import type { BlogPost } from "@/types";
 
 // Curated local covers take precedence over stale or invalid stored URLs.
 const fallbackCovers: Record<string, string> = {
+  "saas-subscription-billing-integration-guide": "/blog-covers/saas-subscription-billing-integration-guide.svg",
   "b2b-ecommerce-development-pakistan-buyer-portal-guide": "/blog-covers/b2b-ecommerce-development-pakistan-buyer-portal-guide.svg",
   "ai-customer-support-automation-guide": "/blog-covers/ai-customer-support-automation-guide.svg",
   "business-website-redesign-pakistan-launch-guide": "/blog-covers/business-website-redesign-pakistan-launch-guide.svg",
